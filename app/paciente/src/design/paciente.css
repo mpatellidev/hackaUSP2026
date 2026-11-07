@@ -1,0 +1,16 @@
+/* Ajustes do app do paciente sobre @uhealth/ui (ver DESIGN.md). */
+.cabecalho-app .marca { display: inline-flex; align-items: center; gap: var(--uh-space-2); }
+.cabecalho-app .marca svg { color: var(--uh-on-brand); }
+.icone { display: inline-flex; align-items: center; justify-content: center; }
+.tabbar a { flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.tabbar a svg { flex: none; }
+
+/* Primeira abertura: opções com rádio visível (foco e seleção claros) */
+.opcoes { border: 0; padding: 0; margin: 0; display: grid; gap: var(--uh-space-3); }
+.opcoes legend { font-weight: 700; margin-bottom: var(--uh-space-2); padding: 0; }
+.opcao { display: flex; align-items: center; gap: var(--uh-space-3); min-height: var(--uh-target); padding: var(--uh-space-3) var(--uh-space-4); background: var(--uh-surface); border: 2px solid var(--uh-border-strong); border-radius: var(--uh-radius-control); cursor: pointer; }
+.opcao--marcada { border-color: var(--uh-link); background: var(--uh-chip-bg); }
+.opcao input { width: 24px; height: 24px; accent-color: var(--uh-link); flex: none; }
+.opcao small { display: block; color: var(--uh-muted); }
+.opcao:focus-within { outline: 3px solid var(--uh-link); outline-offset: 2px; }
+.boas-vindas-marca { display: flex; justify-content: center; padding-top: var(--uh-space-6); }
