@@ -1,12 +1,12 @@
 """Seed idempotente de perfis: docs/fixtures/perfis.json (não sobrescreve perfis já alterados)."""
 import json
-from pathlib import Path
 
 from sqlalchemy.orm import Session
 
 from app.modulos.perfil.models import PerfilUsuario
+from app.core.config import FIXTURES_DIR
 
-_ARQUIVO = Path(__file__).resolve().parents[4] / "docs" / "fixtures" / "perfis.json"
+_ARQUIVO = FIXTURES_DIR / "perfis.json"
 
 
 def run(db: Session) -> dict[str, int]:

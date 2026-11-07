@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 
 from app.core.time import parse_aware
 from app.modulos.cenarios.models import Cenario, InteresseCenario
+from app.core.config import FIXTURES_DIR
 
-_FIX = Path(__file__).resolve().parents[4] / "docs" / "fixtures"
+_FIX = FIXTURES_DIR
 _EXTRA = Path(__file__).parent / "fixtures" / "cenarios-extra.json"
 
 

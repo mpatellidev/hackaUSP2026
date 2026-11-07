@@ -3,6 +3,9 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Fixtures fictícias estáveis (contrato em backend/docs); lidas pelos seeds.
+FIXTURES_DIR = Path(__file__).resolve().parents[2] / "docs" / "fixtures"
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")

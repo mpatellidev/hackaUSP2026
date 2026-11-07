@@ -1,13 +1,13 @@
 """Seed idempotente de urgência: docs/fixtures/urgencias.json (IDs fixos; não sobrescreve o que já mudou)."""
 import json
-from pathlib import Path
 
 from sqlalchemy.orm import Session
 
 from app.core.time import parse_aware
 from app.modulos.urgencia.models import AvaliacaoUrgencia, RelatoUrgencia
+from app.core.config import FIXTURES_DIR
 
-_ARQUIVO = Path(__file__).resolve().parents[4] / "docs" / "fixtures" / "urgencias.json"
+_ARQUIVO = FIXTURES_DIR / "urgencias.json"
 
 
 def run(db: Session) -> dict[str, int]:

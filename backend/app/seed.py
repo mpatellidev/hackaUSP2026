@@ -1,7 +1,6 @@
 """Seed idempotente com dados 100% fictícios (lê docs/fixtures, fixtures estáveis da #1).
 Uso: uv run python -m app.seed   (pode rodar várias vezes: IDs fixos, upsert por id)."""
 import json
-from pathlib import Path
 
 from sqlalchemy.orm import Session
 
@@ -15,8 +14,9 @@ from app.modulos.perfil import seed as perfil_seed
 from app.modulos.prioridade import seed as prioridade_seed
 from app.modulos.urgencia import seed as urgencia_seed
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
+from app.core.config import FIXTURES_DIR
 
-DATA = Path(__file__).resolve().parents[2] / "docs" / "fixtures"
+DATA = FIXTURES_DIR
 
 
 def _load(name: str) -> list[dict]:

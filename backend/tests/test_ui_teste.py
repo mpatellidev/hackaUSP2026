@@ -1,6 +1,7 @@
 """UI de teste servida pela própria API (/teste/): HTML, assets referenciados e redirecionamentos."""
 import re
 from pathlib import Path
+from app.core.config import FIXTURES_DIR
 
 PASTA = Path(__file__).resolve().parents[1] / "app" / "ui_teste"
 
@@ -31,7 +32,7 @@ def test_imports_dos_modulos_js_existem(client):
 
 def test_contas_demo_batem_com_a_fixture(client):
     import json
-    fixture = json.loads((Path(__file__).resolve().parents[2] / "docs" / "fixtures" / "contas-demo.json").read_text(encoding="utf-8"))
+    fixture = json.loads((FIXTURES_DIR / "contas-demo.json").read_text(encoding="utf-8"))
     assert client.get("/teste/dados/contas-demo.json").json()["itens"] == fixture["itens"]
 
 
