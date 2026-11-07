@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+apps/api/chat.db
+apps/api/tts_cache/
+.env
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo

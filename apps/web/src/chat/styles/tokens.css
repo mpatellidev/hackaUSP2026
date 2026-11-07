@@ -1,0 +1,56 @@
+/* Paleta: principal #14BEB9 · claro #E8F9F8 · escuro #052F2E.
+   O texto sobre o verde-água usa o tom escuro (contraste 6,3:1); branco sobre ele não passaria no AA. */
+:root {
+  --font-scale: 1;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Tema claro: fundo branco, cor só onde ajuda a ler (balões, ações). */
+  --page: #E8F9F8;
+  --surface: #ffffff;
+  --text: #052f2e;
+  --text-muted: #557371; /* 5,2:1 sobre branco */
+  --border: #e2eceb;
+  --primary: #14beb9;
+  --on-primary: #052f2e;
+
+  --soft: #f3f7f7;
+  --bubble-bot: #f1f5f5;
+  --bubble-bot-text: #052f2e;
+  --bubble-user: #d6f4f2;
+  --bubble-user-text: #052f2e;
+  --option-border: #14beb9;
+  --option-text: #052f2e;
+  --track: #c9dcda;
+  --focus: #052f2e;
+  --error-bg: #fdecea;
+  --error-text: #8c1d18;
+  --shadow: 0 1px 2px rgba(5, 47, 46, 0.04), 0 8px 24px rgba(5, 47, 46, 0.06);
+}
+
+/* Sem tema escuro automático: o site é sempre branco (só o modo alto contraste muda as cores). */
+:root {
+  color-scheme: light;
+}
+
+/* Alto contraste: preto/amarelo, bordas fortes. */
+:root[data-contrast="high"] {
+  --page: #000000;
+  --surface: #000000;
+  --text: #ffffff;
+  --text-muted: #ffffff;
+  --border: #ffffff;
+  --primary: #ffde00;
+  --on-primary: #000000;
+  --soft: #000000;
+  --bubble-bot: #000000;
+  --bubble-bot-text: #ffffff;
+  --bubble-user: #ffde00;
+  --bubble-user-text: #000000;
+  --option-border: #ffde00;
+  --option-text: #ffde00;
+  --track: #ffffff;
+  --focus: #00e5ff;
+  --error-bg: #000000;
+  --error-text: #ff8a80;
+  --shadow: none;
+}
