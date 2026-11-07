@@ -176,6 +176,14 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
 `InteresseVaga.estado` ∈ `registrado | confirmado | nao_selecionado | retirado`.
 `Agendamento` (`vaga_id`, `solicitacao_id`, `paciente_id`, `clinica_id`, `estado` ∈ `agendado | concluido | cancelado`, `desfecho` ∈ `pendente | compareceu | falta_registrada | cancelado_antecipado | cancelado_pela_clinica`, `confirmado_por`, `confirmado_em`) só existe depois da confirmação por funcionário. `desfecho` é preenchido por humano; `falta_registrada` exige um `RegistroFalta` confirmado (§9.3).
 
+Leitura (paciente: os próprios; funcionário: os da clínica; fora do escopo = `404`): `GET /agendamentos?estado=agendado|concluido|cancelado` → `{"itens": [...], "total": n}` e `GET /agendamentos/{id}`. Cada item traz os campos acima mais `vaga` (`id`, `especialidade`, `inicio`, `fim`, `estado`), `clinica` (`id`, `nome`, `telefone`) e, só para funcionário, `paciente_nome_exibicao`.
+
+**Cancelamento (§7.7):** `POST /agendamentos/{id}/cancelar` com `{"motivo": "texto administrativo ≤ 280" | null}` → `200` com o agendamento atualizado (`estado: "cancelado"`) mais `solicitacao_estado`, `vaga_estado`, `cancelado_em` e `aviso`.
+- Paciente dono → `desfecho: cancelado_antecipado`. Funcionário de qualquer função da clínica do agendamento → `desfecho: cancelado_pela_clinica`. Outra pessoa ou outra clínica → `404`.
+- Só `estado = agendado` com `desfecho = pendente` pode ser cancelado; cancelado, concluído ou com falta registrada → `409 transicao_invalida`.
+- O paciente só cancela **antes do início da vaga** (depois, `409 transicao_invalida`: a clínica registra o desfecho). A clínica pode cancelar enquanto o agendamento estiver ativo.
+- **Nunca** cria `RegistroFalta` e nunca altera o score. Em transação única: agendamento → `cancelado`; vaga → `aberta` se ainda futura (senão `cancelada`); `InteresseVaga` confirmado → `retirado`; pedido `agendada` → `em_analise` (§5); evento `transicao` no histórico com autor e motivo. Quem tinha interesse `nao_selecionado` ou `retirado` na vaga reaberta pode demonstrar interesse de novo.
+
 ### 4.7 Pedido × interesse × agendamento × alerta
 
 | Conceito | O que significa | Quem cria | Garante atendimento? |
@@ -202,6 +210,7 @@ enviada ──► em_analise ◄──► precisa_contato
 enviada / em_analise / precisa_contato ──(paciente demonstra interesse em vaga)──► aguardando_confirmacao
 aguardando_confirmacao ──(funcionário confirma a vaga)──► agendada ──► concluida
 aguardando_confirmacao ──(interesse retirado ou vaga dada a outra pessoa, sem outro interesse)──► em_analise
+agendada ──(agendamento cancelado pelo paciente ou pela clínica)──► em_analise
 ```
 
 | De | Para | Quem | Observações |
@@ -214,8 +223,9 @@ aguardando_confirmacao ──(interesse retirado ou vaga dada a outra pessoa, se
 | `aguardando_confirmacao` | `agendada` | funcionário, ao confirmar a vaga | Único caminho para `agendada` |
 | `aguardando_confirmacao` | `em_analise` | sistema | Interesse retirado / vaga dada a outro e nenhum outro interesse `registrado` |
 | `agendada` | `concluida` | funcionário da clínica | Habilita avaliação da clínica (#16) |
+| `agendada` | `em_analise` | **sistema**, ao cancelar o agendamento (paciente ou clínica) | Cancelamento não é falta nem penalidade (§4.6, §7.7). Nenhum novo pedido é criado sozinho |
 
-Qualquer outra transição → `409 transicao_invalida`. Estados `indisponivel` e `concluida` são terminais. A falta **não cria estado novo**: o pedido segue para `concluida` e o desfecho vai no `Agendamento.desfecho` (§4.6). A penalidade existe só como componente do score (§9.3), nunca como bloqueio de pedido.
+Qualquer outra transição → `409 transicao_invalida`. Se, entre a confirmação e o cancelamento, o paciente abriu outro pedido ativo igual (mesma clínica e especialidade), os dois permanecem ativos (limitação do protótipo); a clínica pode marcar um como `indisponivel`. Estados `indisponivel` e `concluida` são terminais. A falta **não cria estado novo**: o pedido segue para `concluida` e o desfecho vai no `Agendamento.desfecho` (§4.6). A penalidade existe só como componente do score (§9.3), nunca como bloqueio de pedido.
 
 ## 6. Encaminhamento com escolha do paciente
 
@@ -241,6 +251,7 @@ Fluxo da recusa: clínica A marca `indisponivel` → o paciente é **informado**
 4. **Confirmar:** funcionário → `POST /vagas/{id}/confirmar` `{"interesse_id"}`. Em **uma transação** (ou restrição única): interesse → `confirmado`, vaga → `preenchida`, pedido → `agendada`, cria `Agendamento`. Os demais interesses → `nao_selecionado`. **No máximo um confirmado por vaga**; segunda tentativa → `409 vaga_ja_preenchida`. Recusar/não selecionar não altera outros pacientes.
 5. **Priorização para oferta:** a ordem sugerida dos interessados vem do serviço da #13 (nunca de uma fila paralela); urgência avaliada sempre primeiro. A decisão final é do funcionário.
 6. Sem SMS/WhatsApp/push; o app atualiza sob demanda.
+7. **Cancelar agendamento:** ver §4.6. Cancelamento antecipado e cancelamento pela clínica **nunca** geram falta nem penalidade; a vaga reaberta volta a receber interesses (sem cascata automática).
 
 ## 8. Fluxo ponta a ponta (roteiro da #10)
 
@@ -323,7 +334,7 @@ Componentes: `socioeconomico`, `necessidade_academica`, `tempo_espera`, `falta_v
 
 ## 10. Pontos em aberto (decidir antes da integração)
 
-- ~~Desfecho de falta~~ resolvido na 0.1.1 (ver §4.6 e §9.3). Resta decidir o fluxo de **cancelamento** de agendamento (endpoint e quem pode), a cargo da #4.
+- ~~Desfecho de falta~~ resolvido na 0.1.1 (ver §4.6 e §9.3). ~~Fluxo de cancelamento de agendamento~~ resolvido na 0.1.3 (§4.6, §5, §7.7).
 - Vocabulário de `especialidades` pode crescer; mudanças via PR neste documento.
 - Expiração real de token demo e política de sessão (decisão da #2).
 - Numeração: títulos das issues vão de "00" a "17", os números reais do GitHub são +1 (título "00" = #1). Neste repositório sempre se usa o **número do GitHub**.

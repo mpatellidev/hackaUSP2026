@@ -1,6 +1,7 @@
 """Pontos de montagem. Cada frente cria app/routers/<modulo>.py com `router = APIRouter(...)`
 e adiciona UMA linha em ROUTERS (evita conflito de merge no main.py)."""
 from app.modulos.acessibilidade import router as acessibilidade
+from app.modulos.agendamentos import router as agendamentos
 from app.modulos.cenarios import router as cenarios
 from app.modulos.prioridade import router as prioridade
 from app.modulos.solicitacoes import router as solicitacoes
@@ -17,4 +18,5 @@ ROUTERS = [
     urgencia_router,
     cenarios.router,
     vagas.router,
+    agendamentos.router,
 ]

@@ -137,12 +137,18 @@ def registrar_interesse(db: Session, actor: Actor, vaga_id: str, solicitacao_id:
                        "O seu pedido não está em um estado que permita demonstrar interesse em vaga.")
     if pedido.especialidade != vaga.especialidade:
         raise _erro_validacao(["solicitacao_id"], "A vaga é de outra especialidade que a do seu pedido.")
-    if db.scalar(select(InteresseVaga.id).where(InteresseVaga.vaga_id == vaga.id,
-                                                InteresseVaga.solicitacao_id == pedido.id)):
+    existente = db.scalar(select(InteresseVaga).where(InteresseVaga.vaga_id == vaga.id,
+                                                      InteresseVaga.solicitacao_id == pedido.id))
+    if existente is not None and existente.estado in ("registrado", "confirmado"):
         raise ApiError(409, "transicao_invalida", "Você já demonstrou interesse nesta vaga.", {"vaga_id": vaga.id})
-    interesse = InteresseVaga(vaga_id=vaga.id, solicitacao_id=pedido.id, paciente_id=actor.usuario_id,
-                              estado="registrado", criado_em=utc_now())
-    db.add(interesse)
+    if existente is not None:
+        # vaga reaberta (ex.: agendamento cancelado): interesse `nao_selecionado`/`retirado` pode ser refeito
+        interesse = existente
+        interesse.estado = "registrado"
+    else:
+        interesse = InteresseVaga(vaga_id=vaga.id, solicitacao_id=pedido.id, paciente_id=actor.usuario_id,
+                                  estado="registrado", criado_em=utc_now())
+        db.add(interesse)
     anterior = pedido.estado
     if anterior != "aguardando_confirmacao":
         pedido.estado = "aguardando_confirmacao"
