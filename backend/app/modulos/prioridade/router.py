@@ -133,6 +133,7 @@ def registrar_falta(body: FaltaIn, actor: Actor = Depends(require_funcionario), 
     f = RegistroFalta(paciente_id=ag.paciente_id, agendamento_id=ag.id, clinica_id=ag.clinica_id,
                       registrada_por=actor.usuario_id, justificativa=body.justificativa, estado="confirmada")
     db.add(f)
+    ag.desfecho = "falta_registrada"   # contrato §4.6: exige RegistroFalta confirmado
     db.commit()
     return _falta_out(db, f)
 
@@ -163,5 +164,7 @@ def revisar_falta(falta_id: str, body: RevisaoIn, actor: Actor = Depends(require
     db.add(RevisaoFalta(falta_id=f.id, acao=body.acao, motivo=body.motivo, revisor_id=actor.usuario_id,
                         estado_anterior=f.estado, estado_novo=novo))
     f.estado = novo
+    if novo == "revertida" and f.agendamento_id:
+        db.get(Agendamento, f.agendamento_id).desfecho = "pendente"
     db.commit()
     return _falta_out(db, f)

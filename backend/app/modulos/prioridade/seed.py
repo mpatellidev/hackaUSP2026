@@ -11,7 +11,7 @@ from app.modulos.prioridade.models import RegistroFalta
 
 
 def run(db: Session) -> dict[str, int]:
-    itens = json.loads((Path(__file__).parent / "fixtures" / "faltas.json").read_text(encoding="utf-8"))["itens"]
+    itens = json.loads((Path(__file__).resolve().parents[4] / "docs" / "fixtures" / "faltas.json").read_text(encoding="utf-8"))["itens"]
     for r in itens:
         clinica = db.scalar(select(VinculoClinica.clinica_id).where(VinculoClinica.usuario_id == r["registrada_por"]))
         db.merge(RegistroFalta(id=r["id"], paciente_id=r["paciente_id"], agendamento_id=r["agendamento_id"],

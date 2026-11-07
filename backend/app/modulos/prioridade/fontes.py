@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Protocol
 
-FIX = Path(__file__).parent / "fixtures"
+FIX = Path(__file__).resolve().parents[4] / "docs" / "fixtures"
 
 
 def _json(nome: str) -> dict:

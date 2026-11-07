@@ -64,6 +64,8 @@ def test_falta_so_profissional_da_clinica_com_justificativa(client, login, db):
     assert ok.status_code == 201 and ok.json()["estado"] == "confirmada" and ok.json()["paciente_id"] == ag.paciente_id
     dup = client.post("/api/v1/faltas", json=corpo, headers=login(PROF_B))
     assert dup.status_code == 409
+    db.refresh(ag)
+    assert ag.desfecho == "falta_registrada"
 
 
 def test_penalidade_reversao_e_auditoria(client, login, db):
@@ -80,6 +82,8 @@ def test_penalidade_reversao_e_auditoria(client, login, db):
     r = client.post(f"/api/v1/faltas/{falta['id']}/revisao", headers=h,
                     json={"acao": "reverter", "motivo": "Erro de registro da clínica."})
     assert r.status_code == 200 and r.json()["estado"] == "revertida"
+    db.refresh(ag)
+    assert ag.desfecho == "pendente"
     assert r.json()["revisoes"][0]["estado_anterior"] == "confirmada"
     assert client.post(f"/api/v1/faltas/{falta['id']}/revisao", headers=h,
                        json={"acao": "reverter", "motivo": "De novo."}).status_code == 409
