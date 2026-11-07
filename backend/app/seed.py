@@ -10,6 +10,7 @@ from app.core.time import parse_aware
 from app.models.clinicas import Clinica
 from app.models.solicitacoes import EventoSolicitacao, Solicitacao
 from app.models.usuarios import Usuario, VinculoClinica
+from app.modulos.prioridade import seed as prioridade_seed
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
 
 DATA = Path(__file__).resolve().parents[2] / "docs" / "fixtures"
@@ -56,7 +57,8 @@ def run(db: Session) -> dict[str, int]:
                              paciente_id=r["paciente_id"], clinica_id=r["clinica_id"], estado=r["estado"],
                              desfecho=r.get("desfecho", "pendente"), confirmado_por=r["confirmado_por"], **_dt(r, "confirmado_em")))
     db.commit()
-    return {m.__tablename__: db.query(m).count()
+    contagens = prioridade_seed.run(db)
+    return contagens | {m.__tablename__: db.query(m).count()
             for m in (Clinica, Usuario, VinculoClinica, Solicitacao, EventoSolicitacao, Vaga, InteresseVaga, Agendamento)}
 
 
