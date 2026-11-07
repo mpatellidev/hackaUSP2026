@@ -37,7 +37,8 @@ def run(db: Session) -> dict[str, int]:
         db.merge(VinculoClinica(id=r["id"], usuario_id=r["usuario_id"], clinica_id=r["clinica_id"], funcao=r["funcao"]))
     for r in sorted(_load("solicitacoes"), key=lambda x: x["criado_em"]):
         db.merge(Solicitacao(id=r["id"], paciente_id=r["paciente_id"], clinica_id=r["clinica_id"], estado=r["estado"],
-                             especialidade=r["especialidade"], descricao_administrativa=r["descricao_administrativa"],
+                             especialidade=r["especialidade"], publico_alvo=r["publico_alvo"],
+                             descricao_administrativa=r["descricao_administrativa"],
                              solicitacao_origem_id=r["solicitacao_origem_id"], **_dt(r, "criado_em", "atualizado_em")))
         db.flush()
     for r in _load("eventos"):
