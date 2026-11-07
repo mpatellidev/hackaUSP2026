@@ -20,11 +20,41 @@ backend/   API Python/FastAPI + PostgreSQL/Supabase (SQLite só em dev local)   
            └─ app/modulos/acessibilidade/   chat acessível com IA (mock por padrão) — #9
 web/       Chat acessível do paciente (React + Vite), cliente do backend         — #9
 scripts/   Apoio ao iniciar.ps1 (instala as dependências do backend sem uv)
-iniciar.ps1  Prepara e sobe tudo no Windows (PowerShell)
+iniciar.ps1  Prepara e sobe a API e o chat no Windows (PowerShell)
+iniciar.sh   Prepara e sobe API + chat + painel da clínica + app do paciente (Linux/macOS)
 mobile/    App Android React Native/Expo para pacientes                        — issue #5 e módulos
 desktop/   App Windows Tauri + React/Vite para clínicas                        — issue #7 e módulos
 docs/      Contratos, fronteiras, fixtures
 ```
+
+## Como rodar (Linux / macOS)
+
+Pré-requisitos: **Python 3.11+** com [`uv`](https://docs.astral.sh/uv/) (ou `python3 -m venv`), **Node.js 18+** e `curl`.
+```bash
+./iniciar.sh            # prepara tudo, sobe os 4 serviços e imprime as URLs (Ctrl+C encerra)
+./iniciar.sh --mock     # painel e app do paciente com dados simulados no próprio app
+./iniciar.sh --local    # só localhost, sem liberar a rede
+./iniciar.sh --testes   # fixtures + pytest + builds (web, desktop, mobile) e sai
+```
+O script cria `backend/.env`, roda as migrações e o seed (dados fictícios), instala o que falta e sobe, com `--host`:
+
+| Serviço | URL | Conta de teste |
+|---|---|---|
+| API (docs) | http://localhost:8000/docs | |
+| Chat do paciente (`web/`) | http://localhost:5173 | `paciente.ana` |
+| App do paciente (`mobile/`, no navegador) | http://localhost:8081 | `paciente.ana` |
+| Painel da clínica (`desktop/`, no navegador) | http://localhost:1420 | `funcionario.atendimento.a` / `.b`, `funcionario.profissional.a` |
+
+**No celular (mesma rede Wi-Fi):** o script imprime o IP do computador e libera esse IP em `CORS_ORIGINS`; abra `http://IP-DO-PC:8081` (app), `:1420` (painel) ou `:5173` (chat) no navegador do celular. Se o firewall bloquear, libere as portas 8000, 5173, 1420 e 8081.
+
+**Endereço da API nos clientes** (o navegador de quem abre precisa alcançá-lo; `iniciar.sh` já define):
+| Cliente | Variável | Exemplo |
+|---|---|---|
+| `web/` | `VITE_API_URL` (sem `/api/v1`) | `http://192.168.0.10:8000` |
+| `desktop/` | `VITE_API_MODO=api`, `VITE_API_URL` (**com** `/api/v1`) | `http://192.168.0.10:8000/api/v1` |
+| `mobile/` | `EXPO_PUBLIC_API_MODO=api`, `EXPO_PUBLIC_API_URL` (sem `/api/v1`) | `http://192.168.0.10:8000` |
+
+Manual (sem o script): `cd backend && uv sync && uv run alembic upgrade head && uv run python -m app.seed && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000`; nos clientes, `npm install` e `npm run dev:rede` (desktop), `npm run dev -- --host` (web) ou `npm run web:rede` (mobile). Testes: `cd backend && uv run pytest -q`.
 
 ## Como rodar (Windows / PowerShell)
 
@@ -89,7 +119,9 @@ As chaves ficam só no backend, nunca no `web/`.
 | `ModuleNotFoundError` estranho | Caminho da pasta longo demais (veja os pré-requisitos). Apague `backend\.venv`, mova o repositório para uma pasta curta e rode o script de novo. |
 | "Assistente ainda não está configurado" | `LLM_PROVIDER` é `gemini`/`claude` sem a chave. Volte para `LLM_PROVIDER=mock` ou preencha a chave. |
 
-**Ainda NÃO existem:** `mobile/` (`npx expo start`, #5) e `desktop/` (`npm run tauri dev`, #7).
+> No Windows o `iniciar.ps1` sobe só a API e o chat. O painel (`desktop/`) e o app (`mobile/`) rodam com `npm run dev` / `npm run web` (veja o README de cada pasta); um script único para eles no Windows ainda não existe.
+
+**Ainda NÃO existem / não foram testados:** APK do app do paciente (`npm run apk` depende da conta Expo/EAS); instalador do painel no Windows (gerado pelo CI, **nunca aberto em um Windows real**); teste em aparelho físico (o app foi aberto só no navegador); perfil (#18), avaliações (#16), alertas (#17), resumo compartilhável (#15) e a interface de cenários (#12). Cenários (#11) e urgência (#14) têm backend montado, mas guardam dados **em memória** (voltam ao início ao reiniciar a API).
 
 ## Prioridades
 **P0 — percurso principal** (sem isso não há demo): auth demo · clínicas por cidade · pedido · estados e histórico · indisponibilidade → alternativas → escolha do paciente → novo pedido · vaga → interesse → confirmação única · isolamento paciente/clínica · painel da clínica.
@@ -97,10 +129,18 @@ As chaves ficam só no backend, nunca no `web/`.
 **P1 — completam o produto:** cenários acadêmicos (#11, #12) · score/faltas/fila (#13) · urgência (#14) · perfil e cadastro (#18) · alertas (#17) · avaliações (#16) · resumo compartilhável demo (#15) · IA/áudio (#9).
 
 ## Estado atual
+Integração (#10) em andamento no branch `feat/10-integracao`. Tudo com dados fictícios e login DEMO.
+
 | Parte | Situação |
 |---|---|
 | Contratos, fixtures, fronteiras (#1) | Feito |
 | Backend base: banco, seed, auth DEMO, isolamento (#2) | Feito |
-| Prioridade, faltas e fila explicável (#13) | Feito |
-| Chat acessível com IA (#9): backend + `web/` | Feito (mock por padrão; Gemini/Claude opcionais) |
-| Rotas de pedidos (#3), vagas (#4), mobile (#5), desktop (#7) e demais módulos | Pendentes |
+| Pedidos, indisponibilidade, alternativas e encaminhamento escolhido (#3) | Feito; `agendada → concluida` permitido pelo funcionário |
+| Vagas, interesse e confirmação única (#4) | Feito (`app/modulos/vagas/`): 409 em dupla confirmação, pedido só vira "agendada" após a confirmação. Sem emissão do evento `vaga_criada` (não há alertas) |
+| Prioridade, faltas e fila explicável (#13) | Feito; lê urgência avaliada e cenários dos módulos |
+| Chat acessível com IA (#9): backend + `web/` | Feito (mock por padrão; Gemini/Claude opcionais); router agora montado |
+| Urgência (#14) e cenários (#11), backend | Montados com a auth do core (`app/integracao.py`); dados em memória |
+| App do paciente (`mobile/`, #5 e #6) | Clínicas, pedido (com público), andamento, alternativas, vagas/interesse e relato de urgência; roda no celular (Expo Go) e no navegador |
+| Painel da clínica (`desktop/`, #7 e #8) | Solicitações, vagas e prioridade (confirma pelo interesse escolhido), urgências; responsivo; roda no navegador |
+| Teste ponta a ponta da jornada P0 | `backend/tests/test_jornada_p0.py` (pytest) |
+| Perfil (#18), avaliações (#16), alertas (#17), resumos (#15), interface de cenários (#12) | Pendentes |
