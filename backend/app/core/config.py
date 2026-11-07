@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./dev.db"
     demo_mode: bool = True
     session_ttl_hours: int = 8
-    cors_origins: str = "http://localhost:8081,http://localhost:1420,http://localhost:5173"
+    cors_origins: str = "http://localhost:8081,http://localhost:1420,http://localhost:5173,http://tauri.localhost,tauri://localhost"
 
     @property
     def cors_list(self) -> list[str]:
