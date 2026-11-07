@@ -7,7 +7,8 @@ import { ProvedorSessao, useSessao } from "./sessao";
 import { Login } from "./telas/Login";
 
 function Painel() {
-  const { usuario, sair } = useSessao();
+  const { usuario, pronto, sair } = useSessao();
+  if (!pronto) return <main className="login"><p role="status">Abrindo o painel…</p></main>;
   if (!usuario) return <Login />;
   return (
     <HashRouter>

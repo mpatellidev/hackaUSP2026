@@ -6,11 +6,19 @@ export class ApiErro extends Error {
 }
 
 export const MODO: "mock" | "api" = import.meta.env.VITE_API_MODO === "api" ? "api" : "mock";
-export const API_URL: string = import.meta.env.VITE_API_URL ?? "http://localhost:8000/api/v1";
+/** Base COM /api/v1 (ex.: http://localhost:8000/api/v1). Em outro aparelho, troque localhost pelo IP do computador. */
+export const API_URL: string = (import.meta.env.VITE_API_URL ?? "http://localhost:8000/api/v1").replace(/\/+$/, "");
 
-let token: string | null = null; // só em memória
+// Token DEMO em sessionStorage: sobrevive a recarregar a página, mas some ao fechar a aba (nunca localStorage).
+const CHAVE_TOKEN = "uhealth.token";
+const lerToken = (): string | null => { try { return sessionStorage.getItem(CHAVE_TOKEN); } catch { return null; } };
+let token: string | null = lerToken();
 let aoExpirar: () => void = () => {};
-export const setToken = (t: string | null) => { token = t; };
+export const temToken = () => token !== null;
+export const setToken = (t: string | null) => {
+  token = t;
+  try { if (t) sessionStorage.setItem(CHAVE_TOKEN, t); else sessionStorage.removeItem(CHAVE_TOKEN); } catch { /* sem armazenamento: só em memória */ }
+};
 export const aoNaoAutenticado = (fn: () => void) => { aoExpirar = fn; };
 
 export async function http<T>(metodo: string, caminho: string, corpo?: unknown): Promise<T> {
