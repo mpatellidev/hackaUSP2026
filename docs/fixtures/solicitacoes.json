@@ -1,0 +1,82 @@
+{
+  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real. Cobre os 7 estados. Ana (paciente.ana) percorre o fluxo completo: pedido 1 (A, indisponível) -> escolha -> pedido 2 (B, agendada).",
+  "itens": [
+    {
+      "id": "b1000000-0000-4000-8000-000000000001",
+      "paciente_id": "a1000000-0000-4000-8000-000000000001",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "estado": "indisponivel",
+      "solicitacao_origem_id": null,
+      "especialidade": "clinica_geral",
+      "descricao_administrativa": "Consulta de rotina de clínica geral",
+      "criado_em": "2026-11-03T10:12:00-03:00",
+      "atualizado_em": null
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000002",
+      "paciente_id": "a1000000-0000-4000-8000-000000000001",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "estado": "agendada",
+      "solicitacao_origem_id": "b1000000-0000-4000-8000-000000000001",
+      "especialidade": "clinica_geral",
+      "descricao_administrativa": "Consulta de rotina de clínica geral",
+      "criado_em": "2026-11-04T11:30:00-03:00",
+      "atualizado_em": null
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000003",
+      "paciente_id": "a1000000-0000-4000-8000-000000000002",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "estado": "enviada",
+      "solicitacao_origem_id": null,
+      "especialidade": "dermatologia",
+      "descricao_administrativa": "Acompanhamento de pele",
+      "criado_em": "2026-11-06T09:00:00-03:00",
+      "atualizado_em": null
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000004",
+      "paciente_id": "a1000000-0000-4000-8000-000000000003",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "estado": "em_analise",
+      "solicitacao_origem_id": null,
+      "especialidade": "clinica_geral",
+      "descricao_administrativa": "Consulta de rotina de clínica geral",
+      "criado_em": "2026-10-10T15:20:00-03:00",
+      "atualizado_em": null
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000005",
+      "paciente_id": "a1000000-0000-4000-8000-000000000005",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "estado": "aguardando_confirmacao",
+      "solicitacao_origem_id": null,
+      "especialidade": "clinica_geral",
+      "descricao_administrativa": "Consulta de rotina de clínica geral",
+      "criado_em": "2026-10-28T08:45:00-03:00",
+      "atualizado_em": null
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000006",
+      "paciente_id": "a1000000-0000-4000-8000-000000000004",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "estado": "concluida",
+      "solicitacao_origem_id": null,
+      "especialidade": "pediatria",
+      "descricao_administrativa": "Consulta pediátrica de rotina",
+      "criado_em": "2026-10-05T13:10:00-03:00",
+      "atualizado_em": null
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000007",
+      "paciente_id": "a1000000-0000-4000-8000-000000000006",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "estado": "precisa_contato",
+      "solicitacao_origem_id": null,
+      "especialidade": "cardiologia",
+      "descricao_administrativa": "Consulta cardiológica de rotina",
+      "criado_em": "2026-11-01T17:05:00-03:00",
+      "atualizado_em": null
+    }
+  ]
+}
