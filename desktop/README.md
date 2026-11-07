@@ -15,7 +15,7 @@ Contrato: [`docs/contratos-mvp.md`](../docs/contratos-mvp.md) · fronteiras: [`d
 | `mock` (padrão) | Dados **simulados** em memória (`docs/fixtures`). Nada é enviado. A tela avisa. Reinicia ao recarregar. |
 | `api` | Usa o backend FastAPI em `VITE_API_URL` (login e `/auth/me` reais). |
 
-**Pendente com a #3:** a rota de mudança de estado ainda não está no contrato. Assumi `POST /solicitacoes/{id}/transicoes {"estado_novo","motivo"}`, isolada em `src/api/solicitacoes.ts` (`transicionar`). A listagem usa `GET /solicitacoes?estado=`, `GET /solicitacoes/{id}` e `GET /solicitacoes/{id}/eventos`. Em modo `api`, a lista só funciona quando a #3 publicar essas rotas.
+**Rotas usadas (#3, já na `main`):** `GET /solicitacoes?estado=`, `GET /solicitacoes/{id}`, `GET /solicitacoes/{id}/eventos` e `PATCH /solicitacoes/{id}/estado {estado, motivo}`, todas isoladas em `src/api/solicitacoes.ts`. O servidor ainda não devolve o nome do paciente, então em modo `api` a lista mostra "Paciente" (no mock aparece o nome de exibição).
 
 ## Rodar em desenvolvimento
 ```bash

@@ -11,9 +11,7 @@ export interface SolicitacoesApi {
   reiniciar?(): void; // só no mock
 }
 
-/** Implementação real. Rotas de leitura: contrato §4.3/§4.4.
- *  ATENÇÃO: a rota de mudança de estado ainda NÃO está no contrato; é a que a issue #3 deve publicar.
- *  Se a #3 escolher outra, ajuste SÓ a função `transicionar` abaixo. */
+/** Implementação real, alinhada às rotas da #3 (backend/app/modulos/solicitacoes/router.py). */
 export const solicitacoesHttp: SolicitacoesApi = {
   async listar(estado) {
     const q = estado ? `?estado=${estado}` : "";
@@ -23,8 +21,8 @@ export const solicitacoesHttp: SolicitacoesApi = {
   async eventos(id) {
     return (await http<{ itens: EventoSolicitacao[] }>("GET", `/solicitacoes/${id}/eventos`)).itens;
   },
-  transicionar: (id, estado_novo, motivo) =>
-    http<Solicitacao>("POST", `/solicitacoes/${id}/transicoes`, { estado_novo, motivo }),
+  transicionar: (id, estado, motivo) =>
+    http<Solicitacao>("PATCH", `/solicitacoes/${id}/estado`, { estado, motivo }),
 };
 
 export const solicitacoesApi: SolicitacoesApi =
