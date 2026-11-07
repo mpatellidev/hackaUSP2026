@@ -117,6 +117,9 @@ export const mock = {
         campos: ['descricao_administrativa'],
       });
     }
+    if (!clinica.publico.includes(dados.publico_alvo)) {
+      throw new ErroApi(422, 'validacao', 'A clínica não atende o público escolhido.', { campos: ['publico_alvo'] });
+    }
     const duplicada = solicitacoes.find(
       (s) =>
         s.paciente_id === eu &&
@@ -139,6 +142,7 @@ export const mock = {
       clinica_id: dados.clinica_id,
       estado: 'enviada',
       especialidade: dados.especialidade,
+      publico_alvo: dados.publico_alvo,
       descricao_administrativa: descricao,
       solicitacao_origem_id: null,
       criado_em: agora,
