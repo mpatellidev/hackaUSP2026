@@ -1,5 +1,7 @@
 import type { ComponentType } from "react";
 import { rotas as solicitacoes } from "./modulos/solicitacoes/rotas";
+import { rotas as urgencia } from "./modulos/urgencia/rotas";
+import { rotas as vagasPrioridade } from "./modulos/vagas-prioridade/rotas";
 
 export interface RotaModulo {
   caminho: string;
@@ -12,4 +14,6 @@ export interface RotaModulo {
  *  e adiciona UMA linha aqui. Não edite o App.tsx. */
 export const ROTAS: RotaModulo[] = [
   ...solicitacoes,
+  ...vagasPrioridade, // #8
+  ...urgencia, // #14
 ];

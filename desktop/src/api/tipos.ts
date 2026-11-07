@@ -9,6 +9,7 @@ export interface Solicitacao {
   clinica_id: string;
   estado: Estado;
   especialidade: string;
+  publico_alvo?: string;
   descricao_administrativa: string;
   solicitacao_origem_id: string | null;
   criado_em: string;
@@ -46,5 +47,6 @@ export const TRANSICOES: Partial<Record<Estado, Estado[]>> = {
   enviada: ["em_analise", "indisponivel"],
   em_analise: ["precisa_contato", "indisponivel"],
   precisa_contato: ["em_analise", "indisponivel"],
+  agendada: ["concluida"], // "agendada" só nasce da confirmação de vaga (#4)
 };
 export const EXIGE_MOTIVO: Estado[] = ["precisa_contato", "indisponivel"];

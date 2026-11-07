@@ -1,4 +1,5 @@
-import { PainelUrgencia } from './PainelUrgencia';
+import type { RotaModulo } from '../../rotas';
+import PainelUrgenciaRota from './PainelUrgenciaRota';
 
 // A #7 monta o menu com esta entrada.
-export const rotas = [{ caminho: '/urgencia', rotulo: 'Urgências', componente: PainelUrgencia }];
+export const rotas: RotaModulo[] = [{ caminho: '/urgencia', rotulo: 'Urgências', componente: PainelUrgenciaRota }];
