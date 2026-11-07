@@ -1,0 +1,31 @@
+{
+  "_aviso": "Dados fictícios para demonstração (módulo cenários #11). Sem diagnóstico, sem promessa de tratamento. IDs novos; não altera docs/fixtures/.",
+  "itens": [
+    {
+      "id": "c2000000-0000-4000-8000-000000000003",
+      "clinica_id": "c1000000-0000-4000-8000-000000000003",
+      "titulo": "Avaliação supervisionada de rotina da visão com estudantes",
+      "descricao_leiga": "Estudantes de oftalmologia, acompanhados por professores, fazem uma avaliação de rotina. A conduta é sempre decidida por profissionais.",
+      "requisitos": ["Ter 18 anos ou mais", "Morar em São Paulo"],
+      "publico": "adultos",
+      "cidade": "São Paulo",
+      "uf": "SP",
+      "especialidade": "oftalmologia",
+      "estado": "ativo",
+      "publicado_em": "2026-11-03T09:00:00-03:00"
+    },
+    {
+      "id": "c2000000-0000-4000-8000-000000000004",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "titulo": "Acompanhamento supervisionado de crescimento infantil",
+      "descricao_leiga": "Estudantes, acompanhados por professores, fazem uma consulta de rotina com crianças e seus responsáveis. Não substitui atendimento de urgência.",
+      "requisitos": ["Criança de 0 a 12 anos, com responsável presente"],
+      "publico": "criancas",
+      "cidade": "São Paulo",
+      "uf": "SP",
+      "especialidade": "pediatria",
+      "estado": "ativo",
+      "publicado_em": "2026-11-04T09:00:00-03:00"
+    }
+  ]
+}
