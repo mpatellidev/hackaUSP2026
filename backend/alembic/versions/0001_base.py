@@ -96,6 +96,7 @@ def upgrade() -> None:
     sa.Column('paciente_id', sa.String(), nullable=False),
     sa.Column('clinica_id', sa.String(), nullable=False),
     sa.Column('estado', sa.String(), nullable=False),
+    sa.Column('desfecho', sa.String(), nullable=False, server_default='pendente'),
     sa.Column('confirmado_por', sa.String(), nullable=False),
     sa.Column('confirmado_em', sa.DateTime(timezone=True), nullable=False),
     sa.Column('id', sa.String(), nullable=False),

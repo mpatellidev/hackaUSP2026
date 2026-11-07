@@ -33,5 +33,5 @@ Defina `DATABASE_URL=postgresql+psycopg://USUARIO:SENHA@HOST:5432/postgres` (no 
 - Invariantes no banco: no máximo 1 `Agendamento` não cancelado por vaga (índice único parcial); `InteresseVaga` único por (vaga, solicitação).
 
 ## Limitações
-- `backend/seed_data/` é um **snapshot** de `docs/fixtures/` (rascunho da #1); quando a #1 estabilizar, trocar por leitura direta.
+- O seed lê `docs/fixtures/` (da #1) diretamente; rode os comandos a partir do checkout completo do repositório.
 - Sem rotas de pedidos/vagas ainda; sem rate limit; CORS por `CORS_ORIGINS`.

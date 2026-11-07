@@ -40,5 +40,7 @@ class Agendamento(UuidPk, Base):
     paciente_id: Mapped[str] = mapped_column(ForeignKey("usuarios.id"))
     clinica_id: Mapped[str] = mapped_column(ForeignKey("clinicas.id"))
     estado: Mapped[str]                     # agendado | concluido | cancelado
+    # pendente | compareceu | falta_registrada | cancelado_antecipado | cancelado_pela_clinica (contrato §4.6)
+    desfecho: Mapped[str] = mapped_column(default="pendente")
     confirmado_por: Mapped[str] = mapped_column(ForeignKey("usuarios.id"))
     confirmado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True))
