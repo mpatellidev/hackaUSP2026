@@ -33,6 +33,18 @@ Variáveis `EXPO_PUBLIC_*` ficam **dentro do app**: nunca coloque chaves ou segr
 
 Mudou `docs/fixtures/`? Rode `npm run fixtures` para atualizar a cópia do mock.
 
+## Rodar no navegador (PC ou celular)
+O app também roda como site (React Native Web), com os mesmos dados e telas:
+```bash
+cd mobile
+npm install
+npm run web          # abre http://localhost:8081 ; exportar: npm run export:web
+npm run web:rede     # idem, aceitando acesso de outros aparelhos da rede (http://IP-DO-PC:8081)
+```
+Com o backend (`EXPO_PUBLIC_API_MODO=api`), `EXPO_PUBLIC_API_URL` precisa ser alcançável pelo **navegador** de quem abre o app:
+no mesmo computador use `http://localhost:8000`; no celular, `http://IP-DO-PC:8000`. O backend só aceita origens listadas em
+`CORS_ORIGINS` (inclua `http://IP-DO-PC:8081`). O `iniciar.sh` da raiz faz tudo isso.
+
 ## Gerar APK
 ```bash
 npm install -g eas-cli
