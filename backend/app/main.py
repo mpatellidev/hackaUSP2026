@@ -10,8 +10,6 @@ from app.ui_teste import montar as montar_ui_teste
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    if not settings.demo_mode:
-        raise RuntimeError("Só existe autenticação DEMO neste protótipo; DEMO_MODE=false não é suportado.")
     app = FastAPI(
         title="UHealth API (DEMO)",
         version="0.1.0",

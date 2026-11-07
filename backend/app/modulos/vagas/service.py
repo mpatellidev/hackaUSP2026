@@ -16,7 +16,8 @@ from app.models.clinicas import Clinica
 from app.models.solicitacoes import ESTADOS_ATIVOS, EventoSolicitacao, Solicitacao
 from app.models.usuarios import Usuario
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
-from app.modulos.prioridade.fila import ordenar_pedidos  # score e ordenação vivem só na #13
+from app.modulos.prioridade.fila import ordenar_pedidos
+from app.modulos.profissionais.models import Profissional  # score e ordenação vivem só na #13
 from app.modulos.solicitacoes import repositorio as repo
 
 # Pedido em que o paciente já pode demonstrar interesse (tabela da seção 5 do contrato).
@@ -37,7 +38,7 @@ def vaga_preenchida(vaga_id: str) -> ApiError:
 def vaga_json(v: Vaga) -> dict:
     return {"id": v.id, "clinica_id": v.clinica_id, "especialidade": v.especialidade,
             "inicio": to_sp_iso(v.inicio), "fim": to_sp_iso(v.fim), "estado": v.estado,
-            "criado_em": to_sp_iso(v.criado_em)}
+            "profissional_id": v.profissional_id, "criado_em": to_sp_iso(v.criado_em)}
 
 
 def interesse_json(i: InteresseVaga) -> dict:
@@ -68,15 +69,21 @@ def _vaga_da_clinica(db: Session, actor: Actor, vaga_id: str) -> Vaga:
 
 # ---- publicar e listar ------------------------------------------------------------------------
 
-def criar(db: Session, actor: Actor, especialidade: str, inicio, fim) -> Vaga:
+def criar(db: Session, actor: Actor, especialidade: str, inicio, fim, profissional_id: str | None = None) -> Vaga:
     clinica_id = actor.clinica_principal
     clinica = db.get(Clinica, clinica_id)
     if especialidade not in clinica.especialidades:
         raise _erro_validacao(["especialidade"], "A clínica não atende essa especialidade.")
     if fim <= inicio:
         raise _erro_validacao(["fim"], "O fim da vaga precisa ser depois do início.")
+    if profissional_id:
+        prof = db.get(Profissional, profissional_id)
+        if prof is None or prof.clinica_id != clinica_id or not prof.ativo:
+            raise _erro_validacao(["profissional_id"], "Escolha um profissional ativo da sua clínica.")
+        if prof.especialidade != especialidade:
+            raise _erro_validacao(["profissional_id"], "O profissional não atende essa especialidade.")
     vaga = Vaga(clinica_id=clinica_id, especialidade=especialidade, inicio=inicio, fim=fim, estado="aberta",
-                criado_por=actor.usuario_id, criado_em=utc_now())
+                criado_por=actor.usuario_id, criado_em=utc_now(), profissional_id=profissional_id)
     db.add(vaga)
     db.flush()
     return vaga

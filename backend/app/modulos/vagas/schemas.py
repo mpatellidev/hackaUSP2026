@@ -5,6 +5,7 @@ class CriarVagaIn(BaseModel):
     especialidade: str = Field(min_length=1, max_length=80)
     inicio: AwareDatetime
     fim: AwareDatetime
+    profissional_id: str | None = Field(default=None, max_length=64)  # opcional; da própria clínica e ativo
 
 
 class InteresseIn(BaseModel):

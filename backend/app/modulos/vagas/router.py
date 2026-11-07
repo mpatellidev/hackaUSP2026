@@ -22,7 +22,7 @@ def listar_vagas(clinica_id: str | None = Query(default=None), estado: str | Non
 
 @router.post("/vagas", status_code=201, summary="Publicar vaga (funcionário da clínica)")
 def criar_vaga(body: CriarVagaIn, actor: Actor = Depends(require_funcionario), db: Session = Depends(get_db)):
-    vaga = service.criar(db, actor, body.especialidade, body.inicio, body.fim)
+    vaga = service.criar(db, actor, body.especialidade, body.inicio, body.fim, body.profissional_id)
     db.commit()
     db.refresh(vaga)
     return service.vaga_json(vaga)

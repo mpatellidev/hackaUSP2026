@@ -1,0 +1,53 @@
+{
+  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real. Profissionais e agenda inventados.",
+  "itens": [
+    {
+      "id": "e1000000-0000-4000-8000-000000000001",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "nome_exibicao": "Dra. Helena (fictícia)",
+      "especialidade": "clinica_geral",
+      "vinculo": "docente",
+      "ativo": true
+    },
+    {
+      "id": "e1000000-0000-4000-8000-000000000002",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "nome_exibicao": "Dr. Rafael (fictício)",
+      "especialidade": "cardiologia",
+      "vinculo": "docente",
+      "ativo": true
+    },
+    {
+      "id": "e1000000-0000-4000-8000-000000000003",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "nome_exibicao": "Maria, estudante supervisionada (fictícia)",
+      "especialidade": "dermatologia",
+      "vinculo": "estudante_supervisionado",
+      "ativo": true
+    },
+    {
+      "id": "e1000000-0000-4000-8000-000000000004",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "nome_exibicao": "Dr. Paulo (fictício)",
+      "especialidade": "clinica_geral",
+      "vinculo": "docente",
+      "ativo": true
+    },
+    {
+      "id": "e1000000-0000-4000-8000-000000000005",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "nome_exibicao": "Dra. Beatriz (fictícia)",
+      "especialidade": "ginecologia_obstetricia",
+      "vinculo": "residente",
+      "ativo": true
+    },
+    {
+      "id": "e1000000-0000-4000-8000-000000000006",
+      "clinica_id": "c1000000-0000-4000-8000-000000000003",
+      "nome_exibicao": "Dra. Sônia (fictícia)",
+      "especialidade": "ortopedia",
+      "vinculo": "docente",
+      "ativo": true
+    }
+  ]
+}

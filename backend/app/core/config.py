@@ -11,13 +11,14 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     database_url: str = "sqlite:///./dev.db"
+    # true: libera o login sem senha (/auth/demo/login) e mostra a senha de demo na tela de login.
     demo_mode: bool = True
+    # Senha única das contas fictícias (hash no seed). Em ambiente hospedado, troque por DEMO_SENHA no ambiente.
+    demo_senha: str = "demo1234"
     session_ttl_hours: int = 8
-    # Origens que podem chamar a API (separadas por vírgula). Para abrir os apps de outro aparelho da rede,
-    # acrescente o IP do computador (ex.: http://192.168.0.10:8081). O iniciar.sh faz isso sozinho.
-    cors_origins: str = ("http://localhost:8081,http://localhost:1420,http://localhost:5173,"
-                         "http://127.0.0.1:8081,http://127.0.0.1:1420,http://127.0.0.1:5173,"
-                         "http://tauri.localhost,tauri://localhost")
+    # Origens que podem chamar a API de OUTRA origem (separadas por vírgula). Os apps usam a mesma origem
+    # (build servido pela API ou proxy do Vite), então só é preciso preencher para clientes externos.
+    cors_origins: str = "http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174"
 
     # ---- chat acessível (#9): IA e TTS opcionais; chaves SÓ no servidor, nunca no cliente ----
     # mock (padrão, sem rede e sem chave) | gemini | claude

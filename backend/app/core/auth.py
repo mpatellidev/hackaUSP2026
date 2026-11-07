@@ -1,8 +1,10 @@
-"""Autenticação DEMO (contrato §3). NÃO é segura e NÃO pode ir para produção:
-não há senha; quem conhece o nome da conta entra. Papel e clínica vêm SEMPRE do banco,
+"""Autenticação DEMO (contrato §3). NÃO é segura e NÃO pode ir para produção: contas fictícias com UMA senha de
+demo (ou, com DEMO_MODE, sem senha). Papel e clínica vêm SEMPRE do banco,
 a partir do token; qualquer papel/clinica_id/paciente_id enviado pelo cliente é ignorado."""
 import hashlib
+import hmac
 import secrets
+from functools import lru_cache
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
@@ -16,7 +18,7 @@ from app.core.errors import acesso_negado, nao_autenticado
 from app.core.time import hours, utc_now
 from app.models.usuarios import SessaoDemo, Usuario, VinculoClinica
 
-AVISO_DEMO = "Autenticação DEMO: sem senha, conta fictícia. Não usar em produção."
+AVISO_DEMO = "Autenticação DEMO: conta fictícia com senha de demonstração. Não usar em produção."
 
 
 @dataclass(frozen=True)
@@ -48,6 +50,32 @@ class Actor:
 
 def _hash(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
+
+
+_ITERACOES = 120_000
+
+
+def hash_senha(senha: str, sal: str | None = None) -> str:
+    sal = sal or secrets.token_hex(8)
+    h = hashlib.pbkdf2_hmac("sha256", senha.encode(), sal.encode(), _ITERACOES).hex()
+    return f"pbkdf2${_ITERACOES}${sal}${h}"
+
+
+@lru_cache(maxsize=4)
+def hash_senha_demo(senha: str) -> str:
+    """Todas as contas fictícias compartilham a senha de demo; o hash é calculado uma vez por processo."""
+    return hash_senha(senha, sal="uhealth-demo")
+
+
+def senha_confere(senha: str, guardado: str | None) -> bool:
+    if not guardado:
+        return False
+    try:
+        _, iteracoes, sal, esperado = guardado.split("$")
+    except ValueError:
+        return False
+    calculado = hashlib.pbkdf2_hmac("sha256", senha.encode(), sal.encode(), int(iteracoes)).hex()
+    return hmac.compare_digest(calculado, esperado)
 
 
 def criar_sessao(db: Session, usuario: Usuario) -> tuple[str, datetime]:

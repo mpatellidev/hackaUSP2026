@@ -15,6 +15,7 @@ class Vaga(UuidPk, CriadoEm, Base):
     fim: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     estado: Mapped[str]                     # aberta | preenchida | cancelada
     criado_por: Mapped[str] = mapped_column(ForeignKey("usuarios.id"))
+    profissional_id: Mapped[str | None] = mapped_column(ForeignKey("profissionais.id"), default=None)
 
 
 class InteresseVaga(UuidPk, CriadoEm, Base):

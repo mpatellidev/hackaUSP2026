@@ -4,6 +4,8 @@ import json
 
 from sqlalchemy.orm import Session
 
+from app.core.auth import hash_senha_demo
+from app.core.config import get_settings
 from app.core.db import SessionLocal
 from app.core.time import parse_aware
 from app.models.clinicas import Clinica
@@ -12,6 +14,7 @@ from app.models.usuarios import Usuario, VinculoClinica
 from app.modulos.cenarios import seed as cenarios_seed
 from app.modulos.perfil import seed as perfil_seed
 from app.modulos.prioridade import seed as prioridade_seed
+from app.modulos.profissionais import seed as profissionais_seed
 from app.modulos.urgencia import seed as urgencia_seed
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
 from app.core.config import FIXTURES_DIR
@@ -36,6 +39,8 @@ def run(db: Session) -> dict[str, int]:
         db.merge(Usuario(id=r["id"], papel=r["papel"], nome_exibicao=r["nome_exibicao"],
                          conta_demo=r["conta_demo"], ativo=r.get("ativo", True)))
     db.flush()
+    for u in db.query(Usuario).filter(Usuario.senha_hash.is_(None)):
+        u.senha_hash = hash_senha_demo(get_settings().demo_senha)
     for r in _load("vinculos"):
         db.merge(VinculoClinica(id=r["id"], usuario_id=r["usuario_id"], clinica_id=r["clinica_id"], funcao=r["funcao"]))
     for r in sorted(_load("solicitacoes"), key=lambda x: x["criado_em"]):
@@ -49,9 +54,11 @@ def run(db: Session) -> dict[str, int]:
                                    estado_anterior=r["estado_anterior"], estado_novo=r["estado_novo"],
                                    autor_usuario_id=r["autor_usuario_id"], autor_papel=r["autor_papel"],
                                    motivo=r["motivo"], **_dt(r, "criado_em")))
+    contagens: dict[str, int] = profissionais_seed.run(db)  # antes das vagas: Vaga.profissional_id
     for r in _load("vagas"):
         db.merge(Vaga(id=r["id"], clinica_id=r["clinica_id"], especialidade=r["especialidade"], estado=r["estado"],
-                      criado_por=r["criado_por"], **_dt(r, "inicio", "fim", "criado_em")))
+                      criado_por=r["criado_por"], profissional_id=r.get("profissional_id"),
+                      **_dt(r, "inicio", "fim", "criado_em")))
     db.flush()
     for r in _load("interesses"):
         db.merge(InteresseVaga(id=r["id"], vaga_id=r["vaga_id"], solicitacao_id=r["solicitacao_id"],
@@ -61,7 +68,6 @@ def run(db: Session) -> dict[str, int]:
                              paciente_id=r["paciente_id"], clinica_id=r["clinica_id"], estado=r["estado"],
                              desfecho=r.get("desfecho", "pendente"), confirmado_por=r["confirmado_por"], **_dt(r, "confirmado_em")))
     db.commit()
-    contagens: dict[str, int] = {}
     for modulo in (prioridade_seed, urgencia_seed, cenarios_seed, perfil_seed):  # ordem: dependem dos dados acima
         contagens |= modulo.run(db)
     return contagens | {m.__tablename__: db.query(m).count()

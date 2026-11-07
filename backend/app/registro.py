@@ -17,6 +17,7 @@ from app.modulos.auth import router as auth
 from app.modulos.cenarios import router as cenarios
 from app.modulos.perfil import router as perfil
 from app.modulos.prioridade import router as prioridade
+from app.modulos.profissionais import router as profissionais
 from app.modulos.saude import router as saude
 from app.modulos.solicitacoes import router as solicitacoes
 from app.modulos.urgencia import router as urgencia
@@ -32,5 +33,6 @@ ROUTERS: list[APIRouter] = [
     urgencia.router,
     cenarios.router,
     perfil.router,
+    profissionais.router,
     acessibilidade.router,
 ]
