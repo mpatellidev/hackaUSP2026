@@ -32,7 +32,7 @@ O instalador (`.exe` NSIS e `.msi`) é gerado no Windows ou pelo GitHub Actions 
 ```powershell
 cd desktop; npm ci; npm run tauri build
 ```
-Os instaladores saem em `src-tauri/target/release/bundle/`. **Status:** o instalador ainda não foi gerado nem testado em Windows; só o código compila/testa em Linux.
+Os instaladores saem em `src-tauri/target/release/bundle/`. **Status:** o workflow gerou `UHealth Painel_0.1.0_x64-setup.exe` e `..._x64_en-US.msi` no Windows (CI) com os testes passando. **Ainda não foi instalado nem aberto em um Windows real**; teste o artefato antes da demo.
 
 ## Montar novos módulos (#8, #12, #14–#16, #18)
 Cada módulo exporta `rotas: RotaModulo[]` (`{caminho, rotulo, componente}`) e adiciona **uma linha** em `src/rotas.ts`. Não edite `App.tsx`. Use `src/api/cliente.ts` (`http`) e crie um arquivo de API por módulo.
