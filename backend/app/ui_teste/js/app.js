@@ -61,10 +61,11 @@ async function rotear() {
   const abas = [...abasDoPapel(s), ...ABAS_FIXAS];
   let rota = rotaAtual();
   if (!s && rota !== 'jornada') rota = 'entrar';
-  if (s && (rota === '' || rota === 'entrar' || !abas.some((a) => a.id === rota))) rota = abas[0].id;
+  if (s && rota !== 'entrar' && !abas.some((a) => a.id === rota)) rota = abas[0].id;
   if (location.hash !== '#/' + rota) { history.replaceState(null, '', '#/' + rota); }
   atualizarTopo(s);
   desenharNav(s, rota);
+  if (s) document.getElementById('nav').prepend(h('a', { href: '#/entrar', 'aria-current': rota === 'entrar' ? 'page' : null }, 'Trocar conta'));
   const minha = ++geracao;
   view.setAttribute('aria-busy', 'true');
   view.replaceChildren(carregando());
@@ -88,12 +89,9 @@ function atualizarTopo(s) {
     const u = s.usuario;
     info.textContent = `${u.nome_exibicao} · ${u.papel}` + (u.clinica_id ? ` · função ${u.funcao}` : '') + ` · conta ${s.conta}`;
   }
-  $('btn-sair').hidden = !s; $('btn-trocar').hidden = !s;
+  $('btn-sair').hidden = !s;
 }
 $('btn-sair').onclick = async () => { await sair(); location.hash = '#/entrar'; rotear(); };
-$('btn-trocar').onclick = () => { location.hash = '#/entrar'; viewEntrarForcado(); };
-
-async function viewEntrarForcado() { geracao++; atualizarTopo(sessao.get()); desenharNav(sessao.get(), 'entrar'); view.replaceChildren(await viewEntrar()); }
 
 // ---------- login demo ----------
 async function viewEntrar() {

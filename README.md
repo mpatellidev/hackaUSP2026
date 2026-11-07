@@ -56,6 +56,15 @@ O script cria `backend/.env`, roda as migrações e o seed (dados fictícios), i
 
 Manual (sem o script): `cd backend && uv sync && uv run alembic upgrade head && uv run python -m app.seed && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000`; nos clientes, `npm install` e `npm run dev:rede` (desktop), `npm run dev -- --host` (web) ou `npm run web:rede` (mobile). Testes: `cd backend && uv run pytest -q`.
 
+## UI de teste (navegador e celular)
+
+A própria API serve uma UI de teste em HTML/JS puro (sem build, sem npm, funciona offline). Suba só a API e abra:
+
+- **No computador:** http://localhost:8000/teste/ (a raiz `/` redireciona para lá)
+- **No celular (mesma rede Wi-Fi):** `http://IP-DO-PC:8000/teste/`. A API precisa estar com `--host 0.0.0.0`. Para achar o IP: Linux `hostname -I`, macOS `ipconfig getifaddr en0`, Windows `ipconfig` (IPv4). Se o firewall bloquear, libere a porta 8000.
+
+Cobre login demo (troca rápida de conta), visões de paciente e de clínica, urgência, cenários, fila de prioridade, faltas, chat (mock) e uma **jornada guiada** que executa o fluxo P0 passo a passo, com um console das requisições. Mesma origem da API: não precisa de CORS. Dados fictícios e login inseguro.
+
 ## Como rodar (Windows / PowerShell)
 
 ### Pré-requisitos

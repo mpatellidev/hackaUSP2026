@@ -89,3 +89,5 @@ details > summary { cursor: pointer; min-height: var(--uh-target); display: flex
 .marca { font-weight: 700; width: 1.4em; text-align: center; }
 .passo[data-s="ok"] { border-color: var(--uh-link); } .passo[data-s="erro"] { border-color: var(--uh-danger); background: var(--uh-danger-bg); color: var(--uh-danger-text); }
 .passo[data-s="pulado"] { border-style: dashed; }
+
+@media (max-width: 480px) { .faixa__extra { display: none; } .faixa p { font-size: calc(.8125rem * var(--uh-scale)); } .topo { padding: 8px 12px; } main { padding: 12px; } .faixa__sos { padding: 0 10px; } }

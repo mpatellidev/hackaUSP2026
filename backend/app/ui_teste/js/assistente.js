@@ -56,7 +56,8 @@ function perfilForm(rp) {
   const defs = DEF.map(([v, t]) => { const i = h('input', { type: 'checkbox', value: v }); i.checked = p.deficiencias.includes(v); return [i, t]; });
   const saida = h('div', { 'aria-live': 'polite' });
   return h('details', { class: 'card', open: !rp.ok ? true : null }, h('summary', {}, 'Perfil de acessibilidade do chat'),
-    !rp.ok ? h('div', { class: 'erro', role: 'alert' }, textoErro(rp)) : null,
+    rp.status === 404 ? h('p', { class: 'muted' }, 'Você ainda não salvou um perfil. Preencha e salve se quiser adaptar as respostas.') : null,
+    !rp.ok && rp.status !== 404 ? h('div', { class: 'erro', role: 'alert' }, textoErro(rp)) : null,
     p.resumo ? h('p', { class: 'muted' }, p.resumo) : null,
     h('form', { onsubmit: async (ev) => {
       ev.preventDefault();
