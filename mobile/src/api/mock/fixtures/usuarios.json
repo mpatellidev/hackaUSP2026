@@ -1,0 +1,87 @@
+{
+  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real.",
+  "itens": [
+    {
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "papel": "paciente",
+      "nome_exibicao": "Ana M.",
+      "conta_demo": "paciente.ana",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "papel": "paciente",
+      "nome_exibicao": "Bruno S.",
+      "conta_demo": "paciente.bruno",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "papel": "paciente",
+      "nome_exibicao": "Carla P.",
+      "conta_demo": "paciente.carla",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "papel": "paciente",
+      "nome_exibicao": "Diego L.",
+      "conta_demo": "paciente.diego",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "papel": "paciente",
+      "nome_exibicao": "Eva R.",
+      "conta_demo": "paciente.eva",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "papel": "paciente",
+      "nome_exibicao": "Fábio T.",
+      "conta_demo": "paciente.fabio",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000011",
+      "papel": "funcionario",
+      "nome_exibicao": "Gabi (atendimento A)",
+      "conta_demo": "funcionario.atendimento.a",
+      "funcao": "atendimento",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000012",
+      "papel": "funcionario",
+      "nome_exibicao": "Dr. Hugo (profissional A)",
+      "conta_demo": "funcionario.profissional.a",
+      "funcao": "profissional",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000013",
+      "papel": "funcionario",
+      "nome_exibicao": "Iara (atendimento B)",
+      "conta_demo": "funcionario.atendimento.b",
+      "funcao": "atendimento",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000014",
+      "papel": "funcionario",
+      "nome_exibicao": "Dra. Joana (profissional B)",
+      "conta_demo": "funcionario.profissional.b",
+      "funcao": "profissional",
+      "ativo": true
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000015",
+      "papel": "funcionario",
+      "nome_exibicao": "Kleber (coordenação C)",
+      "conta_demo": "funcionario.coordenacao.c",
+      "funcao": "coordenacao",
+      "ativo": true
+    }
+  ]
+}
