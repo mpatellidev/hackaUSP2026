@@ -10,4 +10,5 @@ ROUTERS = [
     auth.router,
     prioridade.router,
     solicitacoes.router,
+    acessibilidade.router,
 ]
