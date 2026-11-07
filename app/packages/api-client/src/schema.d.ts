@@ -133,7 +133,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Ver detalhes de uma clínica */
+        /**
+         * Ver detalhes de uma clínica (paciente: qualquer; funcionário: a própria)
+         * @description Paciente vê qualquer clínica; funcionário só a(s) própria(s) (outra clínica = 404).
+         */
         get: operations["detalhe_clinica_api_v1_clinicas__clinica_id__get"];
         put?: never;
         post?: never;
