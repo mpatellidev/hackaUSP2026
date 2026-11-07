@@ -4,11 +4,12 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
-apps/api/chat.db
-apps/api/tts_cache/
+tts_cache/
+*.db
 .env
 
 # Node
 node_modules/
 dist/
 *.tsbuildinfo
+.vite/

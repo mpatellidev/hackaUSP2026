@@ -1,10 +1,11 @@
 # Contratos do MVP — UHealth
 
-> **Versão `0.1.1-rascunho`** · protótipo de hackathon · dados 100% fictícios.
+> **Versão `0.1.2-rascunho`** · protótipo de hackathon · dados 100% fictícios.
 > Este é o documento de referência das issues #1–#18. Mudanças seguem o processo em [`fronteiras.md`](fronteiras.md#como-mudar-um-contrato).
 
 | Versão | Mudança |
 |---|---|
+| 0.1.2-rascunho | §9.8: endpoints do chat acessível (#9) em `/acessibilidade/chat*`; o chat envia pedidos (§4.3) mas nunca cria agendamento. |
 | 0.1.1-rascunho | Falta verificada passa a ser definida: `Agendamento.desfecho`, penalidade só no score (§9.3); cancelamento antecipado sem penalidade. |
 | 0.1.0-rascunho | Primeira publicação (issue #1): convenções, estados, entidades núcleo e interfaces mínimas das extensões. |
 
@@ -314,6 +315,8 @@ Componentes: `socioeconomico`, `necessidade_academica`, `tempo_espera`, `falta_v
 
 ### 9.8 Mensagem simplificada — #9 (IA/acessibilidade)
 `POST /acessibilidade/simplificar` `{"texto", "nivel": "simples|detalhada"}` → `{"original", "adaptado", "fonte": "mock|gemini", "aviso"}`. O original **sempre** acompanha o adaptado; nunca diagnostica, prevê vaga ou orienta clinicamente. Chave do Gemini só no servidor; modo `mock` sem rede é o padrão.
+
+**Chat acessível (#9)** — só paciente (funcionário → `403`). `GET/PUT /acessibilidade/chat/perfil` (`escolaridade`, `faixa_etaria`, `deficiencias[]`, `prefere_audio`; todos com "prefiro não dizer"). `POST /acessibilidade/chat` `{"message", "conversation_id"?}` → `{"modo": "demo", "fonte": "mock|gemini|claude", "aviso", "conversation_id", "messages": [{"text", "audio"?}], "quick_replies": [{"label", "value"}], "ui_prefs"}`. A IA age como o paciente do token: lê clínicas, pedidos, histórico e agendamentos **confirmados**, e pode **enviar pedido** (§4.3, com confirmação explícita). Nunca cria, muda ou cancela agendamento; sinal grave → SAMU 192.
 
 ## 10. Pontos em aberto (decidir antes da integração)
 
