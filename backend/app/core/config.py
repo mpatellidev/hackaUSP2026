@@ -5,6 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Fixtures fictícias estáveis (contrato em backend/docs); lidas pelos seeds.
 FIXTURES_DIR = Path(__file__).resolve().parents[2] / "docs" / "fixtures"
+# Frontend web (apps/paciente e apps/clinica) na pasta irmã de backend/.
+FRONTEND_DIR = Path(__file__).resolve().parents[3] / "app"
 
 
 class Settings(BaseSettings):

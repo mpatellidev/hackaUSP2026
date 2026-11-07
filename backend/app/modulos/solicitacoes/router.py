@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.core.auth import Actor, get_actor, require_funcionario, require_paciente
 from app.core.db import get_db
+from app.core.errors import nao_encontrado
 from app.models.clinicas import Clinica
 from app.modulos.solicitacoes import service
 from app.modulos.solicitacoes.schemas import (AlternativasOut, AtualizarEstadoIn, ClinicaOut, CriarSolicitacaoIn,
@@ -26,8 +27,11 @@ def listar_clinicas(cidade: str | None = Query(default=None), especialidade: str
     return {"itens": [service.clinica_json(c) for c in clinicas], "total": len(clinicas)}
 
 
-@router.get("/clinicas/{clinica_id}", response_model=ClinicaOut, summary="Ver detalhes de uma clínica")
-def detalhe_clinica(clinica_id: str, _: Actor = Depends(require_paciente), db: Session = Depends(get_db)):
+@router.get("/clinicas/{clinica_id}", response_model=ClinicaOut, summary="Ver detalhes de uma clínica (paciente: qualquer; funcionário: a própria)")
+def detalhe_clinica(clinica_id: str, actor: Actor = Depends(get_actor), db: Session = Depends(get_db)):
+    """Paciente vê qualquer clínica; funcionário só a(s) própria(s) (outra clínica = 404)."""
+    if actor.papel == "funcionario" and not actor.pode_na_clinica(clinica_id):
+        raise nao_encontrado()
     return service.clinica_json(service.obter_clinica(db, clinica_id))
 
 
