@@ -14,3 +14,39 @@
 .opcao small { display: block; color: var(--uh-muted); }
 .opcao:focus-within { outline: 3px solid var(--uh-link); outline-offset: 2px; }
 .boas-vindas-marca { display: flex; justify-content: center; padding-top: var(--uh-space-6); }
+
+/* Busca de clínicas */
+.cidade-atual { flex-wrap: nowrap; }
+.cidade-atual strong { margin-right: auto; }
+.cidade-atual .btn { width: auto; min-height: var(--uh-target); padding: 0 var(--uh-space-4); }
+.filtros { display: flex; flex-wrap: wrap; gap: var(--uh-space-2); }
+.filtro { min-height: var(--uh-target); display: inline-flex; align-items: center; gap: 6px; padding: 0 var(--uh-space-4); border-radius: var(--uh-radius-chip); border: 2px solid var(--uh-border-strong); background: var(--uh-surface); color: var(--uh-text); font: 700 1rem var(--uh-font-body); cursor: pointer; }
+.filtro--ligado { background: var(--uh-chip-bg); color: var(--uh-chip-text); border-color: var(--uh-link); }
+.contagem { font-weight: 700; margin: 0; }
+.chip svg { flex: none; }
+
+/* Etapas do pedido */
+.stepper { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--uh-space-3); }
+.etapa { display: flex; gap: var(--uh-space-3); align-items: flex-start; color: var(--uh-muted); }
+.etapa small { display: block; color: var(--uh-muted); }
+.etapa-marca { flex: none; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: 2px solid var(--uh-border-strong); font-weight: 700; background: var(--uh-surface); color: var(--uh-text); }
+.etapa--feita { color: var(--uh-text); }
+.etapa--feita .etapa-marca { background: var(--uh-brand); color: var(--uh-on-brand); border-color: var(--uh-brand); }
+.etapa--atual { color: var(--uh-text); }
+.etapa--atual .etapa-marca { border-color: var(--uh-link); border-width: 3px; }
+.etapa-aqui { color: var(--uh-link) !important; font-weight: 700; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Revisão antes de enviar */
+.resumo { display: grid; grid-template-columns: auto 1fr; gap: var(--uh-space-2) var(--uh-space-4); margin: 0; }
+.resumo dt { font-weight: 700; }
+.resumo dd { margin: 0; }
+.consentimento { display: flex; gap: var(--uh-space-3); align-items: flex-start; }
+.consentimento input { width: 24px; height: 24px; flex: none; accent-color: var(--uh-link); }
+
+.com-icone { display: inline-flex; align-items: center; justify-content: center; gap: var(--uh-space-2); }
+.voltar { display: inline-flex; align-items: center; gap: 4px; min-height: var(--uh-target); }
+
+/* Contorno: `Aviso tom="perigo"` de @uhealth/ui gera `notice--perigo`, mas o CSS do pacote só define `notice--danger`. */
+.notice--perigo { background: var(--uh-danger-bg); color: var(--uh-danger-text); }
+.notice svg { flex: none; }

@@ -147,6 +147,8 @@ O design tem trechos que conflitam com o `AGENTS.md`. Na implementação vale o 
 | "Ligar para a clínica", "Adicionar ao calendário" | Link `tel:` e arquivo `.ics` reais, ou botão rotulado como demonstração | Não prometer ligação automática |
 | Etapas do stepper e "Horário confirmado" | Derivadas do estado retornado pela API | Só mostrar "agendada" se o backend confirmou |
 | Alternativas e vaga | Nunca enviar sem toque do paciente | Paciente escolhe; sem cascata |
+| "Você pode retirar o pedido a qualquer momento" | Omitido: a API não tem endpoint para retirar pedido | Não prometer o que não existe |
+| Distância em km, mapa com marcadores, "Ligação/Mensagem" como contato, telefone na primeira abertura | Omitidos: a API não tem coordenadas, distância nem esses campos | Sem inventar dado; backend não muda |
 
 Pendências da auditoria de acessibilidade do design (WCAG 2.2 AA) que valem para o app:
 - Botão principal #14BEB9 com borda de 2,2:1: decidir entre borda de 2 px em Tinta ou testar com pessoas.

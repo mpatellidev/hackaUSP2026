@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { Aviso, Botao, Cartao, Carregando, Erro, Selo, Vazio } from "@uhealth/ui";
 import { dataHora, mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
+import { Icone } from "../../design/Icone";
 
 const ROTULO_INTERESSE = { registrado: "Interesse registrado", confirmado: "Confirmada para você", nao_selecionado: "Outra pessoa foi escolhida", retirado: "Interesse retirado" } as const;
 
@@ -24,8 +25,9 @@ export function VagasDoPedido() {
 
   return (
     <>
-      <Link className="voltar" to={`/pedidos/${id}`}>← Voltar ao pedido</Link>
+      <Link className="voltar" to={`/pedidos/${id}`}><Icone nome="voltar" tamanho={20} /> Voltar ao pedido</Link>
       <h1>Vagas informadas</h1>
+      <p className="hint">Ainda não é reserva. A clínica confirma.</p>
       {(pedido.isPending || vagas.isPending) && !pedido.isError && <Carregando />}
       {pedido.isError && <Erro mensagem={mensagemDe(pedido.error)} />}
       {vagas.isError && <Erro mensagem={mensagemDe(vagas.error)} aoTentar={() => vagas.refetch()} />}
@@ -37,12 +39,13 @@ export function VagasDoPedido() {
           <ul className="lista-cartoes">
             {vagas.data.itens.map((v) => (
               <li key={v.id}>
-                <Cartao>
-                  <h2>{rotuloEspecialidade(v.especialidade)}</h2>
-                  <p>{dataHora(v.inicio)}</p>
+                <Cartao aria-labelledby={`v-${v.id}`} selecionado={v.estado === "aberta" && !v.interesse}>
+                  {v.estado === "aberta" && !v.interesse && <span className="chip chip--warn"><Icone nome="vaga" tamanho={20} /> Surgiu uma vaga</span>}
+                  <h2 id={`v-${v.id}`}>{rotuloEspecialidade(v.especialidade)}</h2>
+                  <p className="com-icone"><Icone nome="horario" tamanho={20} /> {dataHora(v.inicio)}</p>
                   {v.interesse ? <Selo tom={v.interesse === "confirmado" ? "padrao" : "aviso"}>{ROTULO_INTERESSE[v.interesse]}</Selo>
                     : v.estado === "aberta" ? <Botao bloco disabled={interesse.isPending} onClick={() => interesse.mutate(v.id)}>Tenho interesse</Botao>
-                    : <Selo tom="aviso">Vaga já preenchida</Selo>}
+                    : <Selo tom="aviso">Essa vaga já foi preenchida.</Selo>}
                 </Cartao>
               </li>
             ))}
