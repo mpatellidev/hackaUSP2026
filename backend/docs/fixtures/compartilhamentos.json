@@ -1,0 +1,18 @@
+{
+  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real. Resumo de exemplo, não é prontuário.",
+  "itens": [
+    {
+      "id": "e4000000-0000-4000-8000-000000000001",
+      "resumo_id": "e3000000-0000-4000-8000-000000000001",
+      "clinica_destino_id": "c1000000-0000-4000-8000-000000000001",
+      "campos_compartilhados": [
+        "Motivo do atendimento",
+        "Orientação administrativa"
+      ],
+      "finalidade": "Continuidade do cuidado na clínica escolhida",
+      "aceite": "aceito",
+      "aceito_em": "2026-10-22T09:00:00-03:00",
+      "revogado_em": null
+    }
+  ]
+}

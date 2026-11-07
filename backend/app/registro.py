@@ -13,11 +13,14 @@ from fastapi import APIRouter
 
 from app.modulos.acessibilidade import router as acessibilidade
 from app.modulos.agendamentos import router as agendamentos
+from app.modulos.alertas import router as alertas
+from app.modulos.avaliacoes import router as avaliacoes
 from app.modulos.auth import router as auth
 from app.modulos.cenarios import router as cenarios
 from app.modulos.perfil import router as perfil
 from app.modulos.prioridade import router as prioridade
 from app.modulos.profissionais import router as profissionais
+from app.modulos.resumos import router as resumos
 from app.modulos.saude import router as saude
 from app.modulos.solicitacoes import router as solicitacoes
 from app.modulos.urgencia import router as urgencia
@@ -34,5 +37,8 @@ ROUTERS: list[APIRouter] = [
     cenarios.router,
     perfil.router,
     profissionais.router,
+    avaliacoes.router,
+    alertas.router,
+    resumos.router,
     acessibilidade.router,
 ]

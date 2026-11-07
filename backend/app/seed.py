@@ -11,10 +11,13 @@ from app.core.time import parse_aware
 from app.models.clinicas import Clinica
 from app.models.solicitacoes import EventoSolicitacao, Solicitacao
 from app.models.usuarios import Usuario, VinculoClinica
+from app.modulos.alertas import seed as alertas_seed
+from app.modulos.avaliacoes import seed as avaliacoes_seed
 from app.modulos.cenarios import seed as cenarios_seed
 from app.modulos.perfil import seed as perfil_seed
 from app.modulos.prioridade import seed as prioridade_seed
 from app.modulos.profissionais import seed as profissionais_seed
+from app.modulos.resumos import seed as resumos_seed
 from app.modulos.urgencia import seed as urgencia_seed
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
 from app.core.config import FIXTURES_DIR
@@ -68,7 +71,7 @@ def run(db: Session) -> dict[str, int]:
                              paciente_id=r["paciente_id"], clinica_id=r["clinica_id"], estado=r["estado"],
                              desfecho=r.get("desfecho", "pendente"), confirmado_por=r["confirmado_por"], **_dt(r, "confirmado_em")))
     db.commit()
-    for modulo in (prioridade_seed, urgencia_seed, cenarios_seed, perfil_seed):  # ordem: dependem dos dados acima
+    for modulo in (prioridade_seed, urgencia_seed, cenarios_seed, perfil_seed, avaliacoes_seed, alertas_seed, resumos_seed):  # ordem: dependem dos dados acima
         contagens |= modulo.run(db)
     return contagens | {m.__tablename__: db.query(m).count()
             for m in (Clinica, Usuario, VinculoClinica, Solicitacao, EventoSolicitacao, Vaga, InteresseVaga, Agendamento)}

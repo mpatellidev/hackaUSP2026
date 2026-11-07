@@ -16,6 +16,7 @@ from app.models.clinicas import Clinica
 from app.models.solicitacoes import ESTADOS_ATIVOS, EventoSolicitacao, Solicitacao
 from app.models.usuarios import Usuario
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
+from app.modulos.alertas import service as alertas
 from app.modulos.prioridade.fila import ordenar_pedidos
 from app.modulos.profissionais.models import Profissional  # score e ordenação vivem só na #13
 from app.modulos.solicitacoes import repositorio as repo
@@ -86,6 +87,7 @@ def criar(db: Session, actor: Actor, especialidade: str, inicio, fim, profission
                 criado_por=actor.usuario_id, criado_em=utc_now(), profissional_id=profissional_id)
     db.add(vaga)
     db.flush()
+    alertas.gerar_para_vaga(db, vaga)  # evento `vaga_criada` (contrato §9.7)
     return vaga
 
 

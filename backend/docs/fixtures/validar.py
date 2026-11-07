@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Valida a integridade das fixtures de demonstração (somente biblioteca padrão).
 
-Uso: python3 docs/fixtures/validar.py
+Uso: python3 backend/docs/fixtures/validar.py
 Confere: UUIDs, horários ISO 8601 com fuso, vocabulário de estados e referências entre arquivos.
 """
 import json
@@ -105,6 +105,29 @@ for vid, v in vagas.items():
     checar((v["estado"] == "preenchida") == (confirmados.get(vid) == 1), f"vaga {vid}: estado incompatível com confirmações")
 for a in itens("agendamentos"):
     checar(a["vaga_id"] in vagas and a["solicitacao_id"] in solicitacoes, f"agendamento {a['id']}: referência inexistente")
+
+profissionais = {x["id"]: x for x in itens("profissionais")}
+for pr in profissionais.values():
+    checar(pr["clinica_id"] in clinicas and pr["vinculo"] in {"docente", "residente", "estudante_supervisionado"},
+           f"profissional {pr['id']}: inválido")
+for b in itens("agenda"):
+    checar(b["profissional_id"] in profissionais and b["estado"] in {"disponivel", "reservado", "indisponivel"},
+           f"bloco de agenda {b['id']}: inválido")
+    checar(datetime.fromisoformat(b["fim"]) > datetime.fromisoformat(b["inicio"]), f"bloco de agenda {b['id']}: fim <= início")
+for v in vagas.values():
+    pid = v.get("profissional_id")
+    checar(pid is None or (pid in profissionais and profissionais[pid]["clinica_id"] == v["clinica_id"]),
+           f"vaga {v['id']}: profissional de outra clínica")
+for a in itens("avaliacoes-clinica"):
+    checar(solicitacoes[a["solicitacao_id"]]["estado"] == "concluida" and 1 <= a["nota"] <= 5,
+           f"avaliação {a['id']}: pedido não concluído ou nota inválida")
+resumos = {r["id"]: r for r in itens("resumos")}
+for c in itens("compartilhamentos"):
+    checar(c["resumo_id"] in resumos and c["clinica_destino_id"] in clinicas and c["aceite"] in {"aceito", "recusado"},
+           f"compartilhamento {c['id']}: inválido")
+for e in itens("eventos-acesso"):
+    checar(e["resumo_id"] in resumos and e["tipo"] in {"consulta", "criacao", "aceite", "recusa", "revogacao"},
+           f"evento de acesso {e['id']}: inválido")
 
 texto = "".join(p.read_text(encoding="utf-8") for p in AQUI.glob("*.json"))
 checar(not re.search(r"\d{3}\.\d{3}\.\d{3}-\d{2}", texto), "possível CPF encontrado")
