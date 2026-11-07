@@ -22,6 +22,7 @@ class PerfilChatIn(BaseModel):
 
 
 class UiPrefs(BaseModel):
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)  # defaults aparecem como obrigatórios no OpenAPI (resposta)
     auto_play_audio: bool = False
     font_scale: float = 1.0
     high_contrast: bool = False
@@ -30,7 +31,7 @@ class UiPrefs(BaseModel):
 
 
 class PerfilChatOut(PerfilChatIn):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, json_schema_serialization_defaults_required=True)
     ui_prefs: UiPrefs = Field(default_factory=UiPrefs)
     resumo: str
 
@@ -42,11 +43,13 @@ class ChatIn(BaseModel):
 
 
 class AudioPayload(BaseModel):
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)  # defaults aparecem como obrigatórios no OpenAPI (resposta)
     text: str
     url: str | None = None  # None => o navegador sintetiza a fala
 
 
 class BotMessage(BaseModel):
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)  # defaults aparecem como obrigatórios no OpenAPI (resposta)
     text: str
     audio: AudioPayload | None = None
 
@@ -57,6 +60,7 @@ class QuickReply(BaseModel):
 
 
 class ChatOut(BaseModel):
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)  # defaults aparecem como obrigatórios no OpenAPI (resposta)
     modo: Literal["demo"] = "demo"
     fonte: str  # mock | gemini | claude
     aviso: str = AVISO_CHAT

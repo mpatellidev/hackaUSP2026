@@ -1,0 +1,36 @@
+{
+  "name": "uhealth-app",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Frontend web do UHealth: app do paciente (mobile-first) e app das clínicas (desktop-first).",
+  "workspaces": [
+    "paciente",
+    "clinica",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,paciente,clinica -c blue,green,magenta \"npm:dev:api\" \"npm:dev:paciente\" \"npm:dev:clinica\"",
+    "dev:api": "cd ../backend && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:paciente": "npm run dev -w @uhealth/paciente",
+    "dev:clinica": "npm run dev -w @uhealth/clinica",
+    "gen:api": "node packages/api-client/scripts/gerar.mjs",
+    "build": "npm run build -w @uhealth/paciente && npm run build -w @uhealth/clinica",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^26.6.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "jsdom": "^25.0.1",
+    "openapi-typescript": "^7.4.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.8"
+  }
+}

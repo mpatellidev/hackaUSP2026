@@ -1,52 +1,3 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  font-size: calc(100% * var(--font-scale));
-}
-
-body {
-  margin: 0;
-  background: var(--page);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 1.0625rem;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-button {
-  font: inherit;
-  color: inherit;
-}
-
-:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
 
 .skip-link {
   position: absolute;
@@ -123,18 +74,20 @@ button {
 }
 
 /* ---------- Layout do chat ---------- */
-.app {
-  min-height: 100dvh;
-  display: grid;
-  place-items: center;
-  padding: 24px 16px;
+.chat-app {
+  --font-body: var(--uh-font-body);
+  display: block;
+  color: var(--text);
+  font-size: calc(1.0625rem * var(--font-scale));
+  line-height: 1.5;
 }
 
 .chat-card {
   position: relative; /* contém os textos .sr-only, que senão criam rolagem na página */
   width: 100%;
   max-width: 560px;
-  height: calc(100dvh - 48px);
+  height: calc(100dvh - 220px);
+  min-height: 440px;
   display: flex;
   flex-direction: column;
   background: var(--surface);
@@ -669,13 +622,10 @@ button.menu-row:hover {
 
 /* ---------- Celular: o chat ocupa a tela inteira ---------- */
 @media (max-width: 600px) {
-  .app {
-    padding: 0;
-  }
   .chat-card {
     max-width: none;
-    height: 100dvh;
-    border-radius: 0;
+    height: calc(100dvh - 200px);
+    border-radius: var(--uh-radius-card);
     box-shadow: none;
   }
   .chat-body {

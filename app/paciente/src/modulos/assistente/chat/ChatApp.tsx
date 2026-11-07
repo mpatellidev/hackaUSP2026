@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api, ApiError, type ChatUser, type ProfileIn } from "./api/client";
+import { ErroApi } from "@uhealth/api-client";
+import { api, type ChatUser, type ProfileIn } from "./api/client";
 import { Avatar } from "./components/icons";
 import { Composer } from "./components/Composer";
 import { MessageBubble, type UiMessage } from "./components/MessageBubble";
@@ -26,11 +27,9 @@ const START_OPTIONS: Option[] = [
   { label: "Atendimentos confirmados", value: "Quais são meus agendamentos?" },
 ];
 
-export interface ChatAppProps extends Partial<Pick<ChatConfig, "apiUrl" | "onUnauthorized" | "logoUrl">> {
+export interface ChatAppProps extends Pick<ChatConfig, "api">, Partial<Pick<ChatConfig, "logoUrl">> {
   /** pessoa logada (nome e foto) */
   user: ChatUser;
-  /** token de acesso enviado ao backend */
-  getToken: () => string | null;
   /** se informado, o menu mostra "Sair" */
   onLogout?: () => void;
 }
@@ -40,8 +39,8 @@ export interface ChatAppProps extends Partial<Pick<ChatConfig, "apiUrl" | "onUna
  * (perfil, chat, áudio) usando o token e o endereço recebidos aqui.
  * Ajuda a encontrar clínicas, enviar pedidos e acompanhá-los. Não marca horário: pedido ≠ agendamento.
  */
-export function ChatApp({ user, getToken, onLogout, apiUrl, onUnauthorized, logoUrl }: ChatAppProps) {
-  configureChat({ apiUrl, getToken, onUnauthorized, logoUrl });
+export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppProps) {
+  configureChat({ api: clienteApi, logoUrl });
   const { prefs, update, applySuggested } = usePrefs();
   const [phase, setPhase] = useState<Phase>("loading");
   const [messages, setMessages] = useState<UiMessage[]>([]);
@@ -119,7 +118,7 @@ export function ChatApp({ user, getToken, onLogout, apiUrl, onUnauthorized, logo
       .catch((err) => {
         if (cancelled) return;
         bot(greeting);
-        if (err instanceof ApiError && err.status === 404) startOnboarding();
+        if (err instanceof ErroApi && err.status === 404) startOnboarding();
         else bot("Não consegui carregar seus dados. Recarregue a página para tentar de novo.", { error: true });
       });
     return () => {
@@ -148,7 +147,7 @@ export function ChatApp({ user, getToken, onLogout, apiUrl, onUnauthorized, logo
       res.messages.forEach((m) => push({ from: "bot", text: m.text, audio: m.audio, autoPlay }));
       setReplies(res.quick_replies.length ? { options: res.quick_replies, title: "Escolha uma opção ou escreva" } : null);
     } catch (err) {
-      bot(err instanceof ApiError ? err.message : "Sem conexão. Verifique sua internet e tente de novo.", {
+      bot(err instanceof ErroApi ? err.message : "Sem conexão. Verifique sua internet e tente de novo.", {
         error: true,
       });
     } finally {
@@ -201,7 +200,7 @@ export function ChatApp({ user, getToken, onLogout, apiUrl, onUnauthorized, logo
   const today = new Intl.DateTimeFormat("pt-BR", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
 
   return (
-    <div className="app">
+    <div className="chat-app">
       <a href="#composer-input" className="skip-link">
         Pular para a caixa de mensagem
       </a>

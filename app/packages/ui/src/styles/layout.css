@@ -1,0 +1,49 @@
+/* Layout compartilhado dos apps (usa tokens.css). */
+.pilha { display: grid; gap: var(--uh-space-4); }
+.linha { display: flex; flex-wrap: wrap; gap: var(--uh-space-3); align-items: center; }
+.estado { color: var(--uh-muted); margin: 0; padding: var(--uh-space-4) 0; }
+.estado--vazio { text-align: center; }
+
+.faixa-demo {
+  background: var(--uh-warn-bg); color: var(--uh-warn-text); text-align: center; font-weight: 700;
+  padding: 6px var(--uh-space-4); font-size: calc(.8125rem * var(--uh-scale));
+}
+
+.emergencia { max-width: 420px; width: calc(100% - 32px); border: 3px solid var(--uh-danger); border-radius: var(--uh-radius-card); background: var(--uh-surface); color: var(--uh-text); padding: var(--uh-space-5); }
+.emergencia::backdrop { background: rgb(0 0 0 / .55); }
+.emergencia h2 { color: var(--uh-danger-text); margin-bottom: var(--uh-space-3); }
+
+.preferencias { display: flex; gap: var(--uh-space-2); }
+.icone { min-width: var(--uh-target); min-height: var(--uh-target); border: 0; border-radius: 12px; background: var(--uh-on-brand); color: var(--uh-brand); font: 700 1.125rem var(--uh-font-display); cursor: pointer; }
+:root[data-theme="hc"] .icone { border: 2px solid #fff; }
+
+.tela-celular { max-width: 480px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column; }
+.cabecalho-app { background: var(--uh-brand); color: var(--uh-on-brand); padding: var(--uh-space-4) var(--uh-space-5); border-radius: 0 0 28px 28px; display: grid; gap: var(--uh-space-3); }
+.cabecalho-app .linha-topo { display: flex; align-items: center; gap: var(--uh-space-2); }
+.cabecalho-app .marca { font: 700 1.25rem var(--uh-font-display); margin-right: auto; }
+.conteudo { flex: 1; padding: var(--uh-space-5); display: grid; gap: var(--uh-space-4); align-content: start; }
+.tela-celular .tabbar { position: sticky; bottom: 0; }
+.etiquetas { display: flex; flex-wrap: wrap; gap: var(--uh-space-2); }
+.lista-cartoes { display: grid; gap: var(--uh-space-3); list-style: none; margin: 0; padding: 0; }
+.voltar { justify-self: start; }
+
+/* Clínica: menu lateral >= 800px, barra superior abaixo disso */
+.shell-clinica { display: grid; grid-template-columns: 240px 1fr; min-height: 100dvh; }
+.shell-clinica > main { padding: var(--uh-space-6); display: grid; gap: var(--uh-space-4); align-content: start; min-width: 0; }
+.menu-lateral { background: var(--uh-surface); border-right: 1.5px solid var(--uh-line); padding: var(--uh-space-4); display: grid; gap: var(--uh-space-4); align-content: start; }
+.menu-lateral ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--uh-space-1); }
+.menu-lateral a { display: flex; gap: var(--uh-space-2); align-items: center; min-height: var(--uh-target); padding: 0 var(--uh-space-3); border-radius: var(--uh-radius-control); color: var(--uh-text); text-decoration: none; }
+.menu-lateral a[aria-current="page"] { background: var(--uh-chip-bg); color: var(--uh-link); font-weight: 700; }
+.tabela-rolavel { overflow-x: auto; }
+@media (max-width: 799px) {
+  .shell-clinica { grid-template-columns: 1fr; }
+  .menu-lateral { border-right: 0; border-bottom: 1.5px solid var(--uh-line); }
+  .menu-lateral ul { grid-auto-flow: column; overflow-x: auto; }
+  .shell-clinica > main { padding: var(--uh-space-4); }
+}
+@media (max-width: 600px) {
+  .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .table tr { display: block; border-top: 1.5px solid var(--uh-line); padding: var(--uh-space-2) 0; }
+  .table td { display: flex; justify-content: space-between; gap: var(--uh-space-3); border-top: 0; padding: var(--uh-space-1) var(--uh-space-2); }
+  .table td::before { content: attr(data-rotulo); font-weight: 700; color: var(--uh-muted); }
+}

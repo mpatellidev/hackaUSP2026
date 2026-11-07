@@ -3,9 +3,9 @@
 //
 // Uso:
 //   import { ChatApp } from "./chat";
-//   <ChatApp user={{ nome }} apiUrl={api} getToken={() => token} onUnauthorized={sair} onLogout={sair} />
+//   <ChatApp user={{ nome }} api={api} onLogout={sair} />
 //
-// O chat depende apenas do backend UHealth (/api/v1): GET/PUT /acessibilidade/chat/perfil,
+// O chat usa o cliente tipado da sessão (@uhealth/api-client): GET/PUT /acessibilidade/chat/perfil,
 // POST /acessibilidade/chat e os arquivos de áudio. O token é o da auth DEMO (conta de paciente).
 import "./styles/tokens.css";
 import "./styles/chat.css";
