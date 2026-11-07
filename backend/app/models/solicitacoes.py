@@ -21,6 +21,7 @@ class Solicitacao(UuidPk, CriadoEm, Base):
     clinica_id: Mapped[str] = mapped_column(ForeignKey("clinicas.id"))
     estado: Mapped[str]
     especialidade: Mapped[str]
+    publico_alvo: Mapped[str]
     descricao_administrativa: Mapped[str]   # sem dados clínicos sensíveis
     solicitacao_origem_id: Mapped[str | None] = mapped_column(ForeignKey("solicitacoes.id"), default=None)
     atualizado_em: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
