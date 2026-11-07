@@ -1,0 +1,17 @@
+{
+  "versao": "demo-0.1",
+  "aviso": "Pesos ILUSTRATIVOS para demonstração. NÃO são critérios clínicos validados nem decisão automática: a ordem é sempre revisada por profissional.",
+  "socioeconomico": {
+    "peso": 1.0,
+    "faixas": {
+      "ate_1_salario_minimo": 15,
+      "1_a_2_salarios_minimos": 10,
+      "2_a_3_salarios_minimos": 5,
+      "acima_de_3_salarios_minimos": 0
+    },
+    "desconhecido": 0
+  },
+  "necessidade_academica": {"peso": 1.0, "valor_se_correspondente": 10},
+  "tempo_espera": {"peso": 1.0, "pontos_por_dia": 1, "teto_dias": 30},
+  "falta_verificada": {"peso": 1.0, "valor_por_falta_confirmada": -10, "teto_faltas": 3}
+}

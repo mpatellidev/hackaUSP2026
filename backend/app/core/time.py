@@ -27,3 +27,8 @@ def to_sp_iso(dt: datetime | None) -> str | None:
 
 def hours(n: int) -> timedelta:
     return timedelta(hours=n)
+
+
+def as_utc(dt: datetime) -> datetime:
+    """SQLite devolve datetimes sem tzinfo; no banco tudo é UTC."""
+    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
