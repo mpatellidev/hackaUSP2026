@@ -1,0 +1,77 @@
+{
+  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real.",
+  "itens": [
+    {
+      "id": "c1000000-0000-4000-8000-000000000001",
+      "nome": "Clínica-Escola A",
+      "cidade": "São Paulo",
+      "uf": "SP",
+      "publico": [
+        "adultos"
+      ],
+      "especialidades": [
+        "clinica_geral",
+        "cardiologia",
+        "dermatologia"
+      ],
+      "custo_informado": "gratuito",
+      "recebendo_pedidos": true,
+      "telefone": "(11) 0000-0001",
+      "distancia_km_demo": 2.4
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000002",
+      "nome": "Clínica-Escola B",
+      "cidade": "São Paulo",
+      "uf": "SP",
+      "publico": [
+        "adultos",
+        "criancas"
+      ],
+      "especialidades": [
+        "clinica_geral",
+        "pediatria",
+        "ginecologia_obstetricia"
+      ],
+      "custo_informado": "a_confirmar",
+      "recebendo_pedidos": true,
+      "telefone": "(11) 0000-0002",
+      "distancia_km_demo": 4.1
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000003",
+      "nome": "Clínica-Escola C",
+      "cidade": "São Paulo",
+      "uf": "SP",
+      "publico": [
+        "adultos"
+      ],
+      "especialidades": [
+        "ortopedia",
+        "oftalmologia"
+      ],
+      "custo_informado": "a_confirmar",
+      "recebendo_pedidos": false,
+      "telefone": "(11) 0000-0003",
+      "distancia_km_demo": 7.8
+    },
+    {
+      "id": "c1000000-0000-4000-8000-000000000004",
+      "nome": "Clínica-Escola D",
+      "cidade": "Campinas",
+      "uf": "SP",
+      "publico": [
+        "adultos",
+        "criancas"
+      ],
+      "especialidades": [
+        "clinica_geral",
+        "saude_mental"
+      ],
+      "custo_informado": "gratuito",
+      "recebendo_pedidos": true,
+      "telefone": "(19) 0000-0004",
+      "distancia_km_demo": null
+    }
+  ]
+}
