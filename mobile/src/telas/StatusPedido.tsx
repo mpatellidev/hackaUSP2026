@@ -23,6 +23,11 @@ import { formatarDataHora, ROTULO_ESTADO, rotuloEspecialidade } from '../textos/
 
 // Rota que a #6 (acompanhamento) pode registrar para alternativas/escolha de outra clínica.
 const ROTA_ALTERNATIVAS = 'Acompanhamento.Alternativas';
+// Vagas informadas pela clínica (#6/#4): contrato 0.1.3, o pedido já enviado pode demonstrar interesse.
+const ROTA_VAGAS = 'Acompanhamento.Vagas';
+const ESTADOS_COM_VAGAS: EstadoSolicitacao[] = ['enviada', 'em_analise', 'precisa_contato', 'aguardando_confirmacao'];
+// Relato de urgência (#14): leva a revisão humana, nunca pune.
+const ROTA_URGENCIA = 'Urgencia.Relato';
 
 const ETAPAS: { estado: EstadoSolicitacao; rotulo: string }[] = [
   { estado: 'enviada', rotulo: 'Pedido enviado' },
@@ -87,6 +92,9 @@ export function StatusPedido({ route, navigation }: NativeStackScreenProps<Rotas
   const atual = indisponivel ? indiceEtapa(ultimo?.estado_anterior) : indiceEtapa(pedido.estado);
   const etapas = indisponivel ? ETAPAS.slice(0, atual + 1) : ETAPAS;
   const temAlternativas = ROTAS_MODULOS.some((r) => r.nome === ROTA_ALTERNATIVAS);
+  const temVagas = ROTAS_MODULOS.some((r) => r.nome === ROTA_VAGAS) && ESTADOS_COM_VAGAS.includes(pedido.estado);
+  const temUrgencia =
+    ROTAS_MODULOS.some((r) => r.nome === ROTA_URGENCIA) && !['indisponivel', 'concluida'].includes(pedido.estado);
 
   return (
     <Tela aoAtualizar={atualizar} atualizando={atualizando}>
@@ -104,6 +112,16 @@ export function StatusPedido({ route, navigation }: NativeStackScreenProps<Rotas
 
       {pedido.estado === 'precisa_contato' && clinica && (
         <Botao rotulo="Abrir discador da clínica" icone="call" variante="contorno" onPress={() => abrirDiscador(clinica.telefone)} dica={AVISOS.discador} />
+      )}
+
+      {temVagas && (
+        <Botao
+          rotulo="Ver vagas informadas pela clínica"
+          icone="event-available"
+          variante="contorno"
+          onPress={() => navigation.navigate(ROTA_VAGAS, { clinicaId: pedido.clinica_id, solicitacaoId })}
+          dica="Mostrar interesse em uma vaga não é agendamento. A clínica confirma uma única pessoa."
+        />
       )}
 
       {indisponivel && (
@@ -159,6 +177,16 @@ export function StatusPedido({ route, navigation }: NativeStackScreenProps<Rotas
           </View>
         ))}
       </View>
+
+      {temUrgencia && (
+        <Botao
+          rotulo="Estou com uma urgência"
+          icone="priority-high"
+          variante="contorno"
+          onPress={() => navigation.navigate(ROTA_URGENCIA, { solicitacaoId })}
+          dica="Avisa a clínica para um profissional avaliar. Em emergência, ligue 192 (SAMU)."
+        />
+      )}
 
       <Aviso>{AVISOS.semPush}</Aviso>
       <Botao rotulo="Atualizar" icone="refresh" variante="contorno" onPress={atualizar} carregando={atualizando} />

@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.core.errors import install_error_handlers
-from app.routers import ROUTERS, saude
+from app.modulos.saude import router as saude
+from app.registro import ROUTERS
+from app.ui_teste import montar as montar_ui_teste
 
 
 def create_app() -> FastAPI:
@@ -23,6 +25,7 @@ def create_app() -> FastAPI:
         api.include_router(r)
     app.include_router(api)
     app.include_router(saude.router)  # atalho GET /saude (contrato §2)
+    montar_ui_teste(app)  # UI de teste em /teste/ (HTML/JS puro, sem build)
     return app
 
 

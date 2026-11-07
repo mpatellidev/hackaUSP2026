@@ -102,3 +102,28 @@ def test_reversao_remove_penalidade_na_fila(client, login, db):
     assert client.post(f"/api/v1/faltas/{falta.id}/revisao", headers=h,
                        json={"acao": "reverter", "motivo": "Revisão: justificou ausência."}).status_code == 200
     assert penalidade() == 0
+
+
+def test_fila_le_cenarios_e_urgencia_do_banco_pelos_servicos_dos_modulos(client, login, db):
+    from app.modulos.cenarios.models import Cenario
+
+    def componente(nome, pedido=PEDIDO_BRUNO):
+        fila = client.get(FILA.format(CLINICA_A), headers=login(ATEND_A)).json()["itens"]
+        item = next(i for i in fila if i["solicitacao_id"] == pedido)
+        return item, next(c for c in item["componentes"] if c["nome"] == nome)
+
+    # cenário ativo de clínica_geral na clínica A (fixture) -> necessidade acadêmica
+    assert componente("necessidade_academica", PEDIDO_CARLA)[1]["valor"] == 10
+    db.get(Cenario, "c2000000-0000-4000-8000-000000000001").estado = "pausado"
+    db.commit()
+    assert componente("necessidade_academica", PEDIDO_CARLA)[1]["valor"] == 0
+
+    # relato de urgência aguardando avaliação só sinaliza; avaliado por profissional passa à frente
+    item, _ = componente("tempo_espera")
+    assert item["urgencia_avaliada"] is False and item["sinalizacoes"]
+    relato = "e2000000-0000-4000-8000-000000000001"
+    r = client.post(f"/api/v1/urgencias/{relato}/avaliacao", headers=login(PROF_A),
+                    json={"classificacao": "urgencia_confirmada"})
+    assert r.status_code == 201
+    item, _ = componente("tempo_espera")
+    assert item["urgencia_avaliada"] is True and item["sinalizacoes"] == []

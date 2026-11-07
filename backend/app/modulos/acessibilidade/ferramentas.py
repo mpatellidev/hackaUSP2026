@@ -2,7 +2,7 @@
 
 Regras do contrato que valem aqui:
 - Quem age é sempre o paciente do token (Actor); nada de paciente_id vindo da IA.
-- Leituras de pedidos passam por app.repositories.solicitacoes (já escopadas).
+- Leituras de pedidos passam por app.modulos.solicitacoes.repositorio (já escopadas).
 - Pedido ≠ agendamento: a IA pode ENVIAR um pedido, nunca criar/remarcar/cancelar agendamento.
   "Agendada" só aparece quando o backend tem o estado `agendada`/Agendamento confirmado por funcionário.
 """
@@ -18,11 +18,12 @@ from app.core.auth import Actor
 from app.core.errors import ApiError, nao_encontrado
 from app.core.time import as_utc, to_sp_iso, utc_now
 from app.models.clinicas import Clinica
-from app.models.solicitacoes import ESTADOS_ATIVOS, EventoSolicitacao, Solicitacao
+from app.models.solicitacoes import ESTADOS_ATIVOS, Solicitacao
 from app.models.vagas import Agendamento, Vaga
 from app.modulos.acessibilidade.formatos import por_extenso
 from app.modulos.acessibilidade.schemas import QuickReply
-from app.repositories import solicitacoes as repo
+from app.modulos.solicitacoes import service as solicitacoes_service
+from app.modulos.solicitacoes import repositorio as repo
 
 ESTADO_EXPLICADO = {
     "enviada": "Pedido enviado. A clínica ainda vai olhar.",
@@ -161,39 +162,38 @@ def listar_meus_agendamentos(db: Session, actor: Actor) -> dict:
                           "ligue para a clínica."}
 
 
-def enviar_pedido(db: Session, actor: Actor, clinica_id: str, especialidade: str, descricao: str) -> dict:
-    """Cria a Solicitacao `enviada` + evento `criada` (contrato §4.3, §2).
-    TODO(#3): quando o módulo de solicitações publicar o serviço de criação, chamar o serviço de lá."""
+def _publico_do_pedido(clinica: Clinica, publico_alvo: str) -> str:
+    """O chat não pergunta o público: usa o informado, ou o único da clínica, ou `adultos`."""
+    if publico_alvo:
+        return publico_alvo
+    if len(clinica.publico) == 1 or "adultos" not in clinica.publico:
+        return clinica.publico[0] if clinica.publico else "adultos"
+    return "adultos"
+
+
+def enviar_pedido(db: Session, actor: Actor, clinica_id: str, especialidade: str, descricao: str,
+                  publico_alvo: str = "") -> dict:
+    """Cria o pedido pelo serviço do módulo de solicitações (#3), que valida clínica, especialidade,
+    público e duplicidade e grava o evento `criada` (contrato §4.3)."""
     clinica = db.get(Clinica, clinica_id)
     if clinica is None:
         raise nao_encontrado()
-    if not clinica.recebendo_pedidos:
-        raise ApiError(409, "clinica_sem_recebimento", "Esta clínica não está recebendo pedidos agora.",
-                       {"clinica_id": clinica_id})
-    if especialidade not in clinica.especialidades:
-        raise ApiError(422, "validacao", "Esta clínica não atende essa especialidade.",
-                       {"campos": ["especialidade"]})
     descricao = descricao.strip()
     if not descricao or len(descricao) > 280:
         raise ApiError(422, "validacao", "A descrição precisa ter entre 1 e 280 caracteres.",
                        {"campos": ["descricao_administrativa"]})
-    duplicado = db.scalar(select(Solicitacao.id).where(
-        Solicitacao.paciente_id == actor.usuario_id, Solicitacao.clinica_id == clinica_id,
-        Solicitacao.especialidade == especialidade, Solicitacao.estado.in_(ESTADOS_ATIVOS)))
-    if duplicado:
-        raise ApiError(409, "solicitacao_duplicada",
-                       "Você já tem um pedido em andamento nesta clínica para essa especialidade.",
-                       {"solicitacao_id": duplicado})
-    agora = utc_now()
-    s = Solicitacao(paciente_id=actor.usuario_id, clinica_id=clinica_id, estado="enviada",
-                    especialidade=especialidade, descricao_administrativa=descricao, criado_em=agora,
-                    atualizado_em=agora)
-    db.add(s)
-    db.flush()
-    db.add(EventoSolicitacao(solicitacao_id=s.id, tipo="criada", estado_anterior=None, estado_novo="enviada",
-                             autor_usuario_id=actor.usuario_id, autor_papel=actor.papel, motivo=None,
-                             criado_em=agora))
-    db.flush()
+    try:
+        s = solicitacoes_service.criar(db, actor, clinica_id, especialidade,
+                                       _publico_do_pedido(clinica, publico_alvo), descricao)
+    except ApiError as exc:
+        if exc.codigo == "solicitacao_duplicada":
+            duplicado = db.scalar(select(Solicitacao.id).where(
+                Solicitacao.paciente_id == actor.usuario_id, Solicitacao.clinica_id == clinica_id,
+                Solicitacao.especialidade == especialidade, Solicitacao.estado.in_(ESTADOS_ATIVOS)))
+            raise ApiError(409, "solicitacao_duplicada",
+                           "Você já tem um pedido em andamento nesta clínica para essa especialidade.",
+                           {"solicitacao_id": duplicado}) from exc
+        raise
     return {"pedido": {"id": s.id, "clinica": clinica.nome, "especialidade": especialidade, "estado": s.estado,
                        "estado_explicado": ESTADO_EXPLICADO["enviada"]}, "aviso": AVISO_PEDIDO}
 

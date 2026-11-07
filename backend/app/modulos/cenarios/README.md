@@ -5,18 +5,16 @@ Oportunidades acadêmicas publicadas por clínica-escola (contrato §9.1). **Pro
 ## Estado da entrega
 | Parte | Situação |
 |---|---|
-| Endpoints, schemas, regras, seed, testes | **Funcional** (armazenamento **em memória**) |
-| Auth | `deps.obter_sessao` é o ponto de integração; `dev_app.py` usa auth **DEMO provisória** (`Bearer demo:<conta>`, sem senha, insegura) |
-| Tabelas no PostgreSQL / registro em `app/main.py` / handler global de erros | **Pendente da #2** (ver "Integração") |
-| Uso do sinal pela fila | **Pendente da #13** (`service.compatibilidade_academica`) |
+| Endpoints, schemas, regras, seed, testes | **Funcional** e **persistido no banco** (tabelas `cenarios` e `cenarios_interesses`, migração `0006`) |
+| Auth e erros | Usa o `Actor` e o `ApiError` do core (token → papel e clínicas); sem sessão/erro próprios |
+| Uso do sinal pela fila (#13) | **Feito**: `prioridade/fontes.py` chama `service.cenario_correspondente` |
 
 ## Executar
 ```bash
 cd backend
-pip install -r app/modulos/cenarios/requirements.txt
-python -m pytest app/modulos/cenarios            # 17 testes
-uvicorn app.modulos.cenarios.dev_app:app --reload  # /docs
-curl -H "Authorization: Bearer demo:paciente.ana" "localhost:8000/api/v1/cenarios?cidade=São Paulo"
+uv run pytest app/modulos/cenarios
+curl -s -X POST localhost:8000/api/v1/auth/demo/login -H 'content-type: application/json' -d '{"conta":"paciente.ana"}'  # token
+curl -H "Authorization: Bearer <token>" "localhost:8000/api/v1/cenarios?cidade=São Paulo"
 ```
 
 ## Endpoints (`/api/v1`)
@@ -65,12 +63,11 @@ Compatibilidade (entrada do score, **não é prioridade clínica**):
 `correspondente = true` quando o paciente tem interesse `registrado` em cenário `ativo` da clínica (e da especialidade, se informada).
 
 ## Seed
-`seed.carregar()` lê `docs/fixtures/cenarios.json`, `interesses-cenario.json` e `fixtures/cenarios-extra.json` (IDs novos `c2…03`, `c2…04`), de forma idempotente. As fixtures de `docs/fixtures/` não foram alteradas. Atenção: só a clínica C tem conta de **coordenação**; os cenários das clínicas A e B só podem ser editados quando a #2 trouxer uma coordenação para elas.
+`seed.run(db)` (chamado por `app/seed.py`) lê `docs/fixtures/cenarios.json`, `interesses-cenario.json` e `fixtures/cenarios-extra.json` (IDs novos `c2…03`, `c2…04`), de forma idempotente (só insere o que falta). As fixtures de `docs/fixtures/` não foram alteradas. Atenção: só a clínica C tem conta de **coordenação**; os cenários das clínicas A e B só podem ser editados quando houver coordenação para elas.
 
 ## Integração
-- **#2:** `app.include_router(router, prefix="/api/v1")`; `app.dependency_overrides[obter_sessao] = <auth real>` (ou trocar o corpo de `deps.obter_sessao`; devolve `Sessao(usuario_id, papel, funcao, clinica_id)`); `erros.instalar_tratadores(app)` ou handler global equivalente; migração `NNNN_cenarios_*` com tabelas `cenarios` e `interesses_cenario` espelhando `models.py` (trocar `RepositorioCenarios`).
-- **#13:** `from app.modulos.cenarios.service import compatibilidade_academica` → `{"correspondente", "cenario_id"}`.
+- **#13:** a fila usa `service.cenario_correspondente(repo, clinica_id, especialidade)` (cenário ativo da especialidade); `service.compatibilidade_academica` devolve `{"correspondente", "cenario_id"}` por paciente.
 - **#12:** consome os endpoints acima; `meu_interesse` já vem na lista/detalhe do paciente.
 
 ## Limitações
-Sem persistência (reinicia o seed); sem moderação de texto livre — o requisito/descrição é responsabilidade de quem publica e a coordenação deve evitar conteúdo diagnóstico; fuso fixo -03:00.
+Sem moderação de texto livre — o requisito/descrição é responsabilidade de quem publica e a coordenação deve evitar conteúdo diagnóstico; fuso de saída fixo -03:00.

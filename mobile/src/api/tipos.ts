@@ -1,4 +1,4 @@
-// Tipos espelhando docs/contratos-mvp.md (v0.1.1). Campos em snake_case como na API.
+// Tipos espelhando docs/contratos-mvp.md (v0.1.2). Campos em snake_case como na API.
 
 export type CustoInformado = 'gratuito' | 'a_confirmar' | 'pago_informado';
 export type Publico = 'adultos' | 'criancas' | 'gestantes' | 'idosos';
@@ -31,6 +31,7 @@ export interface Solicitacao {
   clinica_id: string;
   estado: EstadoSolicitacao;
   especialidade: string;
+  publico_alvo: Publico;
   descricao_administrativa: string;
   solicitacao_origem_id: string | null;
   criado_em: string;
@@ -70,5 +71,6 @@ export interface Lista<T> {
 export interface NovaSolicitacao {
   clinica_id: string;
   especialidade: string;
+  publico_alvo: Publico;
   descricao_administrativa: string;
 }

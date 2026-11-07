@@ -1,148 +1,120 @@
-from uuid import UUID
-
+"""Urgência (#14) pela API real montada: auth do core, dados no banco."""
 import pytest
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
+from sqlalchemy import func, select
 
-from app.modulos.urgencia import ErroApi, obter_ator, obter_repo, router, tratar_erro_api
 from app.modulos.urgencia import service
-from app.modulos.urgencia.models import Ator
-from app.modulos.urgencia.repositorio import RepositorioMemoria
+from app.modulos.urgencia.models import AvaliacaoUrgencia, RelatoUrgencia
+from app.modulos.urgencia.repositorio import RepositorioUrgencia
 
-U = lambda n: UUID(f"a1000000-0000-4000-8000-{n:012d}")
-A_CLI = UUID("c1000000-0000-4000-8000-000000000001")
-B_CLI = UUID("c1000000-0000-4000-8000-000000000002")
+API = "/api/v1/urgencias"
+ID_ANA, ID_BRUNO = "a1000000-0000-4000-8000-000000000001", "a1000000-0000-4000-8000-000000000002"
+ID_PROF_A = "a1000000-0000-4000-8000-000000000012"
+PED1 = "b1000000-0000-4000-8000-000000000001"  # Ana
 PED3 = "b1000000-0000-4000-8000-000000000003"  # Bruno, clínica A
 PED4 = "b1000000-0000-4000-8000-000000000004"  # Carla, clínica A
 RELATO1 = "e2000000-0000-4000-8000-000000000001"  # Bruno, pendente
 RELATO2 = "e2000000-0000-4000-8000-000000000002"  # Carla, avaliada
 
-ANA = Ator(U(1), "paciente")
-BRUNO = Ator(U(2), "paciente")
-ATEND_A = Ator(U(11), "funcionario", "atendimento", A_CLI)
-PROF_A = Ator(U(12), "funcionario", "profissional", A_CLI)
-PROF_B = Ator(U(14), "funcionario", "profissional", B_CLI)
+ANA, BRUNO = "paciente.ana", "paciente.bruno"
+ATEND_A, PROF_A, PROF_B = "funcionario.atendimento.a", "funcionario.profissional.a", "funcionario.profissional.b"
 
 
-@pytest.fixture
-def ctx():
-    app = FastAPI()
-    app.add_exception_handler(ErroApi, tratar_erro_api)
-    app.include_router(router, prefix="/api/v1")
-    repo = RepositorioMemoria.das_fixtures()
-    atual = {"ator": None}
-    app.dependency_overrides[obter_repo] = lambda: repo
-    def _ator():
-        if atual["ator"] is None:
-            raise ErroApi(401, "nao_autenticado", "Entre.")
-        return atual["ator"]
-    app.dependency_overrides[obter_ator] = _ator
-    c = TestClient(app)
-    def como(a):
-        atual["ator"] = a
-        return c
-    return como, repo
-
-
-def test_sem_token_401(ctx):
-    como, _ = ctx
-    r = como(None).get("/api/v1/urgencias")
+def test_sem_token_401(client):
+    r = client.get(API)
     assert r.status_code == 401 and r.json()["erro"]["codigo"] == "nao_autenticado"
 
 
-def test_orientacao_estatica_com_samu(ctx):
-    como, _ = ctx
-    j = como(None).get("/api/v1/urgencias/orientacao").json()
+def test_orientacao_estatica_com_samu(client):
+    j = client.get(f"{API}/orientacao").json()
     assert j["samu"] == "192" and "192" in j["texto"] and j["modo"] == "demo"
 
 
-def test_paciente_relata_urgencia_aguardando_sem_prometer_contato(ctx):
-    como, _ = ctx
-    r = como(ANA).post("/api/v1/urgencias", json={"solicitacao_id": "b1000000-0000-4000-8000-000000000001"})
+def test_paciente_relata_urgencia_aguardando_sem_prometer_contato(client, login):
+    r = client.post(API, headers=login(ANA), json={"solicitacao_id": PED1})
     assert r.status_code == 201
     j = r.json()
     assert j["estado"] == "aguardando_avaliacao" and j["rotulo"] == "Aguardando avaliação"
-    assert j["avaliacao"] is None and j["modo"] == "demo"
+    assert j["avaliacao"] is None and j["modo"] == "demo" and j["criado_em"].endswith("-03:00")
     assert "não garante contato imediato" in j["aviso"] and "192" in j["aviso"]
 
 
-def test_paciente_id_do_corpo_e_ignorado(ctx):
-    como, _ = ctx
-    j = como(ANA).post("/api/v1/urgencias", json={"paciente_id": str(U(2))}).json()
-    assert j["paciente_id"] == str(U(1))
+def test_paciente_id_do_corpo_e_ignorado(client, login):
+    j = client.post(API, headers=login(ANA), json={"paciente_id": ID_BRUNO}).json()
+    assert j["paciente_id"] == ID_ANA
 
 
-def test_nao_relata_sobre_pedido_de_outra_pessoa(ctx):
-    como, _ = ctx
-    assert como(ANA).post("/api/v1/urgencias", json={"solicitacao_id": PED3}).status_code == 404
+def test_nao_relata_sobre_pedido_de_outra_pessoa(client, login):
+    assert client.post(API, headers=login(ANA), json={"solicitacao_id": PED3}).status_code == 404
 
 
-def test_funcionario_nao_relata(ctx):
-    como, _ = ctx
-    assert como(PROF_A).post("/api/v1/urgencias", json={}).status_code == 403
+def test_funcionario_nao_relata(client, login):
+    assert client.post(API, headers=login(PROF_A), json={}).status_code == 403
 
 
-def test_relato_repetido_pendente_nao_duplica(ctx):
-    como, repo = ctx
-    a = como(BRUNO).post("/api/v1/urgencias", json={"solicitacao_id": PED3}).json()
+def test_relato_repetido_pendente_nao_duplica(client, login, db):
+    a = client.post(API, headers=login(BRUNO), json={"solicitacao_id": PED3}).json()
     assert a["id"] == RELATO1
-    assert len(repo.listar_relatos()) == 2
+    assert db.scalar(select(func.count()).select_from(RelatoUrgencia)) == 2
 
 
-def test_listagem_por_escopo(ctx):
-    como, _ = ctx
-    assert [i["id"] for i in como(BRUNO).get("/api/v1/urgencias").json()["itens"]] == [RELATO1]
-    assert como(ANA).get("/api/v1/urgencias").json()["total"] == 0
-    assert como(ATEND_A).get("/api/v1/urgencias").json()["total"] == 2
-    assert como(PROF_B).get("/api/v1/urgencias").json()["total"] == 0
-    f = como(PROF_A).get("/api/v1/urgencias?estado=aguardando_avaliacao").json()
+def test_listagem_por_escopo(client, login):
+    assert [i["id"] for i in client.get(API, headers=login(BRUNO)).json()["itens"]] == [RELATO1]
+    assert client.get(API, headers=login(ANA)).json()["total"] == 0
+    assert client.get(API, headers=login(ATEND_A)).json()["total"] == 2
+    assert client.get(API, headers=login(PROF_B)).json()["total"] == 0
+    f = client.get(f"{API}?estado=aguardando_avaliacao", headers=login(PROF_A)).json()
     assert [i["id"] for i in f["itens"]] == [RELATO1]
 
 
-@pytest.mark.parametrize("ator", [ANA, BRUNO, ATEND_A])
-def test_sem_papel_profissional_nao_avalia(ctx, ator):
-    como, repo = ctx
-    r = como(ator).post(f"/api/v1/urgencias/{RELATO1}/avaliacao", json={"classificacao": "urgencia_confirmada"})
+@pytest.mark.parametrize("conta", [ANA, BRUNO, ATEND_A])
+def test_sem_papel_profissional_nao_avalia(client, login, db, conta):
+    r = client.post(f"{API}/{RELATO1}/avaliacao", headers=login(conta), json={"classificacao": "urgencia_confirmada"})
     assert r.status_code == 403
-    assert repo.avaliacao_do_relato(UUID(RELATO1)) is None
-    assert repo.obter_relato(UUID(RELATO1)).estado == "aguardando_avaliacao"
+    assert RepositorioUrgencia(db).avaliacao_do_relato(RELATO1) is None
+    assert db.get(RelatoUrgencia, RELATO1).estado == "aguardando_avaliacao"
 
 
-def test_profissional_de_outra_clinica_recebe_404(ctx):
-    como, _ = ctx
-    r = como(PROF_B).post(f"/api/v1/urgencias/{RELATO1}/avaliacao", json={"classificacao": "urgencia_confirmada"})
+def test_profissional_de_outra_clinica_recebe_404(client, login):
+    r = client.post(f"{API}/{RELATO1}/avaliacao", headers=login(PROF_B), json={"classificacao": "urgencia_confirmada"})
     assert r.status_code == 404
 
 
-def test_profissional_avalia_com_autor_e_horario_do_servidor(ctx):
-    como, repo = ctx
-    r = como(PROF_A).post(f"/api/v1/urgencias/{RELATO1}/avaliacao", json={
+def test_profissional_avalia_com_autor_e_horario_do_servidor(client, login, db):
+    r = client.post(f"{API}/{RELATO1}/avaliacao", headers=login(PROF_A), json={
         "classificacao": "urgencia_confirmada", "observacao_administrativa": "Priorizar contato.",
-        "avaliador_usuario_id": str(U(14))})
+        "avaliador_usuario_id": "a1000000-0000-4000-8000-000000000014"})
     assert r.status_code == 201
     j = r.json()
     assert j["estado"] == "avaliada"
-    assert j["avaliacao"]["avaliador_usuario_id"] == str(U(12))
+    assert j["avaliacao"]["avaliador_usuario_id"] == ID_PROF_A
     assert j["avaliacao"]["avaliado_em"].endswith("-03:00")
-    assert service.urgencia_avaliada(repo, UUID(PED3))
+    assert service.urgencia_avaliada(RepositorioUrgencia(db), PED3)
 
 
-def test_nao_avalia_duas_vezes(ctx):
-    como, _ = ctx
-    r = como(PROF_A).post(f"/api/v1/urgencias/{RELATO2}/avaliacao", json={"classificacao": "sem_urgencia"})
+def test_nao_avalia_duas_vezes(client, login):
+    r = client.post(f"{API}/{RELATO2}/avaliacao", headers=login(PROF_A), json={"classificacao": "sem_urgencia"})
     assert r.status_code == 409 and r.json()["erro"]["codigo"] == "transicao_invalida"
 
 
-def test_classificacao_invalida_422(ctx):
-    como, _ = ctx
-    r = como(PROF_A).post(f"/api/v1/urgencias/{RELATO1}/avaliacao", json={"classificacao": "grave"})
-    assert r.status_code == 422
+def test_classificacao_invalida_422(client, login):
+    r = client.post(f"{API}/{RELATO1}/avaliacao", headers=login(PROF_A), json={"classificacao": "grave"})
+    assert r.status_code == 422 and r.json()["erro"]["codigo"] == "validacao"
 
 
-def test_interface_para_score_so_conta_urgencia_confirmada(ctx):
-    como, repo = ctx
+def test_interface_para_score_so_conta_urgencia_confirmada(client, login, db):
+    repo = RepositorioUrgencia(db)
     # fixture: Carla (PED4) tem urgência confirmada; Bruno (PED3) só relatou.
-    assert service.solicitacoes_com_urgencia_avaliada(repo) == {UUID(PED4)}
-    assert not service.urgencia_avaliada(repo, UUID(PED3))  # relato não confirmado: sem efeito
-    como(PROF_A).post(f"/api/v1/urgencias/{RELATO1}/avaliacao", json={"classificacao": "sem_urgencia"})
-    assert not service.urgencia_avaliada(repo, UUID(PED3))  # sem_urgencia: neutro, sem punição
+    assert service.solicitacoes_com_urgencia_avaliada(repo) == {PED4}
+    assert service.status_urgencia(repo, PED3) == "autodeclarada"   # só sinaliza, não reordena
+    assert service.status_urgencia(repo, PED4) == "avaliada"
+    client.post(f"{API}/{RELATO1}/avaliacao", headers=login(PROF_A), json={"classificacao": "sem_urgencia"})
+    db.expire_all()
+    assert not service.urgencia_avaliada(repo, PED3)   # sem_urgencia: neutro, sem punição
+    assert service.status_urgencia(repo, PED3) == "nenhuma"
+
+
+def test_urgencia_persiste_em_nova_sessao(client, login, engine):
+    from sqlalchemy.orm import sessionmaker
+    client.post(f"{API}/{RELATO1}/avaliacao", headers=login(PROF_A), json={"classificacao": "urgencia_confirmada"})
+    with sessionmaker(bind=engine)() as outra:
+        assert outra.scalar(select(func.count()).select_from(AvaliacaoUrgencia)) == 2

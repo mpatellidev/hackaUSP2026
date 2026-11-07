@@ -1,28 +1,27 @@
-// Cliente do módulo. A #5 fornece baseUrl (EXPO_PUBLIC_API_URL) e o token da sessão demo.
+// Cliente do módulo. Usa o `chamar` do adaptador da #5: token da sessão demo, erro no formato do contrato
+// e, em modo mock ou se a rota/rede falhar, o cliente mock (com o aviso de origem visível na tela).
+import { chamar } from '../../api/cliente';
+import type { Lista } from '../../api/tipos';
+import { criarClienteMock } from './mock/clienteMock';
 import type { ClienteUrgencia, RelatoUrgencia } from './tipos';
 
-export interface OpcoesApi {
-  baseUrl: string;
-  token: () => string | null;
-  fetchImpl?: typeof fetch;
-}
-
-export function criarClienteApi({ baseUrl, token, fetchImpl = fetch }: OpcoesApi): ClienteUrgencia {
-  async function chamar<T>(caminho: string, init: RequestInit = {}): Promise<T> {
-    const resp = await fetchImpl(`${baseUrl}/api/v1${caminho}`, {
-      ...init,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token() ?? ''}`,
-      },
-    });
-    const corpo = await resp.json().catch(() => null);
-    if (!resp.ok) throw new Error(corpo?.erro?.mensagem ?? 'Não foi possível concluir agora.');
-    return corpo as T;
-  }
+export function criarClienteApi(): ClienteUrgencia {
+  const mock = criarClienteMock();
   return {
     relatar: (solicitacaoId = null) =>
-      chamar<RelatoUrgencia>('/urgencias', { method: 'POST', body: JSON.stringify({ solicitacao_id: solicitacaoId }) }),
-    listar: async () => (await chamar<{ itens: RelatoUrgencia[] }>('/urgencias')).itens,
+      chamar<RelatoUrgencia>('/urgencias', {
+        metodo: 'POST',
+        corpo: { solicitacao_id: solicitacaoId },
+        mock: () => mock.relatar(solicitacaoId),
+      }),
+    listar: async () =>
+      (
+        await chamar<Lista<RelatoUrgencia>>('/urgencias', {
+          mock: async () => {
+            const itens = await mock.listar();
+            return { itens, total: itens.length };
+          },
+        })
+      ).itens,
   };
 }

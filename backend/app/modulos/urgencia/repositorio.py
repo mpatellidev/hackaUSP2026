@@ -1,77 +1,45 @@
-"""Armazenamento em memória (modo demonstrativo), carregado das fixtures.
+"""Acesso ao banco do módulo de urgência. Regras de visibilidade ficam no serviço."""
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-A #2 pode trocar por PostgreSQL implementando a mesma interface.
-"""
-import json
-from datetime import datetime
-from pathlib import Path
-from typing import Optional, Protocol
-from uuid import UUID
-
-from .models import Avaliacao, Relato
-
-FIXTURES = Path(__file__).resolve().parents[4] / "docs" / "fixtures"
+from app.models.solicitacoes import Solicitacao
+from app.modulos.urgencia.models import AvaliacaoUrgencia, RelatoUrgencia
 
 
-class RepositorioUrgencia(Protocol):
-    def salvar_relato(self, r: Relato) -> None: ...
-    def obter_relato(self, id: UUID) -> Optional[Relato]: ...
-    def listar_relatos(self) -> list[Relato]: ...
-    def salvar_avaliacao(self, a: Avaliacao) -> None: ...
-    def avaliacao_do_relato(self, relato_id: UUID) -> Optional[Avaliacao]: ...
-    def clinica_da_solicitacao(self, solicitacao_id: UUID) -> Optional[UUID]: ...
-    def paciente_da_solicitacao(self, solicitacao_id: UUID) -> Optional[UUID]: ...
+class RepositorioUrgencia:
+    def __init__(self, db: Session) -> None:
+        self.db = db
 
+    def salvar_relato(self, r: RelatoUrgencia) -> None:
+        self.db.add(r)
+        self.db.flush()
 
-def _lj(nome: str) -> dict:
-    return json.loads((FIXTURES / nome).read_text(encoding="utf-8"))
+    def obter_relato(self, relato_id: str) -> RelatoUrgencia | None:
+        return self.db.get(RelatoUrgencia, relato_id)
 
+    def listar_relatos(self) -> list[RelatoUrgencia]:
+        return list(self.db.scalars(select(RelatoUrgencia).order_by(
+            RelatoUrgencia.criado_em.desc(), RelatoUrgencia.id.desc())))
 
-class RepositorioMemoria:
-    def __init__(self) -> None:
-        self._relatos: dict[UUID, Relato] = {}
-        self._avaliacoes: dict[UUID, Avaliacao] = {}  # por relato_id
-        self._solicitacoes: dict[UUID, tuple[UUID, UUID]] = {}  # id -> (paciente, clinica)
+    def salvar_avaliacao(self, a: AvaliacaoUrgencia) -> None:
+        self.db.add(a)
+        self.db.flush()
 
-    @classmethod
-    def das_fixtures(cls) -> "RepositorioMemoria":
-        repo = cls()
-        for s in _lj("solicitacoes.json")["itens"]:
-            repo._solicitacoes[UUID(s["id"])] = (UUID(s["paciente_id"]), UUID(s["clinica_id"]))
-        u = _lj("urgencias.json")
-        for r in u["relatos"]:
-            repo.salvar_relato(Relato(
-                UUID(r["id"]), UUID(r["paciente_id"]),
-                UUID(r["solicitacao_id"]) if r["solicitacao_id"] else None,
-                r["estado"], datetime.fromisoformat(r["criado_em"]),
-            ))
-        for a in u["avaliacoes"]:
-            repo.salvar_avaliacao(Avaliacao(
-                UUID(a["id"]), UUID(a["relato_id"]), UUID(a["avaliador_usuario_id"]),
-                a["classificacao"], a["observacao_administrativa"],
-                datetime.fromisoformat(a["avaliado_em"]),
-            ))
-        return repo
+    def avaliacao_do_relato(self, relato_id: str) -> AvaliacaoUrgencia | None:
+        return self.db.scalar(select(AvaliacaoUrgencia).where(AvaliacaoUrgencia.relato_id == relato_id))
 
-    def salvar_relato(self, r: Relato) -> None:
-        self._relatos[r.id] = r
+    def clinica_da_solicitacao(self, solicitacao_id: str) -> str | None:
+        return self.db.scalar(select(Solicitacao.clinica_id).where(Solicitacao.id == solicitacao_id))
 
-    def obter_relato(self, id: UUID) -> Optional[Relato]:
-        return self._relatos.get(id)
+    def paciente_da_solicitacao(self, solicitacao_id: str) -> str | None:
+        return self.db.scalar(select(Solicitacao.paciente_id).where(Solicitacao.id == solicitacao_id))
 
-    def listar_relatos(self) -> list[Relato]:
-        return sorted(self._relatos.values(), key=lambda r: (r.criado_em, str(r.id)), reverse=True)
+    def solicitacoes_com_classificacao(self, classificacao: str) -> set[str]:
+        q = (select(RelatoUrgencia.solicitacao_id).join(AvaliacaoUrgencia, AvaliacaoUrgencia.relato_id == RelatoUrgencia.id)
+             .where(RelatoUrgencia.solicitacao_id.is_not(None), AvaliacaoUrgencia.classificacao == classificacao))
+        return set(self.db.scalars(q))
 
-    def salvar_avaliacao(self, a: Avaliacao) -> None:
-        self._avaliacoes[a.relato_id] = a
-
-    def avaliacao_do_relato(self, relato_id: UUID) -> Optional[Avaliacao]:
-        return self._avaliacoes.get(relato_id)
-
-    def clinica_da_solicitacao(self, solicitacao_id: UUID) -> Optional[UUID]:
-        s = self._solicitacoes.get(solicitacao_id)
-        return s[1] if s else None
-
-    def paciente_da_solicitacao(self, solicitacao_id: UUID) -> Optional[UUID]:
-        s = self._solicitacoes.get(solicitacao_id)
-        return s[0] if s else None
+    def solicitacoes_com_relato_pendente(self) -> set[str]:
+        q = select(RelatoUrgencia.solicitacao_id).where(
+            RelatoUrgencia.solicitacao_id.is_not(None), RelatoUrgencia.estado == "aguardando_avaliacao")
+        return set(self.db.scalars(q))

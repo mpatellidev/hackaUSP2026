@@ -14,12 +14,20 @@ def nao_autenticado() -> ApiError:
     return ApiError(401, "nao_autenticado", "Você precisa entrar para continuar.")
 
 
-def acesso_negado() -> ApiError:
-    return ApiError(403, "acesso_negado", "Você não tem permissão para fazer isso.")
+def acesso_negado(mensagem: str = "Você não tem permissão para fazer isso.") -> ApiError:
+    return ApiError(403, "acesso_negado", mensagem)
 
 
-def nao_encontrado() -> ApiError:
-    return ApiError(404, "nao_encontrado", "Não encontramos o que você procurou.")
+def nao_encontrado(mensagem: str = "Não encontramos o que você procurou.") -> ApiError:
+    return ApiError(404, "nao_encontrado", mensagem)
+
+
+def transicao_invalida(mensagem: str, detalhes: dict | None = None) -> ApiError:
+    return ApiError(409, "transicao_invalida", mensagem, detalhes)
+
+
+def erro_validacao(campos: list[str], mensagem: str) -> ApiError:
+    return ApiError(422, "validacao", mensagem, {"campos": campos})
 
 
 def _body(codigo: str, mensagem: str, detalhes: dict | None = None) -> dict:

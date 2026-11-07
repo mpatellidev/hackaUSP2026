@@ -29,7 +29,7 @@ export function Ajustes() {
   const { usuario, cidade, sair } = useSessao();
   const { tamanho, definirTamanho, preferencia, definirPreferencia, cores } = useTema();
   // Telas de módulos sem aba própria aparecem aqui como atalho.
-  const extras = ROTAS_MODULOS.filter((r) => !r.aba && r.titulo);
+  const extras = ROTAS_MODULOS.filter((r) => !r.aba && r.titulo && !r.semAtalho);
 
   return (
     <Tela>

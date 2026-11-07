@@ -1,0 +1,60 @@
+{
+  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real. Login demonstrativo SEM senha: NÃO é seguro para produção.",
+  "itens": [
+    {
+      "conta": "paciente.ana",
+      "usuario_id": "a1000000-0000-4000-8000-000000000001",
+      "papel": "paciente"
+    },
+    {
+      "conta": "paciente.bruno",
+      "usuario_id": "a1000000-0000-4000-8000-000000000002",
+      "papel": "paciente"
+    },
+    {
+      "conta": "paciente.carla",
+      "usuario_id": "a1000000-0000-4000-8000-000000000003",
+      "papel": "paciente"
+    },
+    {
+      "conta": "paciente.diego",
+      "usuario_id": "a1000000-0000-4000-8000-000000000004",
+      "papel": "paciente"
+    },
+    {
+      "conta": "paciente.eva",
+      "usuario_id": "a1000000-0000-4000-8000-000000000005",
+      "papel": "paciente"
+    },
+    {
+      "conta": "paciente.fabio",
+      "usuario_id": "a1000000-0000-4000-8000-000000000006",
+      "papel": "paciente"
+    },
+    {
+      "conta": "funcionario.atendimento.a",
+      "usuario_id": "a1000000-0000-4000-8000-000000000011",
+      "papel": "funcionario"
+    },
+    {
+      "conta": "funcionario.profissional.a",
+      "usuario_id": "a1000000-0000-4000-8000-000000000012",
+      "papel": "funcionario"
+    },
+    {
+      "conta": "funcionario.atendimento.b",
+      "usuario_id": "a1000000-0000-4000-8000-000000000013",
+      "papel": "funcionario"
+    },
+    {
+      "conta": "funcionario.profissional.b",
+      "usuario_id": "a1000000-0000-4000-8000-000000000014",
+      "papel": "funcionario"
+    },
+    {
+      "conta": "funcionario.coordenacao.c",
+      "usuario_id": "a1000000-0000-4000-8000-000000000015",
+      "papel": "funcionario"
+    }
+  ]
+}

@@ -12,14 +12,26 @@ export function definirToken(t: string | null) {
   token = t;
 }
 
-let rotasBackend: Promise<Set<string> | null> | null = null;
+// Caminho do OpenAPI (ex.: "/api/v1/solicitacoes/{solicitacao_id}") -> métodos HTTP em maiúsculas.
+type RotasBackend = Map<string, Set<string>>;
 
-// Caminhos do OpenAPI, ex.: "/api/v1/solicitacoes/{solicitacao_id}". null = backend inacessível.
-function carregarRotas(): Promise<Set<string> | null> {
+let rotasBackend: Promise<RotasBackend | null> | null = null;
+
+// null = backend inacessível.
+function carregarRotas(): Promise<RotasBackend | null> {
   if (!rotasBackend) {
     rotasBackend = fetch(`${API_URL}/openapi.json`)
       .then((r) => (r.ok ? r.json() : null))
-      .then((doc) => (doc ? new Set(Object.keys(doc.paths ?? {})) : null))
+      .then((doc) =>
+        doc
+          ? new Map<string, Set<string>>(
+              Object.entries<Record<string, unknown>>(doc.paths ?? {}).map(([caminho, ops]) => [
+                caminho,
+                new Set(Object.keys(ops).map((m) => m.toUpperCase())),
+              ]),
+            )
+          : null,
+      )
       .catch(() => null)
       .then((rotas) => {
         if (!rotas) rotasBackend = null; // tenta de novo na próxima chamada
@@ -29,12 +41,15 @@ function carregarRotas(): Promise<Set<string> | null> {
   return rotasBackend;
 }
 
-function rotaExiste(rotas: Set<string>, metodoCaminho: string) {
-  const caminho = PREFIXO_API + metodoCaminho.split('?')[0];
+// A rota só "existe" se o caminho E o método HTTP estão no OpenAPI (ex.: GET /vagas existe, POST /x não).
+function rotaExiste(rotas: RotasBackend, metodo: string, caminhoComQuery: string) {
+  const caminho = PREFIXO_API + caminhoComQuery.split('?')[0];
   const partes = caminho.split('/');
-  for (const rota of rotas) {
+  for (const [rota, metodos] of rotas) {
     const p = rota.split('/');
-    if (p.length === partes.length && p.every((s, i) => s.startsWith('{') || s === partes[i])) return true;
+    if (p.length === partes.length && p.every((s, i) => s.startsWith('{') || s === partes[i]) && metodos.has(metodo)) {
+      return true;
+    }
   }
   return false;
 }
@@ -57,7 +72,7 @@ export async function chamar<T>(caminho: string, { metodo = 'GET', corpo, mock }
   }
 
   const rotas = await carregarRotas();
-  if (!rotas || !rotaExiste(rotas, caminho)) {
+  if (!rotas || !rotaExiste(rotas, metodo, caminho)) {
     registrarOrigem('mock_fallback');
     return mock();
   }

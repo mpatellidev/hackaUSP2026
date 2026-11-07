@@ -1,4 +1,4 @@
-import { ApiErro, http, MODO, setToken } from "./cliente";
+import { ApiErro, http, MODO, setToken, temToken } from "./cliente";
 import { CONTAS, usuarioDe, type ContaDemo } from "./mock/dados";
 import { definirSessaoAtual } from "./sessaoAtual";
 import type { Usuario } from "./tipos";
@@ -22,6 +22,20 @@ export async function entrar(conta: string): Promise<Usuario> {
   }
   definirSessaoAtual(usuario);
   return usuario;
+}
+
+/** Recarregou a página com token na aba: pergunta ao servidor quem é (papel e clínica nunca vêm do cliente). */
+export async function restaurar(): Promise<Usuario | null> {
+  if (MODO !== "api" || !temToken()) return null;
+  try {
+    const usuario = (await http<{ usuario: Usuario }>("GET", "/auth/me")).usuario;
+    if (usuario.papel !== "funcionario") { setToken(null); return null; }
+    definirSessaoAtual(usuario);
+    return usuario;
+  } catch {
+    setToken(null);
+    return null;
+  }
 }
 
 export function sair() {

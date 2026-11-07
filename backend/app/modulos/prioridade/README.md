@@ -16,7 +16,10 @@ Serviço explicável de fila para **demonstração**. Pesos ilustrativos (`pesos
 - `POST /faltas {agendamento_id, justificativa}` · `GET /faltas` · `POST /faltas/{id}/revisao {acao: reverter|manter, motivo}`
 
 ## Integração (#10)
-`fontes.py` define `get_fontes()` com leitura de **fixtures** (`fontes_demo: true` na resposta) para perfil (#18), urgência (#14) e cenários (#11). Troque só essa função quando os módulos reais existirem. Trocar pesos: `PESOS_VERSAO=<arquivo em pesos/>`.
+`fontes.py` define `get_fontes()` → `FontesBanco`, que lê pelos **serviços** dos módulos (banco, não JSON): perfil/renda (`perfil.service.faixa_renda`), urgência (`urgencia.service.status_urgencia`) e cenários (`cenarios.service.cenario_correspondente`). `fila.py` monta e ordena a fila (usado também pela ordem sugerida de interessados em `vagas`). `fontes_demo: true` na resposta indica dados fictícios. Trocar pesos: `PESOS_VERSAO=<arquivo em pesos/>`.
+
+## Cancelamento
+Cancelamento antecipado ou pela clínica (`POST /agendamentos/{id}/cancelar`) **nunca** cria `RegistroFalta`: o componente `falta_verificada` não muda (testado em `agendamentos/tests`).
 
 ## Ainda não existe
-Contestação da falta pelo paciente (hoje ele vê o motivo; a revisão é feita pela clínica); cancelamento de agendamento (em aberto no contrato §10).
+Contestação da falta pelo paciente (hoje ele vê o motivo; a revisão é feita pela clínica).

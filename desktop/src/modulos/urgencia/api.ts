@@ -1,3 +1,6 @@
+import { http, MODO } from '../../api/cliente';
+import { sessaoAtual } from '../../api/sessaoAtual';
+
 export interface RelatoUrgencia {
   id: string;
   paciente_id: string;
@@ -13,22 +16,34 @@ export interface ClienteUrgenciaPainel {
   avaliar(id: string, classificacao: 'urgencia_confirmada' | 'sem_urgencia', observacao?: string): Promise<RelatoUrgencia>;
 }
 
-export function criarClienteApi(baseUrl: string, token: () => string | null, fetchImpl: typeof fetch = fetch): ClienteUrgenciaPainel {
-  async function chamar<T>(caminho: string, init: RequestInit = {}): Promise<T> {
-    const r = await fetchImpl(`${baseUrl}/api/v1${caminho}`, {
-      ...init,
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token() ?? ''}` },
-    });
-    const corpo = await r.json().catch(() => null);
-    if (!r.ok) throw new Error(corpo?.erro?.mensagem ?? 'Não foi possível concluir.');
-    return corpo as T;
-  }
+/** Cliente real: usa o `http` do desktop (URL base já inclui /api/v1, token da sessão). */
+export function criarClienteApi(): ClienteUrgenciaPainel {
   return {
-    listar: async () => (await chamar<{ itens: RelatoUrgencia[] }>('/urgencias')).itens,
+    listar: async () => (await http<{ itens: RelatoUrgencia[] }>('GET', '/urgencias')).itens,
     avaliar: (id, classificacao, observacao) =>
-      chamar<RelatoUrgencia>(`/urgencias/${id}/avaliacao`, {
-        method: 'POST',
-        body: JSON.stringify({ classificacao, observacao_administrativa: observacao || null }),
-      }),
+      http<RelatoUrgencia>('POST', `/urgencias/${id}/avaliacao`, { classificacao, observacao_administrativa: observacao || null }),
   };
 }
+
+/** Cliente demonstrativo (modo mock): dados fictícios em memória. */
+export function criarClienteMock(): ClienteUrgenciaPainel {
+  let itens: RelatoUrgencia[] = [{
+    id: 'mock-relato-1', paciente_id: 'mock-paciente', solicitacao_id: null, estado: 'aguardando_avaliacao',
+    criado_em: new Date().toISOString(), rotulo: 'Aguardando avaliação', avaliacao: null,
+  }];
+  return {
+    listar: async () => itens,
+    avaliar: async (id, classificacao, observacao) => {
+      const r = itens.find((x) => x.id === id);
+      if (!r) throw new Error('Relato não encontrado.');
+      const novo: RelatoUrgencia = {
+        ...r, estado: 'avaliada', rotulo: 'Avaliada por profissional',
+        avaliacao: { classificacao, observacao_administrativa: observacao || null, avaliado_em: new Date().toISOString(), avaliador_usuario_id: sessaoAtual()?.id ?? 'mock' },
+      };
+      itens = itens.map((x) => (x.id === id ? novo : x));
+      return novo;
+    },
+  };
+}
+
+export const clienteUrgencia: ClienteUrgenciaPainel = MODO === 'api' ? criarClienteApi() : criarClienteMock();

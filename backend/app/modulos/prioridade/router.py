@@ -1,21 +1,21 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy import func, or_, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.auth import Actor, get_actor, require_funcionario
 from app.core.db import get_db
 from app.core.errors import ApiError, acesso_negado, nao_encontrado
-from app.core.time import as_utc, to_sp_iso, utc_now
+from app.core.time import to_sp_iso
 from app.models.solicitacoes import Solicitacao
 from app.models.usuarios import Usuario
 from app.models.vagas import Agendamento
-from app.modulos.prioridade import pesos as pesos_mod
 from app.modulos.prioridade import service
+from app.modulos.prioridade.fila import carregar_pesos, ordenar_pedidos
 from app.modulos.prioridade.fontes import Fontes, get_fontes
 from app.modulos.prioridade.models import RegistroFalta, RevisaoFalta
 from app.modulos.prioridade.schemas import (ComponenteOut, FaltaIn, FaltaOut, FilaOut, ItemFila,
                                             RevisaoIn, RevisaoOut)
-from app.repositories import solicitacoes as repo
+from app.modulos.solicitacoes import repositorio as repo
 
 router = APIRouter(tags=["prioridade e faltas"])
 
@@ -23,37 +23,6 @@ ESTADOS_NA_FILA = ("enviada", "em_analise", "precisa_contato", "aguardando_confi
 ORDENACAO = "(urgencia_avaliada desc, score desc, criado_em asc, id asc)"
 AVISO = ("Pesos ilustrativos, não são critérios clínicos validados. A ordem é apoio à decisão: "
          "a priorização e a verificação são sempre feitas por profissional.")
-
-
-def _pesos() -> pesos_mod.Pesos:
-    try:
-        return pesos_mod.carregar()
-    except pesos_mod.PesosInvalidos as e:
-        raise ApiError(503, "servico_indisponivel", f"Configuração de pesos inválida: {e}")
-
-
-def _faltas_confirmadas(db: Session, paciente_ids: set[str]) -> dict[str, int]:
-    if not paciente_ids:
-        return {}
-    q = (select(RegistroFalta.paciente_id, func.count()).where(
-        RegistroFalta.estado == "confirmada", RegistroFalta.paciente_id.in_(paciente_ids))
-        .group_by(RegistroFalta.paciente_id))
-    return dict(db.execute(q).all())
-
-
-def _itens(db: Session, solicitacoes: list[Solicitacao], fontes: Fontes) -> list[tuple[Solicitacao, service.Item]]:
-    pesos, agora = _pesos(), utc_now()
-    faltas = _faltas_confirmadas(db, {s.paciente_id for s in solicitacoes})
-    out = []
-    for s in solicitacoes:
-        entrada = service.Entrada(
-            solicitacao_id=s.id, clinica_id=s.clinica_id, criado_em=as_utc(s.criado_em),
-            urgencia=fontes.urgencia(s.id), faixa_renda=fontes.faixa_renda(s.paciente_id),
-            necessidade_academica=fontes.cenario_correspondente(s.clinica_id, s.especialidade),
-            faltas_confirmadas=faltas.get(s.paciente_id, 0))
-        out.append((s, service.calcular(entrada, pesos, agora)))
-    por_id = {i.entrada.solicitacao_id: s for s, i in out}
-    return [(por_id[i.entrada.solicitacao_id], i) for i in service.ordenar([i for _, i in out])]
 
 
 def _item_out(db: Session, pos: int, s: Solicitacao, i: service.Item, versao: str) -> ItemFila:
@@ -72,8 +41,8 @@ def fila(clinica_id: str, actor: Actor = Depends(require_funcionario), db: Sessi
     if not actor.pode_na_clinica(clinica_id):
         raise nao_encontrado()
     pedidos = [s for s in repo.listar(db, actor) if s.clinica_id == clinica_id and s.estado in ESTADOS_NA_FILA]
-    versao = _pesos().versao
-    itens = [_item_out(db, n, s, i, versao) for n, (s, i) in enumerate(_itens(db, pedidos, fontes), 1)]
+    versao = carregar_pesos().versao
+    itens = [_item_out(db, n, s, i, versao) for n, (s, i) in enumerate(ordenar_pedidos(db, pedidos, fontes), 1)]
     return FilaOut(itens=itens, total=len(itens), versao_pesos=versao, ordenacao=ORDENACAO,
                    fontes_demo=fontes.demo, aviso=AVISO)
 
@@ -83,13 +52,13 @@ def fila(clinica_id: str, actor: Actor = Depends(require_funcionario), db: Sessi
 def prioridade(solicitacao_id: str, actor: Actor = Depends(require_funcionario), db: Session = Depends(get_db),
                fontes: Fontes = Depends(get_fontes)):
     s = repo.obter(db, actor, solicitacao_id)
-    fila_ordenada = _itens(db, [x for x in repo.listar(db, actor) if x.clinica_id == s.clinica_id
+    fila_ordenada = ordenar_pedidos(db, [x for x in repo.listar(db, actor) if x.clinica_id == s.clinica_id
                                 and x.estado in ESTADOS_NA_FILA] or [s], fontes)
-    versao = _pesos().versao
+    versao = carregar_pesos().versao
     for n, (x, i) in enumerate(fila_ordenada, 1):
         if x.id == s.id:
             return _item_out(db, n, x, i, versao)
-    (x, i), = _itens(db, [s], fontes)  # pedido fora da fila (ex.: concluído): só a decomposição
+    (x, i), = ordenar_pedidos(db, [s], fontes)  # pedido fora da fila (ex.: concluído): só a decomposição
     return _item_out(db, 0, x, i, versao)
 
 

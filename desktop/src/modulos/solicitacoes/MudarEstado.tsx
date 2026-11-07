@@ -5,6 +5,7 @@ import { Erro } from "../../componentes/Estados";
 
 const ACAO: Partial<Record<Estado, string>> = {
   em_analise: "Colocar em análise", precisa_contato: "Precisa de contato", indisponivel: "Não recebemos agora",
+  concluida: "Marcar atendimento como concluído",
 };
 
 /** Só oferece as mudanças válidas para o estado atual. O servidor continua sendo quem decide (409 vira erro visível). */

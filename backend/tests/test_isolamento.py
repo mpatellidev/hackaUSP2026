@@ -6,7 +6,7 @@ from app.core.auth import Actor
 from app.core.errors import ApiError
 from app.models.solicitacoes import Solicitacao
 from app.models.vagas import Agendamento
-from app.repositories import solicitacoes as repo
+from app.modulos.solicitacoes import repositorio as repo
 from tests.conftest import ANA, ATEND_A, ATEND_B, CLINICA_A, CLINICA_B, EVA
 
 
