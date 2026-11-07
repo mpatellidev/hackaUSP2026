@@ -2,3 +2,4 @@
 # Cada frente adiciona UMA linha (ex.: from app.models import cenarios  # noqa).
 from app.models import clinicas, solicitacoes, usuarios, vagas  # noqa: F401
 from app.modulos.prioridade import models as _prioridade  # noqa: F401
+from app.modulos.acessibilidade import models as _acessibilidade  # noqa: F401

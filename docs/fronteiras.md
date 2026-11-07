@@ -16,7 +16,8 @@ Como o time grande trabalha em paralelo sem pisar nos arquivos dos outros. Numer
 | `backend/app/modulos/resumos/` | #15 | |
 | `backend/app/modulos/avaliacoes/` | #16 | |
 | `backend/app/modulos/alertas/` | #17 | |
-| `backend/app/modulos/acessibilidade/` | #9 | Serviço Gemini/mock |
+| `backend/app/modulos/acessibilidade/` | #9 | Chat acessível: serviço de IA (mock/Gemini/Claude), perfil de comunicação, TTS |
+| `web/` | #9 | Cliente web do chat acessível para pacientes (React/Vite); usa `VITE_API_URL` |
 | `mobile/` (esqueleto, navegação, tema, adaptador de API) | #5 | Ponto de montagem mobile |
 | `mobile/src/modulos/acompanhamento/` | #6 | Exporta telas; não edita a navegação |
 | `mobile/src/modulos/{cenarios,urgencia,alertas,avaliacoes,perfil,acessibilidade}/` | #12 · #14 · #17 · #16 · #18 · #9 | Exportam telas + guia de integração |

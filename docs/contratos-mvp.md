@@ -318,6 +318,8 @@ Componentes: `socioeconomico`, `necessidade_academica`, `tempo_espera`, `falta_v
 ### 9.8 Mensagem simplificada — #9 (IA/acessibilidade)
 `POST /acessibilidade/simplificar` `{"texto", "nivel": "simples|detalhada"}` → `{"original", "adaptado", "fonte": "mock|gemini", "aviso"}`. O original **sempre** acompanha o adaptado; nunca diagnostica, prevê vaga ou orienta clinicamente. Chave do Gemini só no servidor; modo `mock` sem rede é o padrão.
 
+**Chat acessível (#9)** — só paciente (funcionário → `403`). `GET/PUT /acessibilidade/chat/perfil` (`escolaridade`, `faixa_etaria`, `deficiencias[]`, `prefere_audio`; todos com "prefiro não dizer"). `POST /acessibilidade/chat` `{"message", "conversation_id"?}` → `{"modo": "demo", "fonte": "mock|gemini|claude", "aviso", "conversation_id", "messages": [{"text", "audio"?}], "quick_replies": [{"label", "value"}], "ui_prefs"}`. A IA age como o paciente do token: lê clínicas, pedidos, histórico e agendamentos **confirmados**, e pode **enviar pedido** (§4.3, com confirmação explícita). Nunca cria, muda ou cancela agendamento; sinal grave → SAMU 192.
+
 ## 10. Pontos em aberto (decidir antes da integração)
 
 - ~~Desfecho de falta~~ resolvido na 0.1.1 (ver §4.6 e §9.3). Resta decidir o fluxo de **cancelamento** de agendamento (endpoint e quem pode), a cargo da #4.

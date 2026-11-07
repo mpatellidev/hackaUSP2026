@@ -32,6 +32,9 @@ Defina `DATABASE_URL=postgresql+psycopg://USUARIO:SENHA@HOST:5432/postgres` (no 
 - Migrações: `uv run alembic revision --autogenerate -m "<modulo>"` encadeada no `head`. Rode `alembic heads`; se houver 2 heads depois de um merge, combine com `alembic merge`.
 - Invariantes no banco: no máximo 1 `Agendamento` não cancelado por vaga (índice único parcial); `InteresseVaga` único por (vaga, solicitação).
 
+## Chat acessível (#9)
+Módulo `app/modulos/acessibilidade/` (rotas em `/api/v1/acessibilidade/...`, só paciente). Padrão `LLM_PROVIDER=mock` (sem rede e sem chave); Gemini/Claude opcionais via `.env`. Detalhes: `app/modulos/acessibilidade/README.md`. Cliente web: `web/` na raiz.
+
 ## Limitações
 - O seed lê `docs/fixtures/` (da #1) diretamente; rode os comandos a partir do checkout completo do repositório.
 - Sem rotas de pedidos/vagas ainda; sem rate limit; CORS por `CORS_ORIGINS`.
