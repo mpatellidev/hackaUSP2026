@@ -7,7 +7,7 @@ from app.core.auth import Actor, require_paciente
 from app.core.db import get_db
 from app.core.errors import ApiError, nao_encontrado
 from app.modulos.acessibilidade.adaptacao import build_adaptation, describe_profile
-from app.modulos.acessibilidade.config import get_chat_settings
+from app.core.config import get_settings
 from app.modulos.acessibilidade.models import PerfilChat
 from app.modulos.acessibilidade.motores.base import ChatEngine
 from app.modulos.acessibilidade.motores.factory import get_chat_engine
@@ -73,7 +73,7 @@ def audio(arquivo: str):
     # Sem token: o <audio> do navegador não envia cabeçalho. O nome é um hash imprevisível.
     if not NOME_AUDIO.match(arquivo):
         raise nao_encontrado()
-    path = get_chat_settings().tts_cache_dir / arquivo
+    path = get_settings().tts_cache_dir / arquivo
     if not path.is_file():
         raise nao_encontrado()
     return FileResponse(path, media_type="audio/mpeg")

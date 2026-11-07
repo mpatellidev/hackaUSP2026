@@ -3,7 +3,7 @@ import re
 from functools import lru_cache
 from typing import Protocol
 
-from app.modulos.acessibilidade.config import get_chat_settings
+from app.core.config import get_settings
 
 AUDIO_PATH = "/api/v1/acessibilidade/audio/"
 NOME_AUDIO = re.compile(r"^[0-9a-f]{32}\.mp3$")
@@ -23,7 +23,7 @@ class NoTTS:
 
 @lru_cache
 def get_tts_provider() -> TTSProvider:
-    s = get_chat_settings()
+    s = get_settings()
     if s.tts_provider == "openai" and s.openai_api_key:
         from app.modulos.acessibilidade.tts_openai import OpenAITTS
 

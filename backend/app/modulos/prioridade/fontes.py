@@ -1,15 +1,18 @@
-"""Portas de entrada desacopladas das frentes #18 (perfil), #14 (urgência) e #11 (cenários).
-Hoje: implementações DEMO que leem fixtures. Na integração (#10) troque get_fontes() por
-implementações reais; o serviço e o router não mudam."""
-import json
-from pathlib import Path
+"""Portas de entrada da fila (#13) para dados de outras frentes: perfil (#18), urgência (#14), cenários (#11).
+
+`FontesBanco` lê pelos SERVIÇOS desses módulos (não de JSON): o que a pessoa ou o profissional alterar
+na API muda a fila. Os dados continuam fictícios (`demo = True`)."""
 from typing import Protocol
 
-FIX = Path(__file__).resolve().parents[4] / "docs" / "fixtures"
+from fastapi import Depends
+from sqlalchemy.orm import Session
 
-
-def _json(nome: str) -> dict:
-    return json.loads((FIX / nome).read_text(encoding="utf-8"))
+from app.core.db import get_db
+from app.modulos.cenarios import service as cenarios_service
+from app.modulos.cenarios.repositorio import RepositorioCenarios
+from app.modulos.perfil import service as perfil_service
+from app.modulos.urgencia import service as urgencia_service
+from app.modulos.urgencia.repositorio import RepositorioUrgencia
 
 
 class Fontes(Protocol):
@@ -20,30 +23,23 @@ class Fontes(Protocol):
     def cenario_correspondente(self, clinica_id: str, especialidade: str) -> bool: ...
 
 
-class FontesDemo:
-    demo = True
+class FontesBanco:
+    demo = True  # dados fictícios de demonstração
 
-    def __init__(self) -> None:
-        self._perfis = {p["usuario_id"]: p for p in _json("perfis.json")["itens"]}
-        u = _json("urgencias.json")
-        confirmados = {a["relato_id"] for a in u["avaliacoes"] if a["classificacao"] == "urgencia_confirmada"}
-        self._avaliadas = {r["solicitacao_id"] for r in u["relatos"] if r["id"] in confirmados}
-        self._pendentes = {r["solicitacao_id"] for r in u["relatos"]
-                           if r["estado"] == "aguardando_avaliacao" and r["solicitacao_id"]}
-        self._cenarios = [c for c in _json("cenarios.json")["itens"] if c["estado"] == "ativo"]
+    def __init__(self, db: Session) -> None:
+        self._db = db
+        self._urgencia = RepositorioUrgencia(db)
+        self._cenarios = RepositorioCenarios(db)
 
     def faixa_renda(self, paciente_id: str) -> str | None:
-        socio = (self._perfis.get(paciente_id) or {}).get("socioeconomico") or {}
-        return socio.get("faixa_renda_familiar") if socio.get("informado") else None
+        return perfil_service.faixa_renda(self._db, paciente_id)
 
     def urgencia(self, solicitacao_id: str) -> str:
-        if solicitacao_id in self._avaliadas:
-            return "avaliada"
-        return "autodeclarada" if solicitacao_id in self._pendentes else "nenhuma"
+        return urgencia_service.status_urgencia(self._urgencia, solicitacao_id)
 
     def cenario_correspondente(self, clinica_id: str, especialidade: str) -> bool:
-        return any(c["clinica_id"] == clinica_id and c["especialidade"] == especialidade for c in self._cenarios)
+        return cenarios_service.cenario_correspondente(self._cenarios, clinica_id, especialidade)
 
 
-def get_fontes() -> Fontes:
-    return FontesDemo()
+def get_fontes(db: Session = Depends(get_db)) -> Fontes:
+    return FontesBanco(db)

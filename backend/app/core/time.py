@@ -32,3 +32,8 @@ def hours(n: int) -> timedelta:
 def as_utc(dt: datetime) -> datetime:
     """SQLite devolve datetimes sem tzinfo; no banco tudo é UTC."""
     return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+
+
+def to_sp(dt: datetime) -> datetime:
+    """Datetime ciente de fuso em America/Sao_Paulo (para campos `datetime` de schemas Pydantic)."""
+    return as_utc(dt).astimezone(SP)

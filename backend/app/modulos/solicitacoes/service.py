@@ -8,7 +8,7 @@ from app.core.time import to_sp_iso, utc_now
 from app.models.clinicas import Clinica
 from app.models.solicitacoes import ESTADOS_ATIVOS, EventoSolicitacao, Solicitacao
 from app.models.vagas import Agendamento
-from app.repositories import solicitacoes as repo
+from app.modulos.solicitacoes import repositorio as repo
 
 CRITERIOS_ALTERNATIVAS = ["mesma_cidade", "publico_compativel", "recebendo_pedidos", "mesma_especialidade"]
 AVISO_ALTERNATIVAS = "Sugestão não é garantia de vaga nem de atendimento."

@@ -16,7 +16,8 @@ from app.models.clinicas import Clinica
 from app.models.solicitacoes import ESTADOS_ATIVOS, EventoSolicitacao, Solicitacao
 from app.models.usuarios import Usuario
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
-from app.repositories import solicitacoes as repo
+from app.modulos.prioridade.fila import ordenar_pedidos  # score e ordenação vivem só na #13
+from app.modulos.solicitacoes import repositorio as repo
 
 # Pedido em que o paciente já pode demonstrar interesse (tabela da seção 5 do contrato).
 ESTADOS_PARA_INTERESSE = ("enviada", "em_analise", "precisa_contato", "aguardando_confirmacao")
@@ -57,10 +58,6 @@ def _evento(db: Session, pedido: Solicitacao, tipo: str, actor: Actor, anterior:
                              criado_em=utc_now()))
 
 
-def _clinica_do_funcionario(actor: Actor) -> str:
-    return sorted(actor.vinculos)[0]
-
-
 def _vaga_da_clinica(db: Session, actor: Actor, vaga_id: str) -> Vaga:
     """Funcionário só enxerga vagas das próprias clínicas; fora disso, 404."""
     vaga = db.get(Vaga, vaga_id)
@@ -72,7 +69,7 @@ def _vaga_da_clinica(db: Session, actor: Actor, vaga_id: str) -> Vaga:
 # ---- publicar e listar ------------------------------------------------------------------------
 
 def criar(db: Session, actor: Actor, especialidade: str, inicio, fim) -> Vaga:
-    clinica_id = _clinica_do_funcionario(actor)
+    clinica_id = actor.clinica_principal
     clinica = db.get(Clinica, clinica_id)
     if especialidade not in clinica.especialidades:
         raise _erro_validacao(["especialidade"], "A clínica não atende essa especialidade.")
@@ -166,14 +163,12 @@ def registrar_interesse(db: Session, actor: Actor, vaga_id: str, solicitacao_id:
 def interesses_da_vaga(db: Session, actor: Actor, vaga_id: str, fontes) -> list[dict]:
     """Interessados na ordem SUGERIDA pelo serviço de prioridade (#13): urgência avaliada primeiro.
     A decisão final é do funcionário."""
-    from app.modulos.prioridade.router import _itens  # score e ordenação vivem só na #13
-
     vaga = _vaga_da_clinica(db, actor, vaga_id)
     interesses = list(db.scalars(select(InteresseVaga).where(InteresseVaga.vaga_id == vaga.id)
                                  .order_by(InteresseVaga.criado_em, InteresseVaga.id)))
     pedidos = {p.id: p for p in db.scalars(select(Solicitacao).where(
         Solicitacao.id.in_([i.solicitacao_id for i in interesses] or [""])))}
-    ordem = {s.id: (n, item) for n, (s, item) in enumerate(_itens(db, list(pedidos.values()), fontes), 1)}
+    ordem = {s.id: (n, item) for n, (s, item) in enumerate(ordenar_pedidos(db, list(pedidos.values()), fontes), 1)}
     saida = []
     for i in interesses:
         pedido = pedidos[i.solicitacao_id]

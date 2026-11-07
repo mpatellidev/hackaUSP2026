@@ -2,7 +2,7 @@
 
 Regras do contrato que valem aqui:
 - Quem age é sempre o paciente do token (Actor); nada de paciente_id vindo da IA.
-- Leituras de pedidos passam por app.repositories.solicitacoes (já escopadas).
+- Leituras de pedidos passam por app.modulos.solicitacoes.repositorio (já escopadas).
 - Pedido ≠ agendamento: a IA pode ENVIAR um pedido, nunca criar/remarcar/cancelar agendamento.
   "Agendada" só aparece quando o backend tem o estado `agendada`/Agendamento confirmado por funcionário.
 """
@@ -23,7 +23,7 @@ from app.models.vagas import Agendamento, Vaga
 from app.modulos.acessibilidade.formatos import por_extenso
 from app.modulos.acessibilidade.schemas import QuickReply
 from app.modulos.solicitacoes import service as solicitacoes_service
-from app.repositories import solicitacoes as repo
+from app.modulos.solicitacoes import repositorio as repo
 
 ESTADO_EXPLICADO = {
     "enviada": "Pedido enviado. A clínica ainda vai olhar.",

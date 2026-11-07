@@ -1,33 +1,30 @@
-from dataclasses import dataclass
+"""Tabelas de urgência (migração própria: alembic/versions/0005_urgencia_tabelas.py)."""
 from datetime import datetime
-from typing import Optional
-from uuid import UUID
+
+from sqlalchemy import DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.core.db import Base
+from app.models.base import CriadoEm, UuidPk
+
+ESTADOS_RELATO = ("aguardando_avaliacao", "avaliada")
+CLASSIFICACOES = ("urgencia_confirmada", "sem_urgencia")
 
 
-@dataclass
-class Relato:
-    id: UUID
-    paciente_id: UUID
-    solicitacao_id: Optional[UUID]
-    estado: str
-    criado_em: datetime
+class RelatoUrgencia(UuidPk, CriadoEm, Base):
+    """Relato feito pelo paciente. Gera revisão humana; NUNCA gera punição."""
+    __tablename__ = "urgencia_relatos"
+    paciente_id: Mapped[str] = mapped_column(ForeignKey("usuarios.id"), index=True)
+    solicitacao_id: Mapped[str | None] = mapped_column(ForeignKey("solicitacoes.id"), default=None, index=True)
+    estado: Mapped[str] = mapped_column(default="aguardando_avaliacao")
 
 
-@dataclass
-class Avaliacao:
-    id: UUID
-    relato_id: UUID
-    avaliador_usuario_id: UUID
-    classificacao: str
-    observacao_administrativa: Optional[str]
-    avaliado_em: datetime
-
-
-@dataclass(frozen=True)
-class Ator:
-    """Identidade vinda do servidor (token). Nunca construída a partir do corpo."""
-
-    usuario_id: UUID
-    papel: str  # "paciente" | "funcionario"
-    funcao: Optional[str] = None  # atendimento | profissional | coordenacao
-    clinica_id: Optional[UUID] = None
+class AvaliacaoUrgencia(UuidPk, Base):
+    """Avaliação por profissional (única por relato). Só a avaliação `urgencia_confirmada` pesa na fila (#13)."""
+    __tablename__ = "urgencia_avaliacoes"
+    __table_args__ = (UniqueConstraint("relato_id"),)
+    relato_id: Mapped[str] = mapped_column(ForeignKey("urgencia_relatos.id"))
+    avaliador_usuario_id: Mapped[str] = mapped_column(ForeignKey("usuarios.id"))
+    classificacao: Mapped[str]
+    observacao_administrativa: Mapped[str | None] = mapped_column(default=None)
+    avaliado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True))

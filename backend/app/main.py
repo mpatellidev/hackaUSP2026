@@ -2,9 +2,9 @@ from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
-from app import integracao
 from app.core.errors import install_error_handlers
-from app.routers import ROUTERS, saude
+from app.modulos.saude import router as saude
+from app.registro import ROUTERS
 from app.ui_teste import montar as montar_ui_teste
 
 
@@ -20,7 +20,6 @@ def create_app() -> FastAPI:
     )
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_list, allow_methods=["*"], allow_headers=["*"])
     install_error_handlers(app)
-    integracao.instalar(app)
     api = APIRouter(prefix="/api/v1")
     for r in ROUTERS:
         api.include_router(r)

@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -8,12 +7,9 @@ from app.core.db import get_db
 from app.core.errors import ApiError
 from app.core.time import to_sp_iso
 from app.models.usuarios import Usuario
+from app.modulos.auth.schemas import LoginIn
 
 router = APIRouter(prefix="/auth", tags=["autenticação DEMO"])
-
-
-class LoginIn(BaseModel):
-    conta: str
 
 
 def _usuario_json(actor: Actor) -> dict:

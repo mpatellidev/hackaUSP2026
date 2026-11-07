@@ -7,7 +7,7 @@ from app.core.db import get_db
 from app.models.clinicas import Clinica
 from app.modulos.solicitacoes import service
 from app.modulos.solicitacoes.schemas import AtualizarEstadoIn, CriarSolicitacaoIn, EncaminharIn
-from app.repositories import solicitacoes as repo
+from app.modulos.solicitacoes import repositorio as repo
 
 router = APIRouter(tags=["solicitações"])
 

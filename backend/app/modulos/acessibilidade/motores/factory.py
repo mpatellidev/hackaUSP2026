@@ -1,12 +1,12 @@
 from functools import lru_cache
 
-from app.modulos.acessibilidade.config import get_chat_settings
+from app.core.config import get_settings
 from app.modulos.acessibilidade.motores.base import ChatEngine
 
 
 @lru_cache
 def get_chat_engine() -> ChatEngine:
-    s = get_chat_settings()
+    s = get_settings()
     if s.llm_provider == "mock":
         from app.modulos.acessibilidade.motores.mock import MockEngine
 

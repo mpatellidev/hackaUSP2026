@@ -27,8 +27,17 @@ class Actor:
     vinculos: dict[str, str] = field(default_factory=dict)  # clinica_id -> funcao
 
     @property
+    def clinica_principal(self) -> str | None:
+        """Clínica usada ao CRIAR algo (vaga, cenário). O protótipo tem um vínculo por conta; a ordem é estável."""
+        return sorted(self.vinculos)[0] if self.vinculos else None
+
+    @property
     def clinica_ids(self) -> set[str]:
         return set(self.vinculos)
+
+    def clinica_da_funcao(self, *funcoes: str) -> str | None:
+        """Primeira clínica (ordem estável) em que o funcionário tem uma das funções."""
+        return next((c for c in sorted(self.vinculos) if self.vinculos[c] in funcoes), None)
 
     def pode_na_clinica(self, clinica_id: str) -> bool:
         return clinica_id in self.vinculos
@@ -94,3 +103,4 @@ def require_funcionario(actor: Actor = Depends(get_actor)) -> Actor:
     if actor.papel != "funcionario" or not actor.vinculos:
         raise acesso_negado()
     return actor
+
