@@ -9,7 +9,7 @@ from app.core.errors import ApiError, nao_encontrado
 from app.core.time import to_sp_iso
 from app.models.clinicas import Clinica
 from app.models.usuarios import Usuario, VinculoClinica
-from app.modulos.auth.schemas import LoginDemoIn, LoginIn
+from app.modulos.auth.schemas import ContasDemo, LoginDemoIn, LoginIn, LoginOut, MeOut
 
 router = APIRouter(prefix="/auth", tags=["autenticação DEMO"])
 
@@ -29,7 +29,7 @@ def _resposta_login(db: Session, usuario: Usuario) -> dict:
             "usuario": {"id": usuario.id, "papel": usuario.papel, "nome_exibicao": usuario.nome_exibicao}}
 
 
-@router.get("/contas", summary="Contas fictícias para o login de demonstração")
+@router.get("/contas", response_model=ContasDemo, summary="Contas fictícias para o login de demonstração")
 def contas_demo(db: Session = Depends(get_db)):
     """Lista pública de contas FICTÍCIAS (sem dado pessoal). A senha de demo só é exibida com DEMO_MODE=true."""
     cfg = get_settings()
@@ -44,7 +44,7 @@ def contas_demo(db: Session = Depends(get_db)):
             "login_sem_senha": cfg.demo_mode, "itens": itens}
 
 
-@router.post("/login", summary="Login DEMO com conta fictícia e senha de demonstração")
+@router.post("/login", response_model=LoginOut, summary="Login DEMO com conta fictícia e senha de demonstração")
 def login_com_senha(body: LoginIn, db: Session = Depends(get_db)):
     usuario = db.scalar(select(Usuario).where(Usuario.conta_demo == body.conta, Usuario.ativo))
     if usuario is None or not senha_confere(body.senha, usuario.senha_hash):
@@ -52,7 +52,7 @@ def login_com_senha(body: LoginIn, db: Session = Depends(get_db)):
     return _resposta_login(db, usuario)
 
 
-@router.post("/demo/login", summary="Login DEMO sem senha (só com DEMO_MODE=true)")
+@router.post("/demo/login", response_model=LoginOut, summary="Login DEMO sem senha (só com DEMO_MODE=true)")
 def login_sem_senha(body: LoginDemoIn, db: Session = Depends(get_db)):
     if not get_settings().demo_mode:
         raise nao_encontrado()
@@ -62,7 +62,7 @@ def login_sem_senha(body: LoginDemoIn, db: Session = Depends(get_db)):
     return _resposta_login(db, usuario)
 
 
-@router.get("/me", summary="Usuário do token (papel e clínica vêm do servidor)")
+@router.get("/me", response_model=MeOut, response_model_exclude_unset=True, summary="Usuário do token (papel e clínica vêm do servidor)")
 def me(actor: Actor = Depends(get_actor)):
     return {"modo": "demo", "usuario": _usuario_json(actor)}
 
