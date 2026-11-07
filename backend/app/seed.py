@@ -1,4 +1,4 @@
-"""Seed idempotente com dados 100% fictícios (backend/seed_data, snapshot de docs/fixtures).
+"""Seed idempotente com dados 100% fictícios (lê docs/fixtures, fixtures estáveis da #1).
 Uso: uv run python -m app.seed   (pode rodar várias vezes: IDs fixos, upsert por id)."""
 import json
 from pathlib import Path
@@ -12,7 +12,7 @@ from app.models.solicitacoes import EventoSolicitacao, Solicitacao
 from app.models.usuarios import Usuario, VinculoClinica
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
 
-DATA = Path(__file__).resolve().parent.parent / "seed_data"
+DATA = Path(__file__).resolve().parents[2] / "docs" / "fixtures"
 
 
 def _load(name: str) -> list[dict]:
@@ -54,7 +54,7 @@ def run(db: Session) -> dict[str, int]:
     for r in _load("agendamentos"):
         db.merge(Agendamento(id=r["id"], vaga_id=r["vaga_id"], solicitacao_id=r["solicitacao_id"],
                              paciente_id=r["paciente_id"], clinica_id=r["clinica_id"], estado=r["estado"],
-                             confirmado_por=r["confirmado_por"], **_dt(r, "confirmado_em")))
+                             desfecho=r.get("desfecho", "pendente"), confirmado_por=r["confirmado_por"], **_dt(r, "confirmado_em")))
     db.commit()
     return {m.__tablename__: db.query(m).count()
             for m in (Clinica, Usuario, VinculoClinica, Solicitacao, EventoSolicitacao, Vaga, InteresseVaga, Agendamento)}
