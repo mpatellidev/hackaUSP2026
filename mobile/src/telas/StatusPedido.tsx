@@ -23,9 +23,9 @@ import { formatarDataHora, ROTULO_ESTADO, rotuloEspecialidade } from '../textos/
 
 // Rota que a #6 (acompanhamento) pode registrar para alternativas/escolha de outra clínica.
 const ROTA_ALTERNATIVAS = 'Acompanhamento.Alternativas';
-// Vagas informadas pela clínica (#6/#4): só faz sentido com o pedido já em análise.
+// Vagas informadas pela clínica (#6/#4): contrato 0.1.3, o pedido já enviado pode demonstrar interesse.
 const ROTA_VAGAS = 'Acompanhamento.Vagas';
-const ESTADOS_COM_VAGAS: EstadoSolicitacao[] = ['em_analise', 'precisa_contato', 'aguardando_confirmacao'];
+const ESTADOS_COM_VAGAS: EstadoSolicitacao[] = ['enviada', 'em_analise', 'precisa_contato', 'aguardando_confirmacao'];
 // Relato de urgência (#14): leva a revisão humana, nunca pune.
 const ROTA_URGENCIA = 'Urgencia.Relato';
 
