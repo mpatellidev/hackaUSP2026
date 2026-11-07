@@ -5,7 +5,7 @@
 
 | Versão | Mudança |
 |---|---|
-| 0.1.2-rascunho | §9.8: endpoints do chat acessível (#9) em `/acessibilidade/chat*`; o chat envia pedidos (§4.3) mas nunca cria agendamento. |
+| 0.1.2-rascunho | `Solicitacao.publico_alvo` explicita o público escolhido no pedido e permite filtrar alternativas sem inferência. |
 | 0.1.1-rascunho | Falta verificada passa a ser definida: `Agendamento.desfecho`, penalidade só no score (§9.3); cancelamento antecipado sem penalidade. |
 | 0.1.0-rascunho | Primeira publicação (issue #1): convenções, estados, entidades núcleo e interfaces mínimas das extensões. |
 
@@ -127,6 +127,7 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
   "clinica_id": "c1000000-0000-4000-8000-000000000002",
   "estado": "agendada",
   "especialidade": "clinica_geral",
+  "publico_alvo": "adultos",
   "descricao_administrativa": "Consulta de rotina de clínica geral",
   "solicitacao_origem_id": "b1000000-0000-4000-8000-000000000001",
   "criado_em": "2026-11-04T11:30:00-03:00",
@@ -134,8 +135,9 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
 }
 ```
 - `descricao_administrativa`: texto curto (≤ 280) em linguagem geral. **Sem dados clínicos sensíveis no MVP** (sem sintomas detalhados, exames, diagnósticos). A UI orienta isso.
+- `publico_alvo` ∈ `adultos | criancas | gestantes | idosos`: escolha explícita do paciente para confirmar se a clínica atende o público pretendido. Não é inferido nem usado para priorização clínica.
 - `solicitacao_origem_id`: preenchido só em pedido criado por encaminhamento escolhido (seção 6).
-- Criação: `POST /solicitacoes` `{"clinica_id", "especialidade", "descricao_administrativa"}` — `paciente_id` vem do token. Cria o evento `criada`.
+- Criação: `POST /solicitacoes` `{"clinica_id", "especialidade", "publico_alvo", "descricao_administrativa"}` — `paciente_id` vem do token. Cria o evento `criada`.
 
 ### 4.4 EventoSolicitacao (histórico)
 ```json

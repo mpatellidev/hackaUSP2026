@@ -1,0 +1,91 @@
+/* UHealth — componentes base. Depende de tokens.css. */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--uh-bg); color: var(--uh-text);
+  font-family: var(--uh-font-body); font-size: var(--uh-fs-body); line-height: var(--uh-lh);
+}
+h1, h2, h3 { font-family: var(--uh-font-display); line-height: 1.2; margin: 0; }
+h1 { font-size: var(--uh-fs-title); }
+h2 { font-size: var(--uh-fs-card-title); }
+a { color: var(--uh-link); }
+
+/* Foco sempre visível */
+:focus-visible { outline: 3px solid var(--uh-focus); outline-offset: 3px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Botões: um principal por tela */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--uh-space-2);
+  min-height: max(var(--uh-target), var(--uh-button-h)); padding: 0 var(--uh-space-6);
+  border: 2px solid transparent; border-radius: var(--uh-radius-control);
+  font: 700 var(--uh-fs-button)/1.2 var(--uh-font-body); text-align: center; text-decoration: none; cursor: pointer;
+}
+.btn--primary { background: var(--uh-brand); color: var(--uh-on-brand); }
+.btn--outline { background: transparent; color: var(--uh-link); border-color: var(--uh-link); }
+.btn--sun { background: var(--uh-sun); color: #0b2423; }
+.btn--block { display: flex; width: 100%; }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+
+/* Chips de estado: sempre ícone + texto, nunca só cor */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px;
+  border-radius: var(--uh-radius-chip); background: var(--uh-chip-bg); color: var(--uh-chip-text);
+  font-weight: 700; font-size: var(--uh-fs-body); border: 2px solid transparent;
+}
+.chip--warn { background: var(--uh-warn-bg); color: var(--uh-warn-text); }
+.chip--danger { background: var(--uh-danger-bg); color: var(--uh-danger-text); }
+:root[data-theme="hc"] .chip { border-color: #000; }
+
+/* Cartões */
+.card { background: var(--uh-surface); border: 1.5px solid var(--uh-line); border-radius: var(--uh-radius-card); padding: var(--uh-space-4); }
+.card--selected { border: 2px solid var(--uh-link); }
+:root[data-theme="hc"] .card { border-width: 3px; }
+
+/* Avisos curtos (popups e banners): uma frase, até ~6 palavras no título */
+.notice { display: flex; gap: var(--uh-space-3); align-items: flex-start; padding: var(--uh-space-3) var(--uh-space-4); border-radius: var(--uh-radius-control); font-weight: 700; }
+.notice--info { background: var(--uh-warn-bg); color: var(--uh-warn-text); }
+.notice--danger { background: var(--uh-danger-bg); color: var(--uh-danger-text); }
+:root[data-theme="hc"] .notice { border: 3px solid currentColor; }
+
+/* Campos */
+.field { display: grid; gap: var(--uh-space-2); }
+.field label { font-weight: 700; }
+.field input, .field select, .field textarea {
+  min-height: var(--uh-target); padding: 0 var(--uh-space-4); font: inherit; color: inherit;
+  background: var(--uh-surface); border: 2px solid var(--uh-border-strong); border-radius: var(--uh-radius-control);
+}
+.field textarea { padding: var(--uh-space-3) var(--uh-space-4); min-height: 96px; }
+.field .hint { color: var(--uh-muted); }
+.field .error { color: var(--uh-danger-text); font-weight: 700; }
+
+/* Barra de abas do celular (3 a 5 itens) */
+.tabbar { display: flex; background: var(--uh-surface); border-top: 1.5px solid var(--uh-line); padding: 6px 8px 12px; }
+.tabbar a {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: 56px; border-radius: var(--uh-radius-control); color: var(--uh-muted); text-decoration: none;
+}
+.tabbar a[aria-current="page"] { background: var(--uh-chip-bg); color: var(--uh-link); font-weight: 700; }
+
+/* Roteiro do pedido */
+.stepper { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--uh-space-4); }
+.stepper li { display: flex; gap: var(--uh-space-3); align-items: center; color: var(--uh-muted); }
+.stepper li::before { content: ""; flex: none; width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--uh-border-strong); }
+.stepper li[data-state="done"] { color: var(--uh-text); }
+.stepper li[data-state="done"]::before { background: var(--uh-brand); border-color: var(--uh-brand); }
+.stepper li[aria-current="step"] { color: var(--uh-text); font-weight: 700; }
+.stepper li[aria-current="step"]::before { background: var(--uh-sun); border-color: var(--uh-text); }
+
+/* Tabela da clínica */
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { text-align: left; padding: var(--uh-space-4); border-top: 1.5px solid var(--uh-line); }
+.table th { border-top: 0; background: var(--uh-chip-bg); }
+.table tr[aria-current="true"] { background: var(--uh-chip-bg); }
+
+/* Linha do tempo */
+.timeline { list-style: none; margin: 0; padding: 0 0 0 var(--uh-space-5); border-left: 3px solid var(--uh-border-strong); display: grid; gap: var(--uh-space-4); }
+.timeline time { color: var(--uh-muted); font-weight: 700; margin-right: var(--uh-space-2); }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+@media (max-width: 480px) { .btn { width: 100%; } }
