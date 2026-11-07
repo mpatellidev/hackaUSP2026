@@ -1,32 +1,19 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
-import { Botao, CartaoEmergencia, FaixaDemo } from "@uhealth/ui";
-import { useSessao } from "@uhealth/api-client";
+import { Outlet, useLocation } from "react-router-dom";
+import { FaixaDemo } from "@uhealth/ui";
 import { AbasPaciente } from "./design/AbasPaciente";
-import { Simbolo } from "./design/Icone";
-import { PreferenciasPaciente } from "./design/Preferencias";
 import { ABAS } from "./rotas";
 
-/** Moldura do app logado: faixa de demonstração, preferências, emergência sempre acessível e abas. */
+/** Telas com a barra de abas (as demais são fluxos de tela cheia, como no design). */
+const COM_ABAS = /^\/(clinicas|pedidos|assistente)?$|^\/pedidos\/[^/]+$/;
+
+/** Moldura do app logado: rótulo de demonstração, tela e abas. */
 export function Casca() {
-  const { sair } = useSessao();
-  const [emergencia, setEmergencia] = useState(false);
+  const { pathname } = useLocation();
   return (
-    <div className="tela-celular">
+    <div className="d-casca">
       <FaixaDemo />
-      <header className="cabecalho-app">
-        <div className="linha-topo">
-          <span className="marca"><Simbolo />UHealth</span>
-          <PreferenciasPaciente />
-        </div>
-        <div className="linha">
-          <Botao variante="sun" onClick={() => setEmergencia(true)}>Emergência: 192</Botao>
-          <Botao variante="outline" onClick={() => void sair()}>Sair</Botao>
-        </div>
-      </header>
-      <main className="conteudo" id="conteudo"><Outlet /></main>
-      <AbasPaciente itens={ABAS} />
-      <CartaoEmergencia aberto={emergencia} aoFechar={() => setEmergencia(false)} />
+      <Outlet />
+      {COM_ABAS.test(pathname) && <AbasPaciente itens={ABAS} />}
     </div>
   );
 }

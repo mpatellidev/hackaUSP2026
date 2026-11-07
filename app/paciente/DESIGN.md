@@ -136,19 +136,27 @@ escolher B → enviar → B publica vaga → "Tenho interesse" → B confirma �
 
 ## Adaptações obrigatórias
 
-O design tem trechos que conflitam com o `AGENTS.md`. Na implementação vale o seguinte:
+O app foi comparado lado a lado com as pranchas (tema claro, 390×844): paleta, fontes, medidas, ícones, ilustrações
+e textos são os do design. As únicas diferenças, todas por regra do produto ou por falta de dado na API
+(o backend não foi alterado):
 
-| No design | Na implementação | Regra |
+| No design | No app | Motivo |
 |---|---|---|
-| "Atendimento odontológico perto de você", ícone Dente, sinais graves de rosto/pescoço | Texto genérico de saúde ("Atendimento em clínicas-escola perto de você"); a especialidade vem do dado | Não fixar em odontologia |
-| Sinais graves de urgência | Manter estático e rotulado "Texto de exemplo. Precisa ser validado por profissional de saúde." | Urgência validada por humano; SAMU estático |
-| "Quando uma clínica abrir vaga, você recebe um aviso" | Só dentro do app e rotulado como demonstração; nada de push | Não prometer o que não existe |
-| "Seu pedido fica salvo e será enviado quando a conexão voltar" | Só se houver fila offline de verdade; se não, "Não foi possível enviar. Tente de novo." | Não prometer o que não existe |
-| "Ligar para a clínica", "Adicionar ao calendário" | Link `tel:` e arquivo `.ics` reais, ou botão rotulado como demonstração | Não prometer ligação automática |
-| Etapas do stepper e "Horário confirmado" | Derivadas do estado retornado pela API | Só mostrar "agendada" se o backend confirmou |
-| Alternativas e vaga | Nunca enviar sem toque do paciente | Paciente escolhe; sem cascata |
-| "Você pode retirar o pedido a qualquer momento" | Omitido: a API não tem endpoint para retirar pedido | Não prometer o que não existe |
-| Distância em km, mapa com marcadores, "Ligação/Mensagem" como contato, telefone na primeira abertura | Omitidos: a API não tem coordenadas, distância nem esses campos | Sem inventar dado; backend não muda |
+| Distância em km, mapa e marcadores | Omitidos; "N clínicas-escola em {cidade}" | A API não tem coordenadas nem distância; não inventamos dado |
+| "Atendimento odontológico perto de você" | "Atendimento em clínicas-escola perto de você" | Não fixar em odontologia |
+| Sinais graves com "rosto ou pescoço" | Texto estático do projeto (`TEXTO_EMERGENCIA`) + aviso "Texto de exemplo. Precisa ser validado por profissional de saúde." | Urgência validada por humano; SAMU estático |
+| "Ligação / Mensagem" e telefone para contato | Omitidos | A API não tem esses campos; coletar sem usar não faz sentido |
+| "Também em áudio" no passo 2 | Omitido (o botão "Ouvir em áudio" fica nas telas) | Escolher uma opção sem efeito prometeria o que não existe |
+| "Você pode retirar o pedido a qualquer momento" | "Enviar não garante vaga. Ainda não é consulta marcada." | A API não tem endpoint para retirar pedido |
+| Caixa de consentimento já marcada | Começa desmarcada; "Enviar pedido" só libera depois | Consentimento tem de ser um ato do paciente |
+| "Seu pedido fica salvo e será enviado quando a conexão voltar" | Mensagem da API ("Não foi possível conectar…") | Não existe fila offline |
+| "Quando uma clínica abrir vaga, você recebe um aviso" | Não implementado (sem push) | Não prometer o que não existe |
+| "Avaliação inicial" na vaga, "Rua Exemplo, 100" no horário | Especialidade / data | A API não tem tipo de vaga nem endereço |
+| Faixa de demonstração no topo | Mantida | Rotular mock/demo na UI |
+| "Caso grave? Ligue 192 (SAMU)" só no Acompanhar | Também na busca e em "Meu pedido", com link "Estou com uma urgência" | SAMU sempre acessível |
+| Aba "Ajuda" | Abre o assistente (chat) | É onde a ajuda existe hoje |
+| Início e Agenda | "/" abre a busca; a agenda é a tela "Horário confirmado" | O design tem 3 abas |
+| Alternativas: "Ver detalhes" no 2º cartão | "Enviar meu pedido para {clínica}" | Sem tela de detalhe no design; o paciente escolhe e envia |
 
 Pendências da auditoria de acessibilidade do design (WCAG 2.2 AA) que valem para o app:
 - Botão principal #14BEB9 com borda de 2,2:1: decidir entre borda de 2 px em Tinta ou testar com pessoas.

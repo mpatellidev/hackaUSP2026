@@ -19,6 +19,7 @@ const CORPOS = {
   filtro: `<path d="M3 5h18l-7 8v6l-4-2v-4z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>`,
   voltar: `<path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
   vaga: `<circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="2.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2 2M16.4 16.4l2 2M5.6 18.4l2-2M16.4 7.6l2-2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`,
+  microfone: `<rect x="9" y="3" width="6" height="12" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`,
   ajuda: `<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2.2"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 16.8v.2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`,
 } as const;
 
@@ -27,7 +28,7 @@ export type NomeIcone = keyof typeof CORPOS;
 interface Props extends Omit<SVGProps<SVGSVGElement>, "children"> {
   nome: NomeIcone;
   /** tamanho em px: 20 (inline), 24 (padrão), 32 (abas), 48 (destaque) */
-  tamanho?: 20 | 24 | 32 | 48;
+  tamanho?: number;
   /** obrigatório quando o ícone aparece sozinho; sem ele o ícone fica oculto para leitores de tela */
   rotulo?: string;
 }
@@ -44,11 +45,11 @@ export function Icone({ nome, tamanho = 24, rotulo, ...resto }: Props) {
 }
 
 /** Símbolo da marca: U aberto como sorriso, com o sol (a vaga que surge). */
-export function Simbolo({ tamanho = 32 }: { tamanho?: number }) {
+export function Simbolo({ tamanho = 32, escuro = false }: { tamanho?: number; escuro?: boolean }) {
   return (
     <svg width={tamanho} height={tamanho} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
       <path d="M13 9v16a11 11 0 0 0 22 0V9" fill="none" stroke="currentColor" strokeWidth="6.5" strokeLinecap="round" />
-      <circle cx="24" cy="15" r="4.2" fill="#FFB81C" />
+      <circle cx="24" cy="15" r="4.2" fill={escuro ? "currentColor" : "#FFB81C"} />
     </svg>
   );
 }
