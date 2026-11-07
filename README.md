@@ -7,7 +7,7 @@ Conecta pessoas de baixa renda a **clínicas-escola de saúde** (cursos de medic
 ## Documentação
 | Documento | Para quê |
 |---|---|
-| [`docs/contratos-mvp.md`](docs/contratos-mvp.md) | Escopo, convenções de API, estados, entidades, fluxo e exemplos JSON (v0.1.0-rascunho) |
+| [`docs/contratos-mvp.md`](docs/contratos-mvp.md) | Escopo, convenções de API, estados, entidades, fluxo e exemplos JSON (v0.1.1-rascunho) |
 | [`docs/fronteiras.md`](docs/fronteiras.md) | Dono de cada pasta, pontos de montagem, como mudar contratos |
 | [`docs/fixtures/`](docs/fixtures/) | Dados fictícios estáveis (UUIDs fixos) + `validar.py` |
 | [`AGENTS.md`](AGENTS.md) | Regras para pessoas e IAs |

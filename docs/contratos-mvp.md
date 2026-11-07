@@ -1,10 +1,11 @@
 # Contratos do MVP — UHealth
 
-> **Versão `0.1.0-rascunho`** · protótipo de hackathon · dados 100% fictícios.
+> **Versão `0.1.1-rascunho`** · protótipo de hackathon · dados 100% fictícios.
 > Este é o documento de referência das issues #1–#18. Mudanças seguem o processo em [`fronteiras.md`](fronteiras.md#como-mudar-um-contrato).
 
 | Versão | Mudança |
 |---|---|
+| 0.1.1-rascunho | Falta verificada passa a ser definida: `Agendamento.desfecho`, penalidade só no score (§9.3); cancelamento antecipado sem penalidade. |
 | 0.1.0-rascunho | Primeira publicação (issue #1): convenções, estados, entidades núcleo e interfaces mínimas das extensões. |
 
 ## 1. Escopo e limites
@@ -169,7 +170,7 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
 {"id": "d1000000-0000-4000-8000-000000000001", "vaga_id": "f1000000-…-0001", "solicitacao_id": "b1000000-…-0002", "paciente_id": "a1000000-…-0001", "estado": "confirmado"}
 ```
 `InteresseVaga.estado` ∈ `registrado | confirmado | nao_selecionado | retirado`.
-`Agendamento` (`vaga_id`, `solicitacao_id`, `paciente_id`, `clinica_id`, `estado` ∈ `agendado | concluido | cancelado`, `confirmado_por`, `confirmado_em`) só existe depois da confirmação por funcionário.
+`Agendamento` (`vaga_id`, `solicitacao_id`, `paciente_id`, `clinica_id`, `estado` ∈ `agendado | concluido | cancelado`, `desfecho` ∈ `pendente | compareceu | falta_registrada | cancelado_antecipado | cancelado_pela_clinica`, `confirmado_por`, `confirmado_em`) só existe depois da confirmação por funcionário. `desfecho` é preenchido por humano; `falta_registrada` exige um `RegistroFalta` confirmado (§9.3).
 
 ### 4.7 Pedido × interesse × agendamento × alerta
 
@@ -210,7 +211,7 @@ aguardando_confirmacao ──(interesse retirado ou vaga dada a outra pessoa, se
 | `aguardando_confirmacao` | `em_analise` | sistema | Interesse retirado / vaga dada a outro e nenhum outro interesse `registrado` |
 | `agendada` | `concluida` | funcionário da clínica | Habilita avaliação da clínica (#16) |
 
-Qualquer outra transição → `409 transicao_invalida`. Estados `indisponivel` e `concluida` são terminais. Cancelamento de agendamento e desfecho de falta no comparecimento ficam **em aberto** (ver §10); o registro de falta é da #13.
+Qualquer outra transição → `409 transicao_invalida`. Estados `indisponivel` e `concluida` são terminais. A falta **não cria estado novo**: o pedido segue para `concluida` e o desfecho vai no `Agendamento.desfecho` (§4.6). A penalidade existe só como componente do score (§9.3), nunca como bloqueio de pedido.
 
 ## 6. Encaminhamento com escolha do paciente
 
@@ -296,6 +297,8 @@ Endpoints: `GET /cenarios?cidade=&interesse=` (paciente: só `ativo`), `POST/PAT
 Componentes: `socioeconomico`, `necessidade_academica`, `tempo_espera`, `falta_verificada` (valor desconhecido = 0, documentado). **Ordenação:** `(urgencia_avaliada desc, score desc, criado_em asc, id asc)` — urgência avaliada precede qualquer score. Pesos são **ilustrativos**, versionados e **não são critério clínico**. `GET /clinicas/{id}/fila` (funcionário da clínica) devolve itens ordenados + `aviso`.
 `RegistroFalta`: `{id, paciente_id, agendamento_id, registrada_por, justificativa, estado: confirmada|revertida, revisao}`. Só `profissional`, só com justificativa, sempre revisável com auditoria. Ausência de resposta, cancelamento antecipado, problema da clínica e relato de urgência não confirmado **nunca** geram falta.
 
+**Penalidade por falta (sistema de score).** A falta é o único "problema" que pesa no score, e só quando `RegistroFalta.estado = confirmada`. Fluxo: `profissional` registra a falta com justificativa → entra como componente `falta_verificada` (valor negativo, peso configurável, ex. `-10` por falta confirmada, com teto) → pode ser **revertida** em revisão, o que remove a penalidade e fica auditado. A penalidade só reduz o `score`; **não bloqueia pedidos** e **nunca passa à frente de `urgencia_avaliada`**. O paciente vê o motivo e pode contestar. Valores são ilustrativos (`versao_pesos`).
+
 ### 9.4 Urgência — #14
 `RelatoUrgencia`: `{id, paciente_id, solicitacao_id|null, estado: aguardando_avaliacao|avaliada, criado_em}`. `AvaliacaoUrgencia`: `{id, relato_id, avaliador_usuario_id, classificacao: urgencia_confirmada|sem_urgencia, observacao_administrativa, avaliado_em}`. **Só `funcao = profissional` cria avaliação** (senão `403`). Sinal grave: o **app** mostra texto estático revisado com **SAMU 192**, sem depender de rede, IA, vaga ou fila. Rótulo inicial "aguardando avaliação", sem prometer contato imediato.
 `POST /urgencias`, `GET /urgencias` (paciente: próprios; funcionário: da clínica), `POST /urgencias/{id}/avaliacao`.
@@ -314,7 +317,7 @@ Componentes: `socioeconomico`, `necessidade_academica`, `tempo_espera`, `falta_v
 
 ## 10. Pontos em aberto (decidir antes da integração)
 
-- Cancelamento de agendamento pelo paciente/clínica e o desfecho de **falta efetiva** na solicitação (#13 propõe; #2 e #3 implementam).
+- ~~Desfecho de falta~~ resolvido na 0.1.1 (ver §4.6 e §9.3). Resta decidir o fluxo de **cancelamento** de agendamento (endpoint e quem pode), a cargo da #4.
 - Vocabulário de `especialidades` pode crescer; mudanças via PR neste documento.
 - Expiração real de token demo e política de sessão (decisão da #2).
 - Numeração: títulos das issues vão de "00" a "17", os números reais do GitHub são +1 (título "00" = #1). Neste repositório sempre se usa o **número do GitHub**.
