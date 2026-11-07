@@ -31,6 +31,8 @@ export interface RotaModulo {
   componente: ComponentType<any>;
   /** Título no cabeçalho (pt-BR). */
   titulo?: string;
+  /** Tela que exige params: não ganha atalho em Ajustes › Mais (abre a partir de outra tela). */
+  semAtalho?: boolean;
   /** Se presente, a tela vira uma aba inferior com este rótulo e ícone (MaterialIcons). */
   aba?: { rotulo: string; icone: string };
 }

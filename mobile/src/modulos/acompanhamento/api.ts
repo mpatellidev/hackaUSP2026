@@ -15,7 +15,7 @@ export interface VagaDemo {
   inicio: string;
   fim: string;
   estado: 'aberta' | 'preenchida' | 'cancelada';
-  interesse?: 'registrado' | 'confirmado' | 'nao_selecionado';
+  interesse?: 'registrado' | 'confirmado' | 'nao_selecionado' | 'retirado' | null;
 }
 
 const vagasMock: VagaDemo[] = [
@@ -37,7 +37,7 @@ export const apiAcompanhamento = {
       metodo: 'POST', corpo: { clinica_destino_id: clinicaDestinoId },
       mock: async () => ({ solicitacao: {
         id: `encaminhamento-${Date.now()}`, paciente_id: 'paciente-demo', clinica_id: clinicaDestinoId,
-        estado: 'enviada', especialidade: 'clinica_geral', descricao_administrativa: 'Pedido encaminhado em demonstração.',
+        estado: 'enviada', especialidade: 'clinica_geral', publico_alvo: 'adultos', descricao_administrativa: 'Pedido encaminhado em demonstração.',
         solicitacao_origem_id: solicitacaoId, criado_em: '2026-11-07T10:00:00-03:00', atualizado_em: '2026-11-07T10:00:00-03:00',
       } }),
     });
