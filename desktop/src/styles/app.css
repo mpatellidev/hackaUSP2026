@@ -27,3 +27,15 @@ a { color: var(--uh-link); }
 select, textarea { font: inherit; padding: var(--uh-space-3); border: 2px solid var(--uh-border-strong); border-radius: var(--uh-radius-control, 12px); background: var(--uh-surface); color: var(--uh-text); }
 .login { display: grid; place-items: center; min-height: 100vh; padding: var(--uh-space-5); }
 .login .card { width: min(480px, 100%); display: grid; gap: var(--uh-space-4); }
+
+/* Abaixo de ~800px a barra lateral vira barra superior (padrão de ui/clinica.html). */
+@media (max-width: 800px) {
+  .shell { flex-direction: column; flex-wrap: nowrap; }
+  .side { flex: 0 0 auto; width: 100%; box-sizing: border-box; flex-direction: row; flex-wrap: wrap; align-items: center; padding: var(--uh-space-3) var(--uh-space-4); }
+  .side .brand { width: 100%; padding-bottom: 0; }
+  .side a { min-height: 44px; padding: 0 var(--uh-space-3); }
+  .side-rodape { margin-top: 0; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--uh-space-3); }
+  .content { flex: 1 1 auto; width: 100%; box-sizing: border-box; padding: var(--uh-space-4); }
+  .bar, .bar-acoes { align-items: stretch; }
+  .dados { grid-template-columns: 1fr; }
+}
