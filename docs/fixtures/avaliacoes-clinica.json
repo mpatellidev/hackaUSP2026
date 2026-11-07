@@ -1,0 +1,14 @@
+{
+  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real. Comentários fictícios.",
+  "itens": [
+    {
+      "id": "c3000000-0000-4000-8000-000000000001",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "paciente_id": "a1000000-0000-4000-8000-000000000004",
+      "solicitacao_id": "b1000000-0000-4000-8000-000000000006",
+      "nota": 5,
+      "comentario": "Comentário fictício de exemplo.",
+      "criado_em": "2026-10-21T09:00:00-03:00"
+    }
+  ]
+}
