@@ -37,4 +37,6 @@ Módulo `app/modulos/acessibilidade/` (rotas em `/api/v1/acessibilidade/...`, s�
 
 ## Limitações
 - O seed lê `docs/fixtures/` (da #1) diretamente; rode os comandos a partir do checkout completo do repositório.
-- Sem rotas de pedidos/vagas ainda; sem rate limit; CORS por `CORS_ORIGINS`.
+- Urgência (#14) e cenários (#11) guardam dados **em memória** (demo, a partir das fixtures): reiniciar a API volta ao estado inicial. A autenticação deles é adaptada em `app/integracao.py`.
+- Vagas (#4) em `app/modulos/vagas/`: o evento `vaga_criada` para alertas (#17) ainda não é emitido (não há módulo de alertas).
+- Sem rate limit; CORS por `CORS_ORIGINS` (veja `.env.example` para liberar o celular na mesma rede).
