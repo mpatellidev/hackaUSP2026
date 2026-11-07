@@ -130,7 +130,7 @@ As chaves ficam só no backend, nunca no `web/`.
 
 > No Windows o `iniciar.ps1` sobe só a API e o chat. O painel (`desktop/`) e o app (`mobile/`) rodam com `npm run dev` / `npm run web` (veja o README de cada pasta); um script único para eles no Windows ainda não existe.
 
-**Ainda NÃO existem / não foram testados:** APK do app do paciente (`npm run apk` depende da conta Expo/EAS); instalador do painel no Windows (gerado pelo CI, **nunca aberto em um Windows real**); teste em aparelho físico (o app foi aberto só no navegador); perfil (#18), avaliações (#16), alertas (#17), resumo compartilhável (#15) e a interface de cenários (#12). Cenários (#11) e urgência (#14) têm backend montado, mas guardam dados **em memória** (voltam ao início ao reiniciar a API).
+**Ainda NÃO existem / não foram testados:** APK do app do paciente (`npm run apk` depende da conta Expo/EAS); instalador do painel no Windows (gerado pelo CI, **nunca aberto em um Windows real**); teste em aparelho físico (o app foi aberto só no navegador); avaliações (#16), alertas (#17), resumo compartilhável (#15), as telas de perfil (#18) e a interface de cenários (#12). Cenários (#11), urgência (#14) e perfil (#18) têm backend montado e persistido no banco; falta só a interface. Bancos antigos precisam de `alembic upgrade head`.
 
 ## Prioridades
 **P0 — percurso principal** (sem isso não há demo): auth demo · clínicas por cidade · pedido · estados e histórico · indisponibilidade → alternativas → escolha do paciente → novo pedido · vaga → interesse → confirmação única · isolamento paciente/clínica · painel da clínica.
@@ -148,8 +148,9 @@ Integração (#10) em andamento no branch `feat/10-integracao`. Tudo com dados f
 | Vagas, interesse e confirmação única (#4) | Feito (`app/modulos/vagas/`): 409 em dupla confirmação, pedido só vira "agendada" após a confirmação. Sem emissão do evento `vaga_criada` (não há alertas) |
 | Prioridade, faltas e fila explicável (#13) | Feito; lê urgência avaliada e cenários dos módulos |
 | Chat acessível com IA (#9): backend + `web/` | Feito (mock por padrão; Gemini/Claude opcionais); router agora montado |
-| Urgência (#14) e cenários (#11), backend | Montados com a auth do core (`app/integracao.py`); dados em memória |
+| Urgência (#14), cenários (#11) e perfil (#18), backend | Montados com `Actor`/`ApiError` do core e **persistidos no banco** (migrações 0005–0007); seed idempotente; a fila lê esses módulos pelos serviços |
+| Agendamentos e cancelamento (#4) | `GET /agendamentos`, `POST /agendamentos/{id}/cancelar` (sem falta nem penalidade; vaga reabre; pedido volta a `em_analise`); contrato 0.1.3. Telas ainda não usam |
 | App do paciente (`mobile/`, #5 e #6) | Clínicas, pedido (com público), andamento, alternativas, vagas/interesse e relato de urgência; roda no celular (Expo Go) e no navegador |
 | Painel da clínica (`desktop/`, #7 e #8) | Solicitações, vagas e prioridade (confirma pelo interesse escolhido), urgências; responsivo; roda no navegador |
 | Teste ponta a ponta da jornada P0 | `backend/tests/test_jornada_p0.py` (pytest) |
-| Perfil (#18), avaliações (#16), alertas (#17), resumos (#15), interface de cenários (#12) | Pendentes |
+| Telas de perfil (#18), avaliações (#16), alertas (#17), resumos (#15), interface de cenários (#12) | Pendentes |

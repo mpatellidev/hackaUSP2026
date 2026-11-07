@@ -5,7 +5,7 @@
 
 | Versão | Mudança |
 |---|---|
-| 0.1.3-rascunho | Pedido `enviada` também pode demonstrar interesse em vaga (§5, §7.3). Cancelamento de agendamento definido (§4.6, §5, §7.7, §10): `POST /agendamentos/{id}/cancelar`, `GET /agendamentos`, `GET /agendamentos/{id}`; pedido `agendada` volta a `em_analise`. |
+| 0.1.3-rascunho | `GET/PUT /perfil` no backend (§9.2). Pedido `enviada` também pode demonstrar interesse em vaga (§5, §7.3). Cancelamento de agendamento definido (§4.6, §5, §7.7, §10): `POST /agendamentos/{id}/cancelar`, `GET /agendamentos`, `GET /agendamentos/{id}`; pedido `agendada` volta a `em_analise`. |
 | 0.1.2-rascunho | `Solicitacao.publico_alvo` explicita o público escolhido no pedido e permite filtrar alternativas sem inferência. |
 | 0.1.1-rascunho | Falta verificada passa a ser definida: `Agendamento.desfecho`, penalidade só no score (§9.3); cancelamento antecipado sem penalidade. |
 | 0.1.0-rascunho | Primeira publicação (issue #1): convenções, estados, entidades núcleo e interfaces mínimas das extensões. |
@@ -299,7 +299,7 @@ Endpoints: `GET /cenarios?cidade=&interesse=` (paciente: só `ativo`), `POST/PAT
   "acessibilidade": {"texto": "grande", "linguagem": "simples", "audio": true, "tema": "sistema"}
 }
 ```
-`socioeconomico`: `{"informado": false, "prefiro_nao_informar": true}` é válido e **não impede solicitação**. `contato_preferido` ∈ `app | telefone`. `acessibilidade.texto` ∈ `normal | grande | extra_grande`; `linguagem` ∈ `simples | detalhada`; `tema` ∈ `sistema | claro | escuro | alto_contraste`. Escolhas do usuário, sem inferir por idade/escolaridade. **Não coletar** documento, endereço preciso ou dado clínico. `GET/PUT /perfil` (apenas o próprio usuário).
+`socioeconomico`: `{"informado": false, "prefiro_nao_informar": true}` é válido e **não impede solicitação**. `contato_preferido` ∈ `app | telefone`. `acessibilidade.texto` ∈ `normal | grande | extra_grande`; `linguagem` ∈ `simples | detalhada`; `tema` ∈ `sistema | claro | escuro | alto_contraste`. Escolhas do usuário, sem inferir por idade/escolaridade. **Não coletar** documento, endereço preciso ou dado clínico. `GET/PUT /perfil` (apenas o próprio usuário; **paciente**). `PUT` substitui o perfil; sem perfil salvo, `GET` devolve o padrão com `salvo: false`. Backend implementado na integração (#10); as telas (#18) ainda não consomem.
 
 ### 9.3 Prioridade, score e faltas — #13 (backend), consumido por #7/#8
 ```json

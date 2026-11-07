@@ -10,11 +10,13 @@ Como o time grande trabalha em paralelo sem pisar nos arquivos dos outros. Numer
 | `backend/` (projeto, `main.py`, config, banco, auth demo, migrações, seed) | #2 | Base compartilhada |
 | `backend/app/modulos/solicitacoes/` | #3 | |
 | `backend/app/modulos/vagas/` | #4 | |
+| `backend/app/modulos/agendamentos/` | #4 | Consulta e cancelamento de agendamento |
 | `backend/app/modulos/cenarios/` | #11 | |
 | `backend/app/modulos/prioridade/` | #13 | Único dono de score, faltas e fila |
 | `backend/app/modulos/urgencia/` | #14 | |
 | `backend/app/modulos/resumos/` | #15 | |
 | `backend/app/modulos/avaliacoes/` | #16 | |
+| `backend/app/modulos/perfil/` | #18 | `GET/PUT /perfil` (renda opcional alimenta a fila) |
 | `backend/app/modulos/alertas/` | #17 | |
 | `backend/app/modulos/acessibilidade/` | #9 | Chat acessível: serviço de IA (mock/Gemini/Claude), perfil de comunicação, TTS |
 | `web/` | #9 | Cliente web do chat acessível para pacientes (React/Vite); usa `VITE_API_URL` |
@@ -28,7 +30,12 @@ Como o time grande trabalha em paralelo sem pisar nos arquivos dos outros. Numer
 
 ## Pontos de montagem
 
-- **Backend:** cada módulo tem `router.py` (exporta `router: APIRouter`), `schemas.py`, `service.py`, `models.py` e `tests/`. O registro dos roteadores em `app/main.py` e o diretório de migrações são da #2; quem precisa de tabela nova abre PR **pequeno** para a #2 ou adiciona uma migração própria com prefixo do módulo (`NNNN_<modulo>_<descricao>`), nunca edita migração alheia.
+- **Backend:** tudo vive em `backend/app/`.
+  - `core/` (#2): configuração única (`Settings`, `.env`), banco, `Actor`/auth DEMO, `ApiError` e **handlers de erro únicos** (`install_error_handlers`), horários. **Nenhum módulo cria o próprio auth, erro ou configuração**: use `Depends(get_actor)` e `raise ApiError(...)`/`nao_encontrado()`/`acesso_negado()`.
+  - `registro.py`: **registro único** — a lista `ROUTERS` é o único lugar onde módulos são montados (`main.py` não muda). Tabelas: uma linha em `models/__init__.py`. Dados fictícios: `seed.run(db)` do módulo, chamado de `app/seed.py`.
+  - `modulos/<modulo>/`: estrutura padrão `router.py` (exporta `router`), `schemas.py`, `service.py`, `models.py` (+ `repositorio.py` quando há consultas próprias), `seed.py` e `tests/`. Módulos: `auth`, `saude`, `solicitacoes`, `vagas`, `agendamentos`, `prioridade`, `urgencia`, `cenarios`, `perfil`, `acessibilidade`.
+  - Modelos compartilhados do núcleo (usuários, clínicas, solicitações, vagas/agendamentos) ficam em `app/models/`. Tabela nova de módulo: migração própria `NNNN_<modulo>_<descricao>` encadeada no `head`, nunca editando migração alheia. Hoje: 0001 base · 0002 prioridade · 0003 chat · 0004 publico_alvo · 0005 urgência · 0006 cenários · 0007 perfil.
+  - Dependências entre módulos só por **serviço/repositório**, nunca por JSON: a fila (#13) lê urgência (#14), cenários (#11) e perfil (#18) por `prioridade/fontes.py`.
 - **Mobile:** cada módulo exporta telas e um `rotas.ts` com `{nome, componente}`; a #5 as registra na navegação. Mock em `modulos/<m>/mock/`, identificado na UI.
 - **Desktop:** cada módulo exporta componentes e `rotas.ts` com `{caminho, rotulo, componente}`; a #7 monta o menu.
 - **Adaptadores de API** (`mobile/src/api/`, `desktop/src/api/`): um cliente por módulo, URL base por variável de ambiente (`EXPO_PUBLIC_API_URL`, `VITE_API_URL`). Nunca chave de serviço no cliente.
@@ -37,7 +44,7 @@ Como o time grande trabalha em paralelo sem pisar nos arquivos dos outros. Numer
 
 - Pertencem à #1. **Não alterar IDs existentes**; só acrescentar. Rodar `python3 docs/fixtures/validar.py` antes do PR.
 - Cada módulo pode ter fixtures extras na própria pasta, referenciando os IDs de `docs/fixtures/`.
-- Seed do backend (#2) carrega `docs/fixtures/` de forma idempotente.
+- Seed do backend (#2) carrega `docs/fixtures/` de forma idempotente (núcleo e cada módulo: urgência, cenários, perfil, faltas). Fixtures extras de módulo (ex.: `cenarios/fixtures/cenarios-extra.json`) ficam na pasta do módulo.
 
 ## Como mudar um contrato
 
