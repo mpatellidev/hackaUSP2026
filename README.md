@@ -7,6 +7,8 @@ Conecta pessoas de baixa renda a **clínicas-escola de saúde** (cursos de medic
 ## Documentação
 | Documento | Para quê |
 |---|---|
+| [`docs/arquitetura.md`](docs/arquitetura.md) | Arquitetura alvo 0.2: apps web, pacotes compartilhados, backend, deploy |
+| [`docs/frentes.md`](docs/frentes.md) | As 4 frentes simultâneas, dono de cada pasta, protocolo de merge |
 | [`docs/contratos-mvp.md`](docs/contratos-mvp.md) | Escopo, convenções de API, estados, entidades, fluxo e exemplos JSON |
 | [`docs/fronteiras.md`](docs/fronteiras.md) | Dono de cada pasta, pontos de montagem, como mudar contratos |
 | [`docs/fixtures/`](docs/fixtures/) | Dados fictícios estáveis (UUIDs fixos) + `validar.py` |

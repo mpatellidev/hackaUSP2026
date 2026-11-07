@@ -1,5 +1,7 @@
 # Fronteiras de trabalho — UHealth
 
+> **Vale até o merge da Fundação (0.2).** Depois disso, donos de pasta e protocolo estão em [`frentes.md`](frentes.md) e a estrutura em [`arquitetura.md`](arquitetura.md).
+
 Como o time grande trabalha em paralelo sem pisar nos arquivos dos outros. Numeração = **número da issue no GitHub**. Contratos: [`contratos-mvp.md`](contratos-mvp.md).
 
 ## Dono de cada pasta
