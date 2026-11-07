@@ -12,7 +12,7 @@
 
 **O que é.** UHealth conecta pessoas de baixa renda a **clínicas-escola de saúde** (cursos de medicina e áreas da saúde: clínica geral, pediatria, ginecologia/obstetrícia, cardiologia, dermatologia, ortopedia, oftalmologia, saúde mental etc.). O produto é **geral para saúde**, não específico de uma especialidade. Odontologia é só mais um valor possível de `especialidade`.
 
-> **Nota sobre as issues.** O texto original das issues #1–#9 fala em "solicitação odontológica" e a #11 usa um exemplo de terceiro molar. Isso é um resíduo: **vale este contrato** (saúde geral). Nenhuma frente deve fixar a UI, o modelo de dados ou os textos em odontologia.
+> **Nota sobre as issues.** O texto original das issues falava em "solicitação odontológica", em "Sorriso Aberto" e usava um exemplo de terceiro molar; elas foram atualizadas para saúde geral e UHealth. Se algum resíduo restar, **vale este contrato**. Nenhuma frente deve fixar UI, modelo de dados ou textos em odontologia.
 
 **O que o MVP faz:** busca de clínicas por cidade escolhida manualmente; pedido de atendimento; acompanhamento de status; indisponibilidade da clínica com alternativas; vagas ociosas com interesse e confirmação; cenários acadêmicos; fila explicável; relato de urgência; resumo compartilhável (demo); avaliação de clínicas; alertas; acessibilidade (texto simples, áudio).
 
