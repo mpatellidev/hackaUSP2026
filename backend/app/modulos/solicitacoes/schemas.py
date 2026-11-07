@@ -14,7 +14,7 @@ class CriarSolicitacaoIn(BaseModel):
 
 
 class AtualizarEstadoIn(BaseModel):
-    estado: Literal["em_analise", "precisa_contato", "indisponivel"]
+    estado: Literal["em_analise", "precisa_contato", "indisponivel", "concluida"]
     motivo: str | None = Field(default=None, max_length=280)
 
 

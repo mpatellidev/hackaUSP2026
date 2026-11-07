@@ -7,6 +7,7 @@ from app.core.errors import ApiError, nao_encontrado
 from app.core.time import to_sp_iso, utc_now
 from app.models.clinicas import Clinica
 from app.models.solicitacoes import ESTADOS_ATIVOS, EventoSolicitacao, Solicitacao
+from app.models.vagas import Agendamento
 from app.repositories import solicitacoes as repo
 
 CRITERIOS_ALTERNATIVAS = ["mesma_cidade", "publico_compativel", "recebendo_pedidos", "mesma_especialidade"]
@@ -17,6 +18,7 @@ TRANSICOES_FUNCIONARIO = {
     "enviada": {"em_analise", "indisponivel"},
     "em_analise": {"precisa_contato", "indisponivel"},
     "precisa_contato": {"em_analise", "indisponivel"},
+    "agendada": {"concluida"},  # contrato §5; "agendada" só nasce da confirmação de vaga (#4)
 }
 
 
@@ -119,7 +121,20 @@ def transicionar(db: Session, actor: Actor, solicitacao_id: str, estado_novo: st
     pedido.estado = estado_novo
     pedido.atualizado_em = utc_now()
     _evento(db, pedido, "transicao", actor, anterior, estado_novo, motivo)
+    if estado_novo == "concluida":
+        _concluir_agendamento(db, pedido)
     return pedido
+
+
+def _concluir_agendamento(db: Session, pedido: Solicitacao) -> None:
+    """Pedido concluído fecha o agendamento. Falta já registrada (§9.3) permanece como desfecho;
+    sem registro de falta, o desfecho pendente passa a `compareceu` (ato humano de concluir)."""
+    ag = db.scalar(select(Agendamento).where(Agendamento.solicitacao_id == pedido.id,
+                                             Agendamento.estado == "agendado"))
+    if ag is not None:
+        ag.estado = "concluido"
+        if ag.desfecho == "pendente":
+            ag.desfecho = "compareceu"
 
 
 def alternativas(db: Session, actor: Actor, solicitacao_id: str) -> list[Clinica]:
