@@ -14,7 +14,8 @@ class Usuario(UuidPk, CriadoEm, Base):
     __tablename__ = "usuarios"
     papel: Mapped[str]
     nome_exibicao: Mapped[str]
-    conta_demo: Mapped[str] = mapped_column(unique=True)  # login DEMO, sem senha
+    conta_demo: Mapped[str] = mapped_column(unique=True)  # nome da conta fictícia (login)
+    senha_hash: Mapped[str | None] = mapped_column(default=None)  # pbkdf2; senha única de demo (core.config)
     ativo: Mapped[bool] = mapped_column(default=True)
 
 

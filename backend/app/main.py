@@ -5,13 +5,11 @@ from app.core.config import get_settings
 from app.core.errors import install_error_handlers
 from app.modulos.saude import router as saude
 from app.registro import ROUTERS
-from app.ui_teste import montar as montar_ui_teste
+from app.spa import montar as montar_spa
 
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    if not settings.demo_mode:
-        raise RuntimeError("Só existe autenticação DEMO neste protótipo; DEMO_MODE=false não é suportado.")
     app = FastAPI(
         title="UHealth API (DEMO)",
         version="0.1.0",
@@ -25,7 +23,7 @@ def create_app() -> FastAPI:
         api.include_router(r)
     app.include_router(api)
     app.include_router(saude.router)  # atalho GET /saude (contrato §2)
-    montar_ui_teste(app)  # UI de teste em /teste/ (HTML/JS puro, sem build)
+    montar_spa(app)  # apps web: paciente em / e clínicas em /clinica/ (builds de app/*/dist), por último
     return app
 
 

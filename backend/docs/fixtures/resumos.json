@@ -1,0 +1,26 @@
+{
+  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real. Resumo de exemplo, não é prontuário.",
+  "itens": [
+    {
+      "id": "e3000000-0000-4000-8000-000000000001",
+      "paciente_id": "a1000000-0000-4000-8000-000000000004",
+      "clinica_autora_id": "c1000000-0000-4000-8000-000000000002",
+      "campos": [
+        {
+          "nome": "Motivo do atendimento",
+          "valor": "Consulta de rotina de pediatria (exemplo fictício)."
+        },
+        {
+          "nome": "Orientação administrativa",
+          "valor": "Retorno em 6 meses (exemplo fictício)."
+        },
+        {
+          "nome": "Alergias informadas",
+          "valor": "Nenhuma informada (exemplo fictício)."
+        }
+      ],
+      "criado_por": "a1000000-0000-4000-8000-000000000014",
+      "criado_em": "2026-10-21T10:00:00-03:00"
+    }
+  ]
+}

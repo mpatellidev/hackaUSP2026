@@ -41,3 +41,30 @@ class PerfilIn(BaseModel):
     contato_preferido: Literal["app", "telefone"] | None = None
     socioeconomico: SocioeconomicoIn = Field(default_factory=SocioeconomicoIn)
     acessibilidade: AcessibilidadeIn = Field(default_factory=AcessibilidadeIn)
+
+
+class SocioeconomicoOut(BaseModel):
+    informado: bool = False
+    faixa_renda_familiar: FaixaRenda | None = None
+    prefiro_nao_informar: bool = False
+    finalidade: str | None = None
+
+
+class AcessibilidadeOut(BaseModel):
+    texto: Literal["normal", "grande", "extra_grande"]
+    linguagem: Literal["simples", "detalhada"]
+    audio: bool
+    tema: Literal["sistema", "claro", "escuro", "alto_contraste"]
+
+
+class PerfilOut(BaseModel):
+    usuario_id: str
+    cidade: str | None
+    uf: str | None
+    contato_preferido: Literal["app", "telefone"] | None
+    socioeconomico: SocioeconomicoOut
+    acessibilidade: AcessibilidadeOut
+    atualizado_em: str | None
+    salvo: bool
+    modo: Literal["demo"]
+    aviso: str

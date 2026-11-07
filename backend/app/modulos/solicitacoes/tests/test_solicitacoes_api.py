@@ -100,3 +100,9 @@ def test_lista_vazia_e_destino_fora_da_alternativa(client, login):
     invalido = client.post(f"/api/v1/solicitacoes/{criado['id']}/encaminhar",
                            json={"clinica_destino_id": CLINICA_B}, headers=login(ANA))
     assert invalido.status_code == 422 and invalido.json()["erro"]["detalhes"]["campos"] == ["clinica_destino_id"]
+
+
+def test_funcionario_ve_so_a_propria_clinica(client, login):
+    h = login("funcionario.atendimento.a")
+    assert client.get("/api/v1/clinicas/c1000000-0000-4000-8000-000000000001", headers=h).status_code == 200
+    assert client.get("/api/v1/clinicas/c1000000-0000-4000-8000-000000000002", headers=h).status_code == 404

@@ -1,0 +1,16 @@
+{
+  "name": "@uhealth/api-client",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": { "typecheck": "tsc -p .", "test": "vitest run --passWithNoTests" },
+  "dependencies": {
+    "@tanstack/react-query": "^5.62.0",
+    "@uhealth/ui": "*",
+    "openapi-fetch": "^0.13.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
