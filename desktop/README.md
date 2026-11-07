@@ -7,6 +7,9 @@ Contrato: [`docs/contratos-mvp.md`](../docs/contratos-mvp.md) · fronteiras: [`d
 - Login de demonstração só para funcionários (conta de paciente é recusada).
 - Lista das solicitações **da própria clínica** (filtro por situação, "Atualizar", estados de carregando/erro/vazio).
 - Detalhe do pedido com histórico (autor e horário) e mudança de situação: em análise, precisa de contato, "não recebemos agora". Motivo administrativo obrigatório nos dois últimos. Só as mudanças válidas para o estado atual são oferecidas; erros do servidor (409/404/401) aparecem como erro, nunca como sucesso.
+- Menu: Solicitações, **Vagas e prioridade** (#8: publicar vaga, ver interessados na ordem sugerida, confirmar UMA pessoa pelo `interesse_id`, fila explicável) e **Urgências** (#14: só `profissional` avalia). Pedido agendado pode ser marcado como concluído.
+- Em modo `api` o token fica em `sessionStorage` (sobrevive a recarregar, some ao fechar a aba) e a sessão é restaurada por `/auth/me`.
+- Responsivo: abaixo de 800px a barra lateral vira barra superior (abre no celular via `npm run dev:rede`).
 - Tema (claro/escuro/alto contraste), tamanho de letra, link "Pular para o conteúdo" e navegação por teclado.
 
 ## Mock × API
@@ -14,6 +17,8 @@ Contrato: [`docs/contratos-mvp.md`](../docs/contratos-mvp.md) · fronteiras: [`d
 |---|---|
 | `mock` (padrão) | Dados **simulados** em memória (`docs/fixtures`). Nada é enviado. A tela avisa. Reinicia ao recarregar. |
 | `api` | Usa o backend FastAPI em `VITE_API_URL` (login e `/auth/me` reais). |
+
+**Rotas de vagas (#4):** `GET/POST /vagas`, `GET /vagas/{id}/interesses`, `POST /vagas/{id}/confirmar`; fila `GET /clinicas/{id}/fila` (#13); urgências `GET /urgencias` e `POST /urgencias/{id}/avaliacao` (#14).
 
 **Rotas usadas (#3, já na `main`):** `GET /solicitacoes?estado=`, `GET /solicitacoes/{id}`, `GET /solicitacoes/{id}/eventos` e `PATCH /solicitacoes/{id}/estado {estado, motivo}`, todas isoladas em `src/api/solicitacoes.ts`. O servidor ainda não devolve o nome do paciente, então em modo `api` a lista mostra "Paciente" (no mock aparece o nome de exibição).
 
@@ -23,6 +28,7 @@ cd desktop
 npm install
 npm run dev          # navegador em http://localhost:1420 (modo mock)
 npm test             # testes (Vitest)
+npm run dev:rede     # idem, aceitando outros aparelhos da rede (http://IP-DO-PC:1420)
 npm run tauri dev    # janela do app (precisa de Rust e, no Linux, WebKitGTK)
 ```
 Para usar o backend: `cp .env.example .env.local`, ponha `VITE_API_MODO=api`, rode o backend (`backend/README.md`) e reinicie o `npm run dev`. Nenhuma chave é embutida.
