@@ -30,14 +30,14 @@
 /* Clínica: menu lateral >= 800px, barra superior abaixo disso */
 .shell-clinica { display: grid; grid-template-columns: 240px 1fr; min-height: 100dvh; }
 .shell-clinica > main { padding: var(--uh-space-6); display: grid; gap: var(--uh-space-4); align-content: start; min-width: 0; }
-.menu-lateral { background: var(--uh-surface); border-right: 1.5px solid var(--uh-line); padding: var(--uh-space-4); display: grid; gap: var(--uh-space-4); align-content: start; }
+.menu-lateral { position: sticky; top: 0; align-self: start; max-height: 100dvh; overflow-y: auto; background: var(--uh-surface); border-right: 1.5px solid var(--uh-line); padding: var(--uh-space-4); display: grid; gap: var(--uh-space-4); align-content: start; }
 .menu-lateral ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--uh-space-1); }
 .menu-lateral a { display: flex; gap: var(--uh-space-2); align-items: center; min-height: var(--uh-target); padding: 0 var(--uh-space-3); border-radius: var(--uh-radius-control); color: var(--uh-text); text-decoration: none; }
 .menu-lateral a[aria-current="page"] { background: var(--uh-chip-bg); color: var(--uh-link); font-weight: 700; }
 .tabela-rolavel { overflow-x: auto; }
 @media (max-width: 799px) {
   .shell-clinica { grid-template-columns: 1fr; }
-  .menu-lateral { border-right: 0; border-bottom: 1.5px solid var(--uh-line); }
+  .menu-lateral { position: static; max-height: none; border-right: 0; border-bottom: 1.5px solid var(--uh-line); }
   .menu-lateral ul { grid-auto-flow: column; overflow-x: auto; }
   .shell-clinica > main { padding: var(--uh-space-4); }
 }

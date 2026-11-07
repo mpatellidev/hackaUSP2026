@@ -1,0 +1,30 @@
+name: backend
+# Backend (FastAPI): fixtures, migrações em banco limpo e testes. Roda em PRs e na main quando backend/ muda.
+on:
+  push:
+    branches: [main]
+    paths: ["backend/**", ".github/workflows/backend.yml"]
+  pull_request:
+    paths: ["backend/**", ".github/workflows/backend.yml"]
+  workflow_dispatch:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --frozen
+      - name: Fixtures fictícias
+        run: python3 docs/fixtures/validar.py
+      - name: Migrações em banco limpo (uma head, sem diferença com os modelos)
+        run: |
+          uv run alembic upgrade head
+          uv run alembic check
+          uv run python -m app.seed
+          uv run python -m app.seed
+      - name: Testes
+        run: uv run pytest -q

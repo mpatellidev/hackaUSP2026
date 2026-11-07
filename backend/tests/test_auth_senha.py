@@ -30,3 +30,11 @@ def test_contas_publicas_mostram_senha_so_em_modo_demo(client, monkeypatch):
     assert contas[ANA]["papel"] == "paciente"
     monkeypatch.setattr(get_settings(), "demo_mode", False)
     assert client.get("/api/v1/auth/contas").json()["senha_demo"] is None
+
+
+def test_trocar_a_senha_de_demo_e_rodar_o_seed_atualiza_as_contas(client, db, monkeypatch):
+    from app.seed import run as seed
+    monkeypatch.setattr(get_settings(), "demo_senha", "outra-senha-9")
+    seed(db)
+    assert client.post("/api/v1/auth/login", json={"conta": ANA, "senha": "outra-senha-9"}).status_code == 200
+    assert client.post("/api/v1/auth/login", json={"conta": ANA, "senha": "demo1234"}).status_code == 401

@@ -42,8 +42,9 @@ def run(db: Session) -> dict[str, int]:
         db.merge(Usuario(id=r["id"], papel=r["papel"], nome_exibicao=r["nome_exibicao"],
                          conta_demo=r["conta_demo"], ativo=r.get("ativo", True)))
     db.flush()
-    for u in db.query(Usuario).filter(Usuario.senha_hash.is_(None)):
-        u.senha_hash = hash_senha_demo(get_settings().demo_senha)
+    alvo = hash_senha_demo(get_settings().demo_senha)  # mesmo hash (sal fixo) para todas as contas de demo
+    for u in db.query(Usuario).filter(Usuario.senha_hash.is_distinct_from(alvo)):
+        u.senha_hash = alvo  # trocar DEMO_SENHA e rodar o seed de novo atualiza a senha
     for r in _load("vinculos"):
         db.merge(VinculoClinica(id=r["id"], usuario_id=r["usuario_id"], clinica_id=r["clinica_id"], funcao=r["funcao"]))
     for r in sorted(_load("solicitacoes"), key=lambda x: x["criado_em"]):

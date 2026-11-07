@@ -1,7 +1,9 @@
-# apps/paciente
+# app/paciente
 
-**Dono:** F1 (#34). **Estado:** pasta reservada, ainda sem código.
+App web do paciente (React + Vite + TypeScript), **mobile-first** (375×812). Base `/`, porta de desenvolvimento 5173 (proxy `/api` → 8000).
 
-App web responsivo (mobile-first, 375×812) com tudo o que o paciente faz. React + Vite + TypeScript. Código anterior para portar: `legado/` (chat em `legado/web`, telas em `legado/mobile`).
+- `src/rotas.tsx` é o **registro único** de módulos; `src/Casca.tsx` a moldura (faixa de demonstração, emergência 192, abas).
+- `src/modulos/<m>/`: telas + `rotas.tsx`. Prontos: `inicio`, `clinicas`, `pedidos`, `alternativas`, `vagas`, `agendamentos`, `urgencia`, `assistente`. Pendentes (P1, com README): `alertas`, `avaliar`, `cenarios`, `perfil`.
+- Fala com a API só por `@uhealth/api-client`; visual só de `@uhealth/ui`.
 
-Ver [`docs/frentes.md`](../../docs/frentes.md) e [`docs/arquitetura.md`](../../docs/arquitetura.md).
+Ver [`../../frentes.md`](../../frentes.md) (F1).

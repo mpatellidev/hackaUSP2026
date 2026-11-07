@@ -1,7 +1,9 @@
-# apps/clinica
+# app/clinica
 
-**Dono:** F2 (#35). **Estado:** pasta reservada, ainda sem código.
+Painel web das clínicas-escola (React + Vite + TypeScript), **desktop-first** (usável a partir de 800px). Base `/clinica/`, porta de desenvolvimento 5174 (proxy `/api` → 8000). Clínica e função vêm de `/auth/me`.
 
-App web de administração das clínicas-escola (desktop-first, 1280px). React + Vite + TypeScript. Código anterior para portar: `legado/desktop`.
+- `src/rotas.tsx` é o **registro único** de módulos; `src/Casca.tsx` a moldura (menu lateral).
+- `src/modulos/<m>/`: telas + `rotas.tsx`. Prontos: `pedidos`, `fila`, `vagas`, `agendamentos`, `urgencias`, `profissionais`. Pendentes (P1, com README): `avaliacoes`, `cenarios`, `faltas`, `resumos`.
+- Fala com a API só por `@uhealth/api-client`; visual só de `@uhealth/ui`.
 
-Ver [`docs/frentes.md`](../../docs/frentes.md) e [`docs/arquitetura.md`](../../docs/arquitetura.md).
+Ver [`../../frentes.md`](../../frentes.md) (F2).

@@ -1,139 +1,130 @@
-# Arquitetura — UHealth (alvo 0.2)
+# Arquitetura — UHealth 0.2
 
-Fonte única de como o sistema é montado. Quem trabalha numa frente lê este arquivo, [`frentes.md`](frentes.md) e [`contratos-mvp.md`](contratos-mvp.md) antes de abrir código. Regras do produto: [`../AGENTS.md`](../AGENTS.md).
-
-> Estado: o **backend** já está na forma descrita aqui (PR da integração #10). Os **apps web** e os **pacotes compartilhados** são criados pela **Fundação** (ver `frentes.md`, Fase 0) antes das quatro frentes começarem. Até lá, `web/`, `mobile/`, `desktop/` e `backend/app/ui_teste/` continuam existindo como legado.
+Como o sistema é montado e por quê. Quem trabalha numa frente lê este arquivo, [`frentes.md`](frentes.md) e o contrato [`backend/docs/contratos-mvp.md`](backend/docs/contratos-mvp.md). Regras do produto: [`AGENTS.md`](AGENTS.md).
 
 ## 1. Decisões (e por quê)
 
 | Decisão | Motivo |
 |---|---|
 | **Tudo é web.** A apresentação é gravada e "simula um app" no navegador. | Um só alvo de build e de teste; nada de APK, Expo Go ou instalador. |
-| **Dois apps React + Vite + TypeScript:** `apps/paciente` (responsivo, mobile-first) e `apps/clinica` (administração das clínicas-escola, desktop-first). | Mesmo stack nos dois lados permite compartilhar código e visual. "Mobile" e "desktop" passam a significar **público e layout**, não plataforma. |
-| **Monorepo com npm workspaces** e dois pacotes: `packages/api-client` e `packages/ui`. | Os bugs da integração (#10) vieram de tipos escritos à mão divergindo do backend (`publico_alvo`, URL `/api/v1` duplicada). Um cliente e um visual compartilhados eliminam essa classe de erro. |
-| **O backend é a fonte da verdade do contrato.** Tipos TS são **gerados** do `/openapi.json`. | Mudou o schema Pydantic → regenera → o TypeScript dos apps quebra na compilação, não na demo. |
-| **Um só serviço em produção:** o FastAPI serve `/api/v1`, o app do paciente em `/` e o da clínica em `/clinica/`. | Mesma origem: sem CORS, um deploy, uma URL para a gravação. |
+| **Duas pastas de código: `app/` (frontend) e `backend/`.** Docs, scripts e testes ficam junto de quem os usa. | Cada responsabilidade tem um lugar só; a raiz guarda apenas README, AGENTS, este arquivo, `frentes.md` e o CI. |
+| **Dois apps React + Vite + TypeScript:** `app/paciente` (responsivo, mobile-first) e `app/clinica` (administração, desktop-first). | Mesmo stack permite compartilhar código e visual. "Mobile" e "desktop" significam **público e layout**, não plataforma. |
+| **Workspaces npm** com dois pacotes: `app/packages/ui` e `app/packages/api-client`. | Os bugs da integração vieram de tipos escritos à mão divergindo do backend. Um cliente e um visual compartilhados eliminam essa classe de erro. |
+| **O backend é a fonte da verdade do contrato.** Os tipos TypeScript são **gerados** do `/openapi.json` (`npm run gen:api`). | Mudou um schema Pydantic → regenera → o TypeScript quebra na compilação, não na demonstração. O CI falha se o arquivo gerado estiver desatualizado. |
+| **Um só serviço em produção:** o FastAPI serve `/api/v1`, o paciente em `/` e a clínica em `/clinica/`. | Mesma origem: sem CORS, um deploy, uma URL para a gravação. |
 | **Banco:** SQLite local, PostgreSQL (Supabase) hospedado, mesmo código via `DATABASE_URL` + Alembic. | Ambiente local sem dependências; hospedado sem mudar código. |
-| **Auth demo + senha simples:** contas fictícias com senha (hash) no hospedado; login sem senha só local (`DEMO_MODE`). | O link hospedado não fica aberto a qualquer um que saiba o nome da conta, sem custo de um provedor de auth. Continua sendo **demo**, rotulado. |
-| **Profissionais + agenda** viram entidades (contrato 0.2.0). | A administração precisa ver disponibilidade dos profissionais; vagas podem apontar um profissional. |
+| **Auth demo com senha de demonstração.** Contas fictícias, uma senha única (`DEMO_SENHA`, só o hash no banco); login sem senha só com `DEMO_MODE=true`. | O link hospedado não fica aberto a quem souber o nome da conta, sem custo de um provedor de auth. Continua sendo **demo**, rotulado. |
+| **Profissionais e agenda** são entidades (contrato 0.2.0). | A administração precisa ver a disponibilidade; vagas podem apontar um profissional. |
 
 ## 2. Visão geral
 
 ```
-                 navegador (celular ou PC) — mesma origem
-   ┌────────────────────────────┬──────────────────────────────┐
-   │  /           apps/paciente │  /clinica/     apps/clinica   │
-   │  responsivo, mobile-first  │  administração, desktop-first │
-   └─────────────┬──────────────┴──────────────┬───────────────┘
-                 │  packages/api-client (tipos gerados + fetch + token + erros)
-                 │  packages/ui (tokens, temas, componentes, SAMU 192 estático)
-                 ▼
-   ┌────────────────────────────────────────────────────────────┐
-   │ FastAPI  /api/v1  (backend/app)                             │
-   │  core/ (config, db, auth Actor, errors ApiError, time)      │
-   │  registro.py → ROUTERS de modulos/<m>/                      │
-   │  spa.py → serve os builds de apps/* (prod)                  │
-   └─────────────┬──────────────────────────────────────────────┘
-                 ▼
+              navegador (celular ou computador) — mesma origem
+   ┌───────────────────────────┬───────────────────────────────┐
+   │ /            app/paciente │ /clinica/        app/clinica   │
+   │ responsivo, mobile-first  │ administração, desktop-first   │
+   └────────────┬──────────────┴───────────────┬───────────────┘
+                │  app/packages/api-client (tipos gerados + fetch + sessão + erros)
+                │  app/packages/ui (tokens, temas, componentes, SAMU 192 estático)
+                ▼
+   ┌─────────────────────────────────────────────────────────────┐
+   │ FastAPI  /api/v1  (backend/app)                              │
+   │  core/ (config, db, auth Actor, errors ApiError, time)       │
+   │  registro.py → ROUTERS de modulos/<m>/                       │
+   │  spa.py → serve os builds de app/*/dist (produção)           │
+   └────────────┬────────────────────────────────────────────────┘
+                ▼
      SQLite (local) | PostgreSQL/Supabase (hospedado)   ← Alembic
      IA opcional (Gemini/Claude) e TTS: só no servidor, mock por padrão
 ```
 
-## 3. Estrutura do repositório (alvo após a Fundação)
+## 3. Estrutura do repositório
 
 ```
-apps/
-  paciente/        React+Vite — F1  (porta dev 5173, base "/")
-  clinica/         React+Vite — F2  (porta dev 5174, base "/clinica/")
-packages/
-  api-client/      tipos gerados + cliente HTTP + hooks — F4 (guardião)
-  ui/              design system (tokens de ui/, componentes) — F4 (guardião)
-backend/           FastAPI — F3 (exceto modulos/acessibilidade e spa.py: F4)
-docs/              contratos, arquitetura, frentes, fixtures — mudança só por PR de contrato
-e2e/               Playwright, jornada ponta a ponta — F4
-package.json       workspaces + scripts raiz — F4
-iniciar.sh / iniciar.ps1   sobem tudo local — F4
+app/                       package.json (workspaces) · tsconfig.base.json · iniciar.sh · iniciar.ps1
+  paciente/                @uhealth/paciente  — Vite, base "/", porta dev 5173
+    src/App.tsx · Casca.tsx · rotas.tsx (registro único)
+    src/modulos/<m>/       telas + rotas.tsx de cada módulo
+      assistente/chat/     chat acessível (perfil de comunicação, áudio, Libras)
+  clinica/                 @uhealth/clinica   — Vite, base "/clinica/", porta dev 5174
+    src/…                  mesma forma do paciente
+  packages/ui/             @uhealth/ui — tokens, componentes, FaixaDemo, CartaoEmergencia
+  packages/api-client/     @uhealth/api-client — schema.d.ts (gerado), cliente, sessão, login, rótulos
+backend/
+  app/                     main.py · registro.py · seed.py · spa.py · core/ · models/ · modulos/<m>/
+  alembic/versions/        migrações lineares NNNN_<modulo>_<descricao>
+  docs/                    contratos-mvp.md · fixtures/ (+ validar.py)
+  scripts/                 instalar_backend.py (Windows sem uv)
+  tests/                   testes de núcleo (auth, isolamento, jornada P0, migrações, spa)
+.github/workflows/         backend.yml · app.yml
 ```
-
-**Removidos pela Fundação:** `web/` (o chat é portado para `apps/paciente`), `mobile/` (Expo), `desktop/src-tauri` e `.github/workflows/desktop-windows.yml` (Tauri). O código de telas, textos e regras de `mobile/src`, `desktop/src` e `backend/app/ui_teste/` é a **referência** para portar; não se perde, fica no histórico do git. `backend/app/ui_teste/` sai quando os dois apps cobrirem a jornada (responsabilidade da F4).
 
 ## 4. Backend
 
-```
-backend/app/
-  main.py            create_app(): CORS (só dev), handlers de erro, /api/v1 + ROUTERS, spa
-  registro.py        REGISTRO ÚNICO de módulos (uma linha por módulo)
-  core/              config.py · db.py · auth.py (Actor) · errors.py (ApiError) · time.py
-  models/            entidades núcleo compartilhadas (clinicas, usuarios, solicitacoes, vagas)
-  modulos/<m>/       router.py · schemas.py · service.py · models.py? · repositorio.py? · seed.py? · tests/
-  seed.py            chama seed.run(db) de cada módulo; idempotente; lê docs/fixtures
-alembic/versions/    NNNN_<modulo>_<descricao>.py, cadeia linear
-```
+Módulos (`backend/app/modulos/<m>/`, cada um com `router.py`, `schemas.py`, `service.py`, `models.py`/`repositorio.py` se tiver tabela, `seed.py` se tiver dados fictícios e `tests/`): `auth`, `saude`, `solicitacoes`, `vagas`, `agendamentos`, `prioridade`, `urgencia`, `cenarios`, `perfil`, `acessibilidade`, `profissionais`, `avaliacoes`, `alertas`, `resumos`. O registro é `app/registro.py` (uma linha por módulo); modelos entram em `app/models/__init__.py`; seeds em `app/seed.py`.
 
-Módulos atuais: `saude`, `auth`, `solicitacoes`, `vagas`, `agendamentos`, `prioridade`, `urgencia`, `cenarios`, `perfil`, `acessibilidade`. Entram na 0.2: `profissionais` (com agenda), `avaliacoes`, `alertas`, `resumos`.
-
-Regras invioláveis do backend:
+Regras invioláveis:
 - **Quem age vem do token** (`Depends(get_actor)` → `Actor`); nunca de `papel`/`clinica_id`/`paciente_id` no corpo.
-- **Um formato de erro:** `ApiError` → `{"erro": {"codigo", "mensagem", "detalhes"?}}`, mensagem pt-BR pronta para a pessoa. Novos códigos são documentados no contrato §2.
-- **Isolamento:** recurso de outra pessoa/clínica → `404`.
-- **Fila:** `(urgencia_avaliada desc, score desc, criado_em asc, id asc)`. Nenhum módulo reordena a fila por conta própria; quem precisa de ordem chama `prioridade`.
-- **Transições** só pela tabela do contrato §5, num ponto único por entidade (service do dono), dentro de transação.
-- **Migrações:** cadeia linear; **só a F3 cria migrações** (inclusive para a F4). Número = próximo da head; o PR que cria migração roda `alembic upgrade head` em banco limpo.
-- Respostas demo/mock trazem `modo`, `fonte` e/ou `aviso`.
+- **Um formato de erro:** `ApiError` → `{"erro": {"codigo", "mensagem", "detalhes"?}}`, mensagem pt-BR pronta para a pessoa.
+- **Isolamento:** recurso de outra pessoa ou clínica → `404`.
+- **Fila:** `(urgencia_avaliada desc, score desc, criado_em asc, id asc)`. Só `prioridade` ordena; quem precisa de ordem chama `prioridade`.
+- **Transições** só pela tabela do contrato §5, num ponto único por entidade, dentro de transação.
+- **Migrações:** cadeia linear; `ADD COLUMN` simples (nada de recriar tabela referenciada: `tests/test_migracoes.py` carrega dados no esquema antigo e migra). Só a F3 cria migrações.
+- **Respostas tipadas:** toda rota nova declara `response_model`; é isso que torna os tipos do frontend úteis. Respostas demo/mock trazem `modo`, `fonte` e/ou `aviso`.
+- **Eventos entre módulos** são chamadas explícitas de serviço (ex.: `vagas.service.criar` → `alertas.service.gerar_para_vaga`), sem barramento.
 
 ## 5. Contrato e cliente compartilhado
 
 Fluxo de uma mudança de API:
+1. Quem altera `schemas.py`/`router.py` atualiza também `backend/docs/contratos-mvp.md` (bump de versão + changelog) **no mesmo PR**.
+2. No mesmo PR roda `npm run gen:api` (em `app/`): exporta o OpenAPI do FastAPI e regenera `app/packages/api-client/src/schema.d.ts` (arquivo gerado, commitado, sem o prefixo `/api/v1`).
+3. CI (`app.yml`): `npm run gen:api && git diff --exit-code` falha se esqueceram.
+4. O TypeScript dos apps aponta tudo o que precisa mudar.
 
-1. F3 altera `schemas.py`/`router.py` e `docs/contratos-mvp.md` (bump de versão + changelog) no **mesmo PR**.
-2. No mesmo PR roda `npm run gen:api` (raiz): sobe a app FastAPI em memória, exporta `/openapi.json` e gera `packages/api-client/src/schema.d.ts`. O arquivo gerado é commitado.
-3. CI: `npm run gen:api && git diff --exit-code` falha se alguém esqueceu de regenerar.
-4. F1/F2 atualizam `main`, e o TypeScript aponta tudo o que precisa mudar.
-
-`packages/api-client` expõe:
-- `criarCliente({ baseUrl = "/api/v1", obterToken, aoNaoAutenticado })` — um `fetch` tipado pelos paths do OpenAPI; erro sempre vira `ErroApi { status, codigo, mensagem, detalhes }`.
-- Sessão: token em `sessionStorage` (`uhealth.sessao.<app>`), restaurada por `GET /auth/me`; 401 → sai da sessão.
-- Hooks finos sobre TanStack Query (`useConsulta`, `useMutacao`) com invalidação por chave de recurso.
+`@uhealth/api-client`:
+- `criarApi({ baseUrl = "/api/v1", obterToken, aoNaoAutenticado })` → `{ cliente, dados, semCorpo }`. `cliente` é o `openapi-fetch` tipado pelos paths; `dados(...)` desembrulha e lança `ErroApi { status, codigo, mensagem, detalhes }` (sem conexão vira `status 0, codigo "sem_conexao"`).
+- `ProvedorUHealth` (sessão + TanStack Query): token em `sessionStorage`, restaurado por `GET /auth/me`; 401 encerra a sessão; `papelEsperado` impede abrir o app da clínica com conta de paciente e vice-versa. `TelaLogin` é compartilhada.
 - **Nada** de regra de negócio: ordenar fila, decidir estado ou "achar" que algo está agendado é proibido no cliente.
 
 ## 6. Frontend
 
-Stack fixa nos dois apps: React 18, Vite 5, TypeScript estrito, `react-router-dom` 6, `@tanstack/react-query` 5, Vitest + Testing Library. Sem biblioteca de componentes externa: só `packages/ui`.
+Stack fixa: React 18, Vite 5, TypeScript estrito, `react-router-dom` 6, `@tanstack/react-query` 5, Vitest + Testing Library. Sem biblioteca de componentes externa: só `@uhealth/ui`.
 
-- **Rotas por módulo:** cada app tem `src/rotas.tsx` (registro único, dono = o app) e `src/modulos/<m>/` com telas e `rotas.ts` exportando `{caminho, rotulo, elemento, papel?}`.
-- **`packages/ui`:** tokens e temas copiados de `ui/` (teal `#14BEB9`, Lexend + Atkinson Hyperlegible, temas sistema/escuro/alto contraste, escala de texto), componentes base (Botao, Campo, Cartao, Selo de estado, Carregando/Vazio/Erro, Abas, Dialogo), `FaixaDemo` ("dados fictícios · demo") e `CartaoEmergencia` (SAMU 192, **texto estático embutido**, funciona sem rede e sem IA).
-- **Paciente:** layout de uma coluna até 480px, navegação inferior por abas, alvos ≥ 44px. Precisa ficar bom em 375×812 (é o que aparece na gravação).
-- **Clínica:** barra lateral ≥ 800px, barra superior abaixo disso; tabelas legíveis em 1280px.
-- **Dev:** `npm run dev` na raiz sobe API (8000) + paciente (5173) + clínica (5174); o Vite faz proxy de `/api` para 8000, então o código usa sempre `/api/v1` relativo e não há CORS nem URL por ambiente.
-- Textos pt-BR simples; estados do pedido exibidos com rótulos do contrato; "agendada" só quando a API devolveu.
+- **Módulos de rota:** cada app tem `src/rotas.tsx` (registro único, uma linha por módulo) e `src/modulos/<m>/rotas.tsx` exportando `{ caminho, elemento, aba? }`.
+- **`@uhealth/ui`:** tokens e temas (teal `#14BEB9`, Lexend + Atkinson Hyperlegible; claro, escuro, alto contraste; escala de texto), `Botao`, `Cartao`, `Selo`, `Aviso`, `Campo*`, `Carregando/Vazio/Erro`, `Abas`, `MenuLateral`, `Tabela`, `Preferencias`, `FaixaDemo` e `CartaoEmergencia` (SAMU 192, **texto estático embutido**: funciona sem rede e sem IA).
+- **Paciente:** uma coluna até 480px, abas inferiores, alvos ≥ 44px; precisa ficar bom em 375×812.
+- **Clínica:** menu lateral ≥ 800px, barra superior abaixo disso; tabelas viram cartões em telas estreitas.
+- **Dev:** `npm run dev` (em `app/`) sobe API (8000), paciente (5173) e clínica (5174); o Vite faz proxy de `/api`, então o código usa sempre `/api/v1` relativo e não há CORS nem URL por ambiente.
+- Textos pt-BR simples; "agendada" só quando a API devolveu.
 
 ## 7. Ambientes e deploy
 
 | | Local | Hospedado (apresentação) |
 |---|---|---|
-| Comando | `./iniciar.sh` ou `npm run dev` | um serviço web (Render/Fly) |
+| Comando | `app/iniciar.sh` (ou `--dev`) | um serviço web (Render/Fly) |
 | Banco | SQLite `backend/dev.db` | PostgreSQL Supabase (`DATABASE_URL`) |
-| Login | demo sem senha + com senha | só com senha (`DEMO_MODE=false` desativa o login sem senha) |
-| Fronts | Vite dev com proxy | `npm run build` gera `apps/*/dist`, servidos por `backend/app/spa.py` |
+| Login | senha de demo; sem senha com `DEMO_MODE=true` | `DEMO_MODE=false` e `DEMO_SENHA` própria |
+| Frontends | Vite dev com proxy, ou o build servido pela API | build servido pela API |
 | IA | `LLM_PROVIDER=mock` | mock ou chave no ambiente do serviço |
 
-Build de produção (um comando, usado pelo serviço hospedado e pela E2E): `npm ci && npm run build && cd backend && uv sync && alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Variáveis em `backend/.env.example` (sem segredos). Limites do plano gratuito (hibernação, expiração do Postgres) ficam documentados no README pela F4.
+Build de produção: `cd app && npm ci && npm run build`, depois `cd backend && uv sync && alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Variáveis em `backend/.env.example`. Os arquivos de deploy (Dockerfile/`render.yaml`) e os limites dos planos gratuitos ainda **não** foram escritos (F4).
 
 ## 8. Qualidade
 
-| Camada | Ferramenta | Dono | Roda no CI |
-|---|---|---|---|
-| Fixtures | `python docs/fixtures/validar.py` | todos | sim |
-| Backend | `uv run pytest -q` (inclui jornada P0) | F3 (F4 no módulo acessibilidade) | sim |
-| Contrato | `npm run gen:api && git diff --exit-code` | F3 | sim |
-| Pacotes e apps | `npm run typecheck && npm test` (Vitest) | F1/F2/F4 | sim |
-| Ponta a ponta | Playwright sobre o build único, viewport 375 e 1280 | F4 | sim (após a Fundação) |
+| Camada | Ferramenta | Roda no CI |
+|---|---|---|
+| Fixtures | `python3 backend/docs/fixtures/validar.py` | `backend.yml` |
+| Backend | `uv run pytest -q` (inclui jornada P0, isolamento, migrações com dados, spa) | `backend.yml` |
+| Migrações | `alembic upgrade head` + `alembic check` + seed duas vezes | `backend.yml` |
+| Contrato | `npm run gen:api && git diff --exit-code` | `app.yml` |
+| App | `npm run typecheck && npm test && npm run build` | `app.yml` |
+| Tudo local | `app/iniciar.sh --testes` | — |
 
-Workflow único `.github/workflows/ci.yml` (Fundação) em PR e push na `main`.
+Ainda não há teste ponta a ponta no navegador (Playwright); a jornada P0 é coberta no backend por `tests/test_jornada_p0.py` e foi percorrida à mão nos apps.
 
 ## 9. Regras de produto que a arquitetura protege
 
-- Não diagnostica, não prescreve, não garante vaga; emergência = SAMU 192 estático no `packages/ui`, sem rede/IA.
+- Não diagnostica, não prescreve, não garante vaga; emergência = SAMU 192 estático em `@uhealth/ui`, sem rede/IA.
 - Urgência **avaliada por profissional** sempre antes do score; relato nunca é punido; cancelamento antecipado nunca gera falta.
 - Paciente escolhe antes de ir a outra clínica (sem cascata automática).
 - Pedido ≠ interesse ≠ agendamento ≠ alerta; "agendada" só com confirmação do backend.

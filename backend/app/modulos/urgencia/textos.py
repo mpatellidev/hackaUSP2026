@@ -1,6 +1,6 @@
 """Textos estáticos de urgência.
 
-Espelham `mobile/src/modulos/urgencia/textos.ts`. O app embute o texto: ele NÃO
+Espelham `TEXTO_EMERGENCIA` de `app/packages/ui` (componente `CartaoEmergencia`). O app embute o texto: ele NÃO
 depende desta API, de rede, de IA, de vaga ou de fila para orientar emergência.
 
 PENDENTE: revisão clínica/jurídica antes de qualquer uso real. Protótipo.

@@ -33,3 +33,11 @@ const FORMATO_HORA = new Intl.DateTimeFormat("pt-BR", { timeStyle: "short", time
 export const dataHora = (iso: string) => FORMATO_DATA_HORA.format(new Date(iso));
 export const data = (iso: string) => FORMATO_DATA.format(new Date(iso));
 export const hora = (iso: string) => FORMATO_HORA.format(new Date(iso));
+
+/** Critérios que a API usa para sugerir clínicas alternativas, em linguagem simples. */
+export const CRITERIO_ALTERNATIVA: Record<string, string> = {
+  mesma_cidade: "fica na mesma cidade",
+  publico_compativel: "atende o público do seu pedido",
+  recebendo_pedidos: "está recebendo pedidos",
+  mesma_especialidade: "atende a mesma especialidade",
+};

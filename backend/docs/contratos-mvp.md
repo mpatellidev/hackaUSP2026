@@ -1,10 +1,11 @@
 # Contratos do MVP — UHealth
 
-> **Versão `0.1.3-rascunho`** · protótipo de hackathon · dados 100% fictícios.
-> Este é o documento de referência das issues #1–#18. Mudanças seguem o processo em [`fronteiras.md`](fronteiras.md#como-mudar-um-contrato).
+> **Versão `0.2.0-rascunho`** · protótipo de hackathon · dados 100% fictícios.
+> Documento de referência da API. A fonte da verdade técnica é o OpenAPI do backend (`/openapi.json`); os tipos TypeScript dos apps são gerados dele (`npm run gen:api` em `app/`). Mudanças seguem [`frentes.md`](../../frentes.md#protocolo-de-trabalho): mesmo PR altera o código, este documento (com bump de versão) e os tipos gerados.
 
 | Versão | Mudança |
 |---|---|
+| 0.2.0-rascunho | **Login com senha de demonstração** (`POST /auth/login`, `GET /auth/contas`; login sem senha só com `DEMO_MODE`). **Profissionais e agenda** (`Profissional`, `BlocoAgenda`, disponibilidade da clínica, `Vaga.profissional_id` opcional). **Avaliações** (`POST /avaliacoes`), **alertas** (preferência + `GET /alertas`) e **resumos compartilháveis** com aceite, revogação e auditoria implementados. `GET /clinicas/{id}` vale também para funcionário da própria clínica. Respostas das rotas de pedidos, vagas, agendamentos, perfil e auth passam a ter modelo no OpenAPI. |
 | 0.1.3-rascunho | `GET/PUT /perfil` no backend (§9.2). Pedido `enviada` também pode demonstrar interesse em vaga (§5, §7.3). Cancelamento de agendamento definido (§4.6, §5, §7.7, §10): `POST /agendamentos/{id}/cancelar`, `GET /agendamentos`, `GET /agendamentos/{id}`; pedido `agendada` volta a `em_analise`. |
 | 0.1.2-rascunho | `Solicitacao.publico_alvo` explicita o público escolhido no pedido e permite filtrar alternativas sem inferência. |
 | 0.1.1-rascunho | Falta verificada passa a ser definida: `Agendamento.desfecho`, penalidade só no score (§9.3); cancelamento antecipado sem penalidade. |
@@ -74,9 +75,11 @@ Formato único em qualquer erro:
 
 ## 3. Autenticação demonstrativa
 
-> ⚠️ **Autenticação DEMO. Não é segura e não pode ir para produção.** Não há senha. Qualquer pessoa que conheça o nome da conta entra. Toda resposta de autenticação carrega `"modo": "demo"` e as UIs devem exibir o selo "Conta fictícia · demonstração".
+> ⚠️ **Autenticação DEMO. Não é segura e não pode ir para produção.** As contas são fictícias e compartilham **uma senha de demonstração** (`DEMO_SENHA`, padrão `demo1234`, só o hash fica no banco). Com `DEMO_MODE=true` entra-se também sem senha. Toda resposta de autenticação carrega `"modo": "demo"` e as UIs devem exibir o selo "Conta fictícia · demonstração".
 
-- `POST /auth/demo/login` com `{"conta": "paciente.ana"}` → `200`:
+- `GET /auth/contas` (público) → `{modo, aviso, senha_demo|null, login_sem_senha, itens: [{conta, nome_exibicao, papel, funcao|null, clinica_nome|null}]}`. A senha só aparece com `DEMO_MODE=true`.
+- `POST /auth/login` com `{"conta": "paciente.ana", "senha": "…"}` (conta ou senha erradas → `401 nao_autenticado`).
+- `POST /auth/demo/login` com `{"conta": "paciente.ana"}` — **só com `DEMO_MODE=true`** (senão `404`) → `200`:
   ```json
   {
     "modo": "demo",
@@ -168,6 +171,7 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
 }
 ```
 `estado` ∈ `aberta | preenchida | cancelada`.
+`profissional_id` é **opcional** (profissional ativo da própria clínica e da mesma especialidade; senão `422 validacao`).
 
 ### 4.6 InteresseVaga e Agendamento
 ```json
@@ -194,6 +198,22 @@ Leitura (paciente: os próprios; funcionário: os da clínica; fora do escopo = 
 | **Agendamento** (`Agendamento`) | Clínica confirmou **uma** pessoa na vaga | Funcionário | Sim, no horário confirmado |
 
 A UI só escreve "agendada" quando o backend devolve `estado: "agendada"`.
+
+### 4.8 Profissional e agenda (0.2.0)
+```json
+{"id": "e1000000-0000-4000-8000-000000000001", "clinica_id": "c1000000-0000-4000-8000-000000000001", "nome_exibicao": "Dra. Helena (fictícia)", "especialidade": "clinica_geral", "vinculo": "docente", "ativo": true}
+{"id": "e2000000-0000-4000-8000-000000000001", "profissional_id": "e1000000-…-0001", "inicio": "2026-11-12T09:00:00-03:00", "fim": "2026-11-12T10:00:00-03:00", "estado": "reservado"}
+```
+`vinculo` ∈ `docente | residente | estudante_supervisionado`; `BlocoAgenda.estado` ∈ `disponivel | reservado | indisponivel`. Pessoas **fictícias**. Disponibilidade **não** é vaga publicada nem agendamento.
+
+| Rota | Quem | Efeito |
+|---|---|---|
+| `GET /profissionais?clinica_id=&ativos=` | funcionário | lista das próprias clínicas |
+| `POST /profissionais` · `PATCH /profissionais/{id}` | `atendimento` ou `coordenacao` | cadastra / edita (`ativo`, nome, especialidade, vínculo); especialidade precisa ser da clínica |
+| `GET /profissionais/{id}/agenda?data=` · `POST /profissionais/{id}/agenda` · `PATCH /agenda/{id}` | leitura: funcionário · escrita: `atendimento`/`coordenacao` | blocos do profissional; sobreposição → `422` |
+| `GET /clinicas/{id}/disponibilidade?data=YYYY-MM-DD` | funcionário da clínica | profissionais ativos com blocos do dia e `disponiveis` |
+
+Outra clínica → `404`.
 
 ## 5. Máquina de estados da solicitação
 
@@ -274,7 +294,7 @@ Casos de erro a exercitar: Atendimento A tenta ver o pedido 2 → 404; segunda c
 
 ## 9. Interfaces mínimas das extensões
 
-Só forma de entrada/saída. **Regras funcionais pertencem à issue dona.** Cada módulo registra seu próprio roteador (ver [`fronteiras.md`](fronteiras.md#pontos-de-montagem)).
+Só forma de entrada/saída. **Regras funcionais pertencem à issue dona.** Cada módulo registra seu próprio roteador (ver [`arquitetura.md`](../../arquitetura.md#4-backend)).
 
 ### 9.1 Cenários acadêmicos — #11 (backend) / #12 (telas)
 ```json
@@ -319,13 +339,13 @@ Componentes: `socioeconomico`, `necessidade_academica`, `tempo_espera`, `falta_v
 `POST /urgencias`, `GET /urgencias` (paciente: próprios; funcionário: da clínica), `POST /urgencias/{id}/avaliacao`.
 
 ### 9.5 Resumo compartilhável (demo) — #15
-`ResumoProntuario` `{id, paciente_id, clinica_autora_id, campos: [{nome, valor}], criado_por, criado_em}` (conteúdo fictício) · `Compartilhamento` `{id, resumo_id, clinica_destino_id, campos_compartilhados[], finalidade, aceite: aceito|recusado, aceito_em, revogado_em|null}` · `EventoAcesso` `{id, resumo_id, usuario_id, clinica_id, tipo: consulta|criacao|aceite|recusa|revogacao, criado_em}`. Envio **só ao destino escolhido pelo paciente**, após ver campos e destino. Revogação vale para acessos futuros; histórico preservado. Aviso fixo: "registro de escolha não basta para exigências legais; não é prontuário real". Dados de saúde **nunca** vão à IA.
+`ResumoProntuario` `{id, paciente_id, clinica_autora_id, campos: [{nome, valor}], criado_por, criado_em}` (conteúdo fictício) · `Compartilhamento` `{id, resumo_id, clinica_destino_id, campos_compartilhados[], finalidade, aceite: aceito|recusado, aceito_em, revogado_em|null}` · `EventoAcesso` `{id, resumo_id, usuario_id, clinica_id, tipo: consulta|criacao|aceite|recusa|revogacao, criado_em}`. Rotas: `POST /resumos` `{solicitacao_id, campos[]}` (só `profissional` da clínica do pedido) · `GET /resumos` e `GET /resumos/{id}` (paciente: os próprios; funcionário: os da clínica autora e os compartilhados **só com os campos escolhidos**; a consulta de destinatária gera `EventoAcesso`) · `POST /resumos/{id}/compartilhamentos` `{clinica_destino_id, campos_compartilhados[], finalidade, aceite}` (só o paciente dono) · `GET /resumos/{id}/compartilhamentos` · `POST /compartilhamentos/{id}/revogar` · `GET /resumos/{id}/eventos` (auditoria). Envio **só ao destino escolhido pelo paciente**, após ver campos e destino. Revogação vale para acessos futuros; histórico preservado. Aviso fixo: "registro de escolha não basta para exigências legais; não é prontuário real". Dados de saúde **nunca** vão à IA.
 
 ### 9.6 Avaliação de clínica — #16
-`AvaliacaoClinica` `{id, clinica_id, paciente_id, solicitacao_id, nota: 1..5, comentario|null, criado_em}`. Só com solicitação `concluida` do próprio paciente; uma por paciente e atendimento (editável pelo autor). `GET /clinicas/{id}/avaliacoes` → `{media|null, quantidade, itens[]}` sem nome nem dado de saúde. Comentários fictícios.
+`AvaliacaoClinica` `{id, clinica_id, paciente_id, solicitacao_id, nota: 1..5, comentario|null, criado_em}`. Só com solicitação `concluida` do próprio paciente; uma por paciente e atendimento (editável pelo autor). `POST /avaliacoes` `{solicitacao_id, nota, comentario?}` (`201`; reenviar edita e devolve `200`; pedido não concluído → `409 transicao_invalida`) · `GET /avaliacoes` (as minhas) · `GET /clinicas/{id}/avaliacoes` → `{media|null, quantidade, itens[]}` sem nome nem dado de saúde. Comentários fictícios.
 
 ### 9.7 Alertas — #17
-`Alerta` `{id, paciente_id, vaga_id, clinica_id, evento_origem: "vaga_criada", lido: bool, criado_em}`. Gerado a partir do evento `vaga_criada` para pacientes com pedido ativo elegível que **optaram** por esse aviso; um alerta por (paciente, vaga). `GET /alertas`, `POST /alertas/{id}/lido`. Alerta ≠ reserva. Push real só se configurado **e** testado; senão não se chama funcional.
+`Alerta` `{id, paciente_id, vaga_id, clinica_id, evento_origem: "vaga_criada", lido: bool, criado_em}`. Gerado a partir do evento `vaga_criada` para pacientes com pedido ativo elegível que **optaram** por esse aviso; um alerta por (paciente, vaga). `GET /alertas`, `POST /alertas/{id}/lido`, `GET/PUT /alertas/preferencia` `{receber, ligacao}` (a opção de **ligação** significa só que a clínica pode telefonar; não há ligação automática). O alerta é gerado ao publicar a vaga, para quem optou e tem pedido ativo (`enviada`, `em_analise`, `precisa_contato`) na mesma clínica e especialidade. Alerta ≠ reserva. Push real só se configurado **e** testado; senão não se chama funcional.
 
 ### 9.8 Mensagem simplificada — #9 (IA/acessibilidade)
 `POST /acessibilidade/simplificar` `{"texto", "nivel": "simples|detalhada"}` → `{"original", "adaptado", "fonte": "mock|gemini", "aviso"}`. O original **sempre** acompanha o adaptado; nunca diagnostica, prevê vaga ou orienta clinicamente. Chave do Gemini só no servidor; modo `mock` sem rede é o padrão.
@@ -344,7 +364,7 @@ Componentes: `socioeconomico`, `necessidade_academica`, `tempo_espera`, `falta_v
 | Item | Situação no MVP |
 |---|---|
 | API, banco, autorização por papel/clínica | Real (protótipo) |
-| Login | **Demo**, sem senha |
+| Login | **Demo**: contas fictícias com senha única de demonstração (ou sem senha com `DEMO_MODE`) |
 | Dados | **Fictícios** |
 | Gemini | Opcional; `mock` por padrão |
 | Push, SMS, WhatsApp | **Não existe** |

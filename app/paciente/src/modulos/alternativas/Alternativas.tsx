@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Aviso, Botao, Cartao, Carregando, Erro, Selo, Vazio } from "@uhealth/ui";
-import { CUSTO, mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
+import { CRITERIO_ALTERNATIVA, CUSTO, mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
 
 /** O paciente ESCOLHE a nova clínica; nada é enviado automaticamente. */
 export function Alternativas() {
@@ -26,7 +26,7 @@ export function Alternativas() {
       {lista.data && (
         <>
           <Aviso>{lista.data.aviso}</Aviso>
-          <p>Critérios: {lista.data.criterios.join("; ")}.</p>
+          <p>Mostramos clínicas que: {lista.data.criterios.map((c) => CRITERIO_ALTERNATIVA[c] ?? c).join("; ")}.</p>
           {lista.data.itens.length === 0 && <Vazio>Não encontramos outra clínica compatível agora. Tente de novo mais tarde.</Vazio>}
           <ul className="lista-cartoes">
             {lista.data.itens.map(({ clinica: c }) => (
