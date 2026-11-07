@@ -1,9 +1,7 @@
-# paciente · alertas
+# paciente · alertas (P1, pendente)
 
-**Dono:** F1 (#34). **Estado:** pasta reservada, ainda sem código.
+Preferência de alerta de vaga, lista de alertas e marcar como lido. Alerta não é reserva e não há push.
 
-Alertas de vaga e opção de ligação, sem push real (P1).
+**Backend pronto:** `GET/PUT /alertas/preferencia`, `GET /alertas`, `POST /alertas/{id}/lido`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
 
-Endpoints: `/alertas`
-
-Ver [`docs/frentes.md`](../../../../../docs/frentes.md) e [`docs/arquitetura.md`](../../../../../docs/arquitetura.md).
+Ver [`frentes.md`](../../../../frentes.md).

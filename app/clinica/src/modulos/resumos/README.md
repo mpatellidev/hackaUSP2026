@@ -1,9 +1,7 @@
-# clínica · resumos
+# clinica · resumos (P1, pendente)
 
-**Dono:** F2 (#35). **Estado:** pasta reservada, ainda sem código.
+Criar resumo fictício (profissional) e ver os resumos compartilhados com a clínica; consulta fica registrada.
 
-Resumo compartilhável demo, só com escolha do paciente (P1).
+**Backend pronto:** `GET/POST /resumos`, `GET /resumos/{id}`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
 
-Endpoints: `/resumos*`
-
-Ver [`docs/frentes.md`](../../../../../docs/frentes.md) e [`docs/arquitetura.md`](../../../../../docs/arquitetura.md).
+Ver [`frentes.md`](../../../../frentes.md).

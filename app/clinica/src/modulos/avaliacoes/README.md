@@ -1,9 +1,7 @@
-# clínica · avaliacoes
+# clinica · avaliacoes (P1, pendente)
 
-**Dono:** F2 (#35). **Estado:** pasta reservada, ainda sem código.
+Visualizar as avaliações da própria clínica (sem nome e sem dado de saúde).
 
-Visualizar avaliações da própria clínica (P1).
+**Backend pronto:** `GET /clinicas/{id}/avaliacoes`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
 
-Endpoints: `/clinicas/{id}/avaliacoes`
-
-Ver [`docs/frentes.md`](../../../../../docs/frentes.md) e [`docs/arquitetura.md`](../../../../../docs/arquitetura.md).
+Ver [`frentes.md`](../../../../frentes.md).

@@ -1,9 +1,7 @@
-# paciente · avaliar
+# paciente · avaliar (P1, pendente)
 
-**Dono:** F1 (#34). **Estado:** pasta reservada, ainda sem código.
+Avaliar a clínica depois de um pedido concluído (nota de 1 a 5, comentário opcional, editável).
 
-Avaliar a clínica após `concluida` (P1).
+**Backend pronto:** `POST /avaliacoes`, `GET /avaliacoes`, `GET /clinicas/{id}/avaliacoes`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
 
-Endpoints: `/avaliacoes`
-
-Ver [`docs/frentes.md`](../../../../../docs/frentes.md) e [`docs/arquitetura.md`](../../../../../docs/arquitetura.md).
+Ver [`frentes.md`](../../../../frentes.md).

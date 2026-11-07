@@ -13,8 +13,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    with op.batch_alter_table("usuarios") as lote:
-        lote.add_column(sa.Column("senha_hash", sa.String(), nullable=True))
+    op.add_column("usuarios", sa.Column("senha_hash", sa.String(), nullable=True))
 
 
 def downgrade() -> None:

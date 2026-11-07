@@ -47,3 +47,8 @@
   .table td { display: flex; justify-content: space-between; gap: var(--uh-space-3); border-top: 0; padding: var(--uh-space-1) var(--uh-space-2); }
   .table td::before { content: attr(data-rotulo); font-weight: 700; color: var(--uh-muted); }
 }
+
+/* Cabeçalho do celular compacto: os dois botões lado a lado; "outline" legível sobre a cor da marca */
+.cabecalho-app .linha { flex-wrap: nowrap; }
+.cabecalho-app .linha .btn { flex: 1; width: auto; min-height: var(--uh-target); padding: 0 var(--uh-space-3); font-size: calc(1rem * var(--uh-scale)); }
+.cabecalho-app .btn--outline { color: var(--uh-on-brand); border-color: var(--uh-on-brand); }

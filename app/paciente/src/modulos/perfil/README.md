@@ -1,9 +1,7 @@
-# paciente · perfil
+# paciente · perfil (P1, pendente)
 
-**Dono:** F1 (#34). **Estado:** pasta reservada, ainda sem código.
+Cidade, contato preferido, renda opcional ('prefiro não informar' vale) e preferências de acessibilidade.
 
-Cidade, contato, socioeconômico opcional, acessibilidade (P1).
+**Backend pronto:** `GET/PUT /perfil`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
 
-Endpoints: `/perfil`
-
-Ver [`docs/frentes.md`](../../../../../docs/frentes.md) e [`docs/arquitetura.md`](../../../../../docs/arquitetura.md).
+Ver [`frentes.md`](../../../../frentes.md).

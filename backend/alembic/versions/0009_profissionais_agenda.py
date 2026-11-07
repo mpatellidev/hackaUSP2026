@@ -36,14 +36,16 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index("ix_agenda_blocos_profissional_id", "agenda_blocos", ["profissional_id"])
-    with op.batch_alter_table("vagas") as lote:
-        lote.add_column(sa.Column("profissional_id", sa.String(), nullable=True))
-        lote.create_foreign_key("fk_vagas_profissional", "profissionais", ["profissional_id"], ["id"])
+    # ADD COLUMN simples (sem recriar a tabela, então funciona com dados). No SQLite a FK vai inline no ADD COLUMN.
+    if op.get_bind().dialect.name == "sqlite":
+        op.execute("ALTER TABLE vagas ADD COLUMN profissional_id VARCHAR REFERENCES profissionais (id)")
+    else:
+        op.add_column("vagas", sa.Column("profissional_id", sa.String(), nullable=True))
+        op.create_foreign_key("fk_vagas_profissional", "vagas", "profissionais", ["profissional_id"], ["id"])
 
 
 def downgrade() -> None:
-    with op.batch_alter_table("vagas") as lote:
-        lote.drop_constraint("fk_vagas_profissional", type_="foreignkey")
+    with op.batch_alter_table("vagas") as lote:  # só no downgrade (recria a tabela no SQLite)
         lote.drop_column("profissional_id")
     op.drop_table("agenda_blocos")
     op.drop_table("profissionais")

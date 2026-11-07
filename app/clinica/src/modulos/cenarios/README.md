@@ -1,9 +1,7 @@
-# clínica · cenarios
+# clinica · cenarios (P1, pendente)
 
-**Dono:** F2 (#35). **Estado:** pasta reservada, ainda sem código.
+Publicar cenários acadêmicos e ver interessados (função coordenação).
 
-Publicar e ver interessados, função `coordenacao` (P1).
+**Backend pronto:** `GET/POST/PATCH /cenarios*`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
 
-Endpoints: `/cenarios*`
-
-Ver [`docs/frentes.md`](../../../../../docs/frentes.md) e [`docs/arquitetura.md`](../../../../../docs/arquitetura.md).
+Ver [`frentes.md`](../../../../frentes.md).

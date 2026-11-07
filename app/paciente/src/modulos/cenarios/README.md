@@ -1,9 +1,7 @@
-# paciente · cenarios
+# paciente · cenarios (P1, pendente)
 
-**Dono:** F1 (#34). **Estado:** pasta reservada, ainda sem código.
+Cenários acadêmicos compatíveis com o perfil e demonstrar interesse.
 
-Cenários acadêmicos compatíveis e interesse (P1).
+**Backend pronto:** `GET /cenarios`, `GET /cenarios/compatibilidade`, `POST/DELETE /cenarios/{id}/interesses`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
 
-Endpoints: `/cenarios`, `/cenarios/compatibilidade`
-
-Ver [`docs/frentes.md`](../../../../../docs/frentes.md) e [`docs/arquitetura.md`](../../../../../docs/arquitetura.md).
+Ver [`frentes.md`](../../../../frentes.md).
