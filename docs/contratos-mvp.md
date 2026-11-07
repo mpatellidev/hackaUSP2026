@@ -1,10 +1,11 @@
 # Contratos do MVP — UHealth
 
-> **Versão `0.1.2-rascunho`** · protótipo de hackathon · dados 100% fictícios.
+> **Versão `0.1.3-rascunho`** · protótipo de hackathon · dados 100% fictícios.
 > Este é o documento de referência das issues #1–#18. Mudanças seguem o processo em [`fronteiras.md`](fronteiras.md#como-mudar-um-contrato).
 
 | Versão | Mudança |
 |---|---|
+| 0.1.3-rascunho | Pedido `enviada` também pode demonstrar interesse em vaga (§5, §7.3). Cancelamento de agendamento definido (§4.6, §5, §7.7, §10): `POST /agendamentos/{id}/cancelar`, `GET /agendamentos`, `GET /agendamentos/{id}`; pedido `agendada` volta a `em_analise`. |
 | 0.1.2-rascunho | `Solicitacao.publico_alvo` explicita o público escolhido no pedido e permite filtrar alternativas sem inferência. |
 | 0.1.1-rascunho | Falta verificada passa a ser definida: `Agendamento.desfecho`, penalidade só no score (§9.3); cancelamento antecipado sem penalidade. |
 | 0.1.0-rascunho | Primeira publicação (issue #1): convenções, estados, entidades núcleo e interfaces mínimas das extensões. |
@@ -198,7 +199,7 @@ enviada ──► em_analise ◄──► precisa_contato
                           ▼
                     indisponivel  (terminal para este pedido)
 
-em_analise / precisa_contato ──(paciente demonstra interesse em vaga)──► aguardando_confirmacao
+enviada / em_analise / precisa_contato ──(paciente demonstra interesse em vaga)──► aguardando_confirmacao
 aguardando_confirmacao ──(funcionário confirma a vaga)──► agendada ──► concluida
 aguardando_confirmacao ──(interesse retirado ou vaga dada a outra pessoa, sem outro interesse)──► em_analise
 ```
@@ -209,7 +210,7 @@ aguardando_confirmacao ──(interesse retirado ou vaga dada a outra pessoa, se
 | `enviada`, `em_analise`, `precisa_contato` | `indisponivel` | funcionário da clínica | `motivo` administrativo obrigatório |
 | `em_analise` | `precisa_contato` | funcionário da clínica | `motivo` obrigatório (ex.: "faltam informações de contato") |
 | `precisa_contato` | `em_analise` | funcionário da clínica | |
-| `em_analise`, `precisa_contato` | `aguardando_confirmacao` | **sistema**, ao paciente registrar interesse | Interesse não é agendamento |
+| `enviada`, `em_analise`, `precisa_contato` | `aguardando_confirmacao` | **sistema**, ao paciente registrar interesse | Interesse não é agendamento; a clínica ainda confirma depois |
 | `aguardando_confirmacao` | `agendada` | funcionário, ao confirmar a vaga | Único caminho para `agendada` |
 | `aguardando_confirmacao` | `em_analise` | sistema | Interesse retirado / vaga dada a outro e nenhum outro interesse `registrado` |
 | `agendada` | `concluida` | funcionário da clínica | Habilita avaliação da clínica (#16) |
@@ -236,7 +237,7 @@ Fluxo da recusa: clínica A marca `indisponivel` → o paciente é **informado**
 
 1. **Publicar:** funcionário da clínica → `POST /vagas` `{"especialidade", "inicio", "fim"}` (`clinica_id` do token). Emite evento `vaga_criada` (consumido pela #17 para criar alertas).
 2. **Ver:** paciente com **pedido ativo** na clínica → `GET /vagas?clinica_id=`. Sem pedido ativo → lista vazia/`403`.
-3. **Interesse:** `POST /vagas/{id}/interesses` `{"solicitacao_id"}` — paciente dono do pedido ativo. Cria `InteresseVaga.registrado` e leva o pedido a `aguardando_confirmacao`. **Não é agendamento.**
+3. **Interesse:** `POST /vagas/{id}/interesses` `{"solicitacao_id"}` — paciente dono do pedido ativo. Cria `InteresseVaga.registrado` e leva o pedido a `aguardando_confirmacao` (o pedido pode estar `enviada`, `em_analise` ou `precisa_contato`). **Não é agendamento.**
 4. **Confirmar:** funcionário → `POST /vagas/{id}/confirmar` `{"interesse_id"}`. Em **uma transação** (ou restrição única): interesse → `confirmado`, vaga → `preenchida`, pedido → `agendada`, cria `Agendamento`. Os demais interesses → `nao_selecionado`. **No máximo um confirmado por vaga**; segunda tentativa → `409 vaga_ja_preenchida`. Recusar/não selecionar não altera outros pacientes.
 5. **Priorização para oferta:** a ordem sugerida dos interessados vem do serviço da #13 (nunca de uma fila paralela); urgência avaliada sempre primeiro. A decisão final é do funcionário.
 6. Sem SMS/WhatsApp/push; o app atualiza sob demanda.

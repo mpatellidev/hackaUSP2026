@@ -39,13 +39,11 @@ def test_jornada_p0_completa(client, login):
     assert client.get(f"{API}/solicitacoes/{pedido_b}", headers=a).status_code == 404
     assert client.get(f"{API}/solicitacoes/{pedido_b}", headers=eva).status_code == 404
 
-    # Interesse antes da análise não é permitido (tabela de estados do contrato §5)
+    # Pedido apenas `enviada` já pode demonstrar interesse (contrato §5, 0.1.3); a clínica ainda confirma depois
     vaga = client.post(f"{API}/vagas", headers=b, json={
         "especialidade": "clinica_geral", "inicio": "2026-11-25T14:00:00-03:00", "fim": "2026-11-25T14:30:00-03:00"})
     assert vaga.status_code == 201
     vaga_id = vaga.json()["id"]
-    cedo = client.post(f"{API}/vagas/{vaga_id}/interesses", headers=bruno, json={"solicitacao_id": pedido_b})
-    assert cedo.status_code == 409
 
     # 7. B marca em análise
     assert client.patch(f"{API}/solicitacoes/{pedido_b}/estado", headers=b, json={"estado": "em_analise"}).status_code == 200

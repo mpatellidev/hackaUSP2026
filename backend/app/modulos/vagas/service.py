@@ -19,7 +19,7 @@ from app.models.vagas import Agendamento, InteresseVaga, Vaga
 from app.repositories import solicitacoes as repo
 
 # Pedido em que o paciente já pode demonstrar interesse (tabela da seção 5 do contrato).
-ESTADOS_PARA_INTERESSE = ("em_analise", "precisa_contato", "aguardando_confirmacao")
+ESTADOS_PARA_INTERESSE = ("enviada", "em_analise", "precisa_contato", "aguardando_confirmacao")
 # Pedidos que dão direito a ver as vagas da clínica (pedido ativo ou já aguardando confirmação).
 ESTADOS_VISIVEIS = ESTADOS_ATIVOS + ("aguardando_confirmacao",)
 
@@ -134,7 +134,7 @@ def registrar_interesse(db: Session, actor: Actor, vaga_id: str, solicitacao_id:
         raise ApiError(409, "transicao_invalida", "Esta vaga não está mais disponível.", {"vaga_id": vaga.id})
     if pedido.estado not in ESTADOS_PARA_INTERESSE:
         raise ApiError(409, "transicao_invalida",
-                       "A clínica ainda precisa começar a analisar o seu pedido antes de você demonstrar interesse.")
+                       "O seu pedido não está em um estado que permita demonstrar interesse em vaga.")
     if pedido.especialidade != vaga.especialidade:
         raise _erro_validacao(["solicitacao_id"], "A vaga é de outra especialidade que a do seu pedido.")
     if db.scalar(select(InteresseVaga.id).where(InteresseVaga.vaga_id == vaga.id,

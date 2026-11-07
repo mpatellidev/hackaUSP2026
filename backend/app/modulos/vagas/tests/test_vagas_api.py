@@ -63,6 +63,21 @@ def test_interesse_exige_pedido_do_paciente_e_vaga_da_mesma_clinica(client, logi
                        headers=login(ATEND_B)).status_code == 403
 
 
+def test_pedido_enviada_ja_pode_demonstrar_interesse(client, login, db):
+    ana = login(ANA)
+    pedido = client.post("/api/v1/solicitacoes", headers=ana, json={
+        "clinica_id": CLINICA_B, "especialidade": "clinica_geral", "publico_alvo": "adultos",
+        "descricao_administrativa": "Nova consulta de rotina"})
+    assert pedido.status_code == 201 and pedido.json()["estado"] == "enviada"
+    r = client.post(f"{V}/{VAGA_ABERTA}/interesses", json={"solicitacao_id": pedido.json()["id"]}, headers=ana)
+    assert r.status_code == 201, r.text
+    assert r.json()["interesse"] == "registrado" and r.json()["solicitacao_estado"] == "aguardando_confirmacao"
+    # interesse não é agendamento: nada foi confirmado
+    db.expire_all()
+    assert db.get(Solicitacao, pedido.json()["id"]).estado == "aguardando_confirmacao"
+    assert list(db.scalars(select(Agendamento).where(Agendamento.vaga_id == VAGA_ABERTA))) == []
+
+
 def test_interesse_duplicado_e_em_vaga_preenchida(client, login):
     h = login(EVA)
     dup = client.post(f"{V}/{VAGA_ABERTA}/interesses", json={"solicitacao_id": PEDIDO_EVA}, headers=h)
