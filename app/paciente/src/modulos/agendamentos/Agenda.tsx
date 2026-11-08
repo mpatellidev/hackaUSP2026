@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { data as formatarData, mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
-import { Btn, BtnLink, BtnTel } from "../../design/Componentes";
+import { Btn, BtnLink, BtnTel, TelaCarregando } from "../../design/Componentes";
 import { Ilustracao } from "../../design/Ilustracoes";
 import { quando } from "../../design/datas";
 
@@ -43,7 +43,7 @@ function Remarcar({ agendamentoId, clinicaId, especialidade, aoFechar }: { agend
       </fieldset>
       <span className="d-small">O horário atual é liberado sem falta nem penalidade. O novo só vale quando a clínica confirmar.</span>
       {remarcar.isError && <b role="alert">{mensagemDe(remarcar.error)}</b>}
-      <Btn variante="escuro" disabled={!vaga || remarcar.isPending} onClick={() => remarcar.mutate()}>{remarcar.isPending ? "Pedindo…" : "Pedir este horário"}</Btn>
+      <Btn aria-busy={remarcar.isPending || undefined} variante="escuro" disabled={!vaga || remarcar.isPending} onClick={() => remarcar.mutate()}>{remarcar.isPending ? "Pedindo…" : "Pedir este horário"}</Btn>
       <Btn variante="fantasma" onClick={aoFechar}>Manter o horário atual</Btn>
     </section>
   );
@@ -64,7 +64,7 @@ function diaEHora(iso: string): string {
 /** Arquivo de calendário (.ics) real, gerado no aparelho a partir do horário confirmado pela clínica. */
 function linkCalendario(titulo: string, inicio: string, fim: string): string {
   const formato = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
-  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//UHealth//PT", "BEGIN:VEVENT", `UID:${formato(inicio)}@uhealth`, `DTSTAMP:${formato(new Date().toISOString())}`,
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sorriu+//PT", "BEGIN:VEVENT", `UID:${formato(inicio)}@sorriumais`, `DTSTAMP:${formato(new Date().toISOString())}`,
     `DTSTART:${formato(inicio)}`, `DTEND:${formato(fim)}`, `SUMMARY:${titulo}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
 }
@@ -81,7 +81,7 @@ export function Agenda() {
     onSuccess: () => { setCancelando(false); return Promise.all([qc.invalidateQueries({ queryKey: ["agendamentos"] }), qc.invalidateQueries({ queryKey: ["solicitacoes"] })]); },
   });
 
-  if (lista.isPending) return <div className="d-tela"><main className="d-corpo"><p role="status" className="d-small">Carregando…</p></main></div>;
+  if (lista.isPending) return <TelaCarregando />;
   if (lista.isError) {
     return (
       <div className="d-tela"><main className="d-corpo">
@@ -125,7 +125,7 @@ export function Agenda() {
         <div className="d-fim">
           {cancelando ? (
             <>
-              <Btn variante="escuro" disabled={cancelar.isPending} onClick={() => cancelar.mutate(proximo.id)}>{cancelar.isPending ? "Cancelando…" : "Cancelar este atendimento"}</Btn>
+              <Btn aria-busy={cancelar.isPending || undefined} variante="escuro" disabled={cancelar.isPending} onClick={() => cancelar.mutate(proximo.id)}>{cancelar.isPending ? "Cancelando…" : "Cancelar este atendimento"}</Btn>
               <Btn variante="fantasma" onClick={() => setCancelando(false)}>Manter horário</Btn>
             </>
           ) : (

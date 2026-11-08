@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Btn } from "../../design/Componentes";
+import { Btn, Progresso } from "../../design/Componentes";
 import { Simbolo } from "../../design/Icone";
 import { Ilustracao } from "../../design/Ilustracoes";
 import { BotaoOuvir } from "../../design/Preferencias";
+import { useTopoAoMudar } from "../../design/rolagem";
+import { Marca } from "@uhealth/ui";
 
 const CHAVE = "uh-boasvindas";
 type Escala = "" | "lg" | "xl";
@@ -30,6 +32,7 @@ function Opcao<T extends string>({ nome, valor, atual, rotulo, aoMudar, tamanho,
 /** Primeira abertura (design C3): boas-vindas e 2 passos. As escolhas ficam só neste aparelho. */
 export function BoasVindas({ aoConcluir }: { aoConcluir: () => void }) {
   const [passo, setPasso] = useState(0);
+  useTopoAoMudar(passo);
   const [paraQuem, setParaQuem] = useState<"mim" | "outra">("mim");
   const [detalhe, setDetalhe] = useState<Detalhe>("simples");
   const [escala, setEscala] = useState<Escala>(() => {
@@ -53,7 +56,7 @@ export function BoasVindas({ aoConcluir }: { aoConcluir: () => void }) {
       {passo === 0 && (
         <div className="d-tela d-tela--teal">
           <main className="d-corpo d-corpo--24">
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}><Simbolo tamanho={34} escuro /><span className="d-marca d-marca--24">UHealth</span></div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}><Simbolo tamanho={34} escuro /><Marca className="d-marca d-marca--24" /></div>
             <div style={{ alignSelf: "center" }}><Ilustracao nome="boasVindas" texto="Duas portas em arco, uma aberta com luz amarela" /></div>
             <h1 className="d-h1 d-h1--32">Atendimento em clínicas-escola perto de você</h1>
             <p className="d-p d-p--grande" style={{ color: "inherit", fontSize: "calc(18px * var(--d-s))" }}>Encontre clínicas-escola, peça atendimento e acompanhe cada passo.</p>
@@ -67,8 +70,7 @@ export function BoasVindas({ aoConcluir }: { aoConcluir: () => void }) {
       {passo === 1 && (
         <div className="d-tela">
           <main className="d-corpo d-corpo--24">
-            <p className="d-small" aria-live="polite">Passo 1 de 2</p>
-            <div className="d-progresso" role="presentation"><div style={{ width: "50%" }} /></div>
+            <Progresso atual={1} total={2} />
             <h1 className="d-h1" style={{ lineHeight: 1.2 }}>Você procura atendimento para quem?</h1>
             <fieldset className="d-campos">
               <legend className="sr-only">Para quem é o atendimento</legend>
@@ -86,8 +88,7 @@ export function BoasVindas({ aoConcluir }: { aoConcluir: () => void }) {
       {passo === 2 && (
         <div className="d-tela">
           <main className="d-corpo d-corpo--24" style={{ gap: 16 }}>
-            <p className="d-small" aria-live="polite">Passo 2 de 2</p>
-            <div className="d-progresso" role="presentation"><div style={{ width: "100%" }} /></div>
+            <Progresso atual={2} total={2} />
             <h1 className="d-h1" style={{ lineHeight: 1.2 }}>Como você prefere receber as informações?</h1>
             <fieldset className="d-campos" style={{ gap: 10 }}>
               <legend>Texto</legend>
@@ -96,7 +97,7 @@ export function BoasVindas({ aoConcluir }: { aoConcluir: () => void }) {
             </fieldset>
             <fieldset className="d-campos" style={{ gap: 8 }}>
               <legend>Tamanho das letras</legend>
-              <div className="d-segs">
+              <div className="d-segs d-segs--3">
                 <Opcao tamanho="m" nome="escala" valor="" atual={escala} rotulo="Normal" aoMudar={mudarEscala} />
                 <Opcao tamanho="m" nome="escala" valor="lg" atual={escala} rotulo="Grande" aoMudar={mudarEscala} estilo={{ fontSize: 20 }} />
                 <Opcao tamanho="m" nome="escala" valor="xl" atual={escala} rotulo="Extra" aoMudar={mudarEscala} estilo={{ fontSize: 24 }} />

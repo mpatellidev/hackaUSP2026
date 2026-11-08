@@ -1,0 +1,47 @@
+/* Páginas operacionais da clínica (pedidos, fila, vagas, agenda, urgências, profissionais).
+   Mesmo visual do painel (`clinica.css`): menu verde-escuro, conteúdo em cartões. Vale só dentro de `.shell-clinica`. */
+.shell-clinica { grid-template-columns: 232px minmax(0, 1fr); background: #f3f5f6; }
+.shell-clinica > main { padding: 28px 32px 48px; max-width: 1180px; width: 100%; box-sizing: border-box; gap: 18px; }
+.shell-clinica > main > h1 { margin: 0; font: 700 28px/1.2 var(--uh-font-display); color: #153c36; }
+.shell-clinica > main > h1 + .aviso, .shell-clinica > main > h1 + .hint { margin-top: -4px; }
+.shell-clinica .hint { margin: 0; color: var(--uh-muted); font-size: 15px; }
+
+/* menu lateral */
+.shell-clinica .menu-lateral { background: #153c36; color: #e7eeea; border-right: 0; height: calc(100dvh - 32px); max-height: none; padding: 22px 12px 16px; gap: 14px; align-content: start; grid-template-rows: auto 1fr; }
+.shell-clinica .menu-lateral .pilha { gap: 10px; padding-bottom: 14px; border-bottom: 1px solid #3b5b4c; }
+.shell-clinica .menu-lateral .marca { display: flex; align-items: center; gap: 8px; font: 700 21px var(--uh-font-display); color: #fff; padding: 0 12px; }
+.shell-clinica .menu-lateral .pilha > span:not(.marca) { font-size: 13px; color: #c9d8cf; padding: 0 12px; }
+.shell-clinica .menu-lateral .preferencias { padding: 0 12px; }
+.shell-clinica .menu-lateral .icone { background: #234b40; color: #e7eeea; min-width: 40px; min-height: 40px; border-radius: 10px; }
+.shell-clinica .menu-lateral .btn--outline { color: #e7eeea; border-color: #5d7d6e; min-height: 40px; font-size: 14px; margin: 0 12px; width: auto; border-radius: 10px; }
+.shell-clinica .menu-lateral ul { align-content: start; gap: 3px; }
+.shell-clinica .menu-lateral a { color: #e0e9e3; font-size: 14px; border-radius: 8px; }
+.shell-clinica .menu-lateral a:hover { background: #234b40; }
+.shell-clinica .menu-lateral a[aria-current="page"] { background: #edf4ef; color: #1c4f40; font-weight: 700; }
+.shell-clinica .menu-lateral a:focus-visible { outline: 3px solid #ffb81c; outline-offset: 2px; }
+
+/* cartões, tabelas e formulários */
+.shell-clinica .card, .shell-clinica .tabela-rolavel { background: #fff; border: 1px solid #dce2df; border-radius: 12px; }
+.shell-clinica .card { padding: 20px; }
+.shell-clinica .tabela-rolavel { overflow: hidden auto; }
+.shell-clinica .table th { background: #edf5f3; color: #153c36; font-size: 13px; text-transform: none; padding: 12px 16px; }
+.shell-clinica .table td { padding: 14px 16px; border-top: 1px solid #e6ebe9; vertical-align: middle; }
+.shell-clinica .table tbody tr:hover { background: #f6faf9; }
+.shell-clinica .table small { color: var(--uh-muted); }
+.shell-clinica .table a { font-weight: 700; }
+.shell-clinica .card > h2 { margin: 0 0 4px; font-size: 18px; color: #153c36; }
+@media (min-width: 900px) {
+  /* formulário em duas colunas (ex.: início e fim da vaga lado a lado); o primeiro campo e o botão ocupam a linha toda */
+  .shell-clinica form.form-duas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 18px; }
+  .shell-clinica form.form-duas > :first-child, .shell-clinica form.form-duas > :last-child, .shell-clinica form.form-duas > .aviso { grid-column: 1 / -1; }
+}
+
+/* telas estreitas: barra superior verde com rolagem horizontal */
+@media (max-width: 799px) {
+  .shell-clinica { grid-template-columns: 1fr; }
+  .shell-clinica .menu-lateral { height: auto; padding: 12px; border-bottom: 0; }
+  .shell-clinica .menu-lateral ul { grid-auto-flow: column; overflow-x: auto; }
+  .shell-clinica .menu-lateral a { white-space: nowrap; }
+  .shell-clinica > main { padding: 20px 16px 40px; }
+}
+.shell-clinica .chip { white-space: nowrap; }

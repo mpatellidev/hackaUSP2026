@@ -133,9 +133,13 @@ a.d-quad { position: relative; text-decoration: none; }
 .d-passo-texto small { display: block; font-weight: 400; font-size: calc(16px * var(--d-s)); color: var(--uh-muted); }
 
 /* ---------- barra de abas ---------- */
-.d-abas { position: sticky; bottom: 0; display: flex; background: var(--uh-surface); border-top: 1.5px solid var(--uh-line); padding: 6px 8px 12px; }
-.d-abas a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 56px; border-radius: 12px; color: var(--uh-muted); font-size: calc(16px * var(--d-s)); text-decoration: none; }
-.d-abas a[aria-current="page"] { background: var(--uh-chip-bg); color: var(--uh-link); font-weight: 700; }
+/* Barra verde (marca) flutuando no rodapé: não encosta nas bordas da moldura nem no fim da tela. */
+.d-abas { --abas-mb: max(12px, env(safe-area-inset-bottom)); position: sticky; bottom: 0; z-index: 10; display: flex; margin: 0 10px var(--abas-mb); padding: 6px; border-radius: 22px; background: var(--uh-brand); color: var(--uh-on-brand); box-shadow: 0 8px 22px rgba(11, 36, 35, 0.18); transition: transform .25s ease, margin .25s ease; }
+/* Escondida ao rolar para baixo: sai da tela e não deixa espaço vazio (o conteúdo vai até o fim). */
+.d-abas--oculta { margin-top: calc(-1 * (var(--abas-h) + var(--abas-mb))); transform: translateY(calc(var(--abas-h) + var(--abas-mb) + 4px)); }
+@media (prefers-reduced-motion: reduce) { .d-abas { transition: none; } }
+.d-abas a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 56px; border-radius: 16px; color: var(--uh-on-brand); font-size: calc(16px * var(--d-s)); text-decoration: none; }
+.d-abas a[aria-current="page"] { background: rgba(11, 36, 35, 0.16); color: var(--uh-on-brand); font-weight: 700; }
 
 /* ---------- conversa ---------- */
 .d-chat-topo { background: var(--uh-brand); color: var(--uh-on-brand); padding: 16px; display: flex; align-items: center; gap: 10px; }
@@ -216,6 +220,8 @@ a.d-quad { position: relative; text-decoration: none; }
   .d-moldura-rolagem { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
   .d-moldura-rolagem > .d-casca, .d-moldura-rolagem > .d-tela { flex: 1; min-height: 0; max-width: none; }
   .d-moldura-rolagem .d-casca { min-height: 100%; }
+  /* A casca cresce com o conteúdo (a barra de abas, sticky, fica presa a ela e não sobe com a rolagem). */
+  .d-moldura-rolagem > .d-casca { flex: 1 0 auto; }
   .d-moldura-rolagem .d-casca--conversa { height: 100%; }
   .d-moldura-rolagem .chat-card { height: 640px; min-height: 0; }
   .d-moldura-rolagem .chat-app--unica .chat-card { height: auto; }
@@ -267,3 +273,157 @@ a.d-quad { position: relative; text-decoration: none; }
 
 /* ---------- símbolo da marca (logo.png) ---------- */
 .d-simbolo { flex: none; display: block; border-radius: 22%; object-fit: contain; }
+
+/* ---------- ajustes de usabilidade ---------- */
+/* Abas: o rótulo nunca quebra em duas linhas (a barra não muda de altura nem "pula"). */
+.d-abas a { min-width: 0; white-space: nowrap; font-size: calc(15px * var(--d-s)); padding: 0 2px; }
+.d-abas a > span:last-child { overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+/* Busca: "Ordenar por" e "Filtros" lado a lado, para a lista de clínicas aparecer logo na primeira tela. */
+.d-linhaBtn--fim { align-items: flex-end; }
+.d-linhaBtn--fim .d-campo { flex: 1.3 1 0; }
+.d-linhaBtn--fim .d-btn { flex: 1 1 0; min-height: calc(52px * var(--d-s)); }
+/* Botão principal de formulário longo (endereço e preferências) sempre à mão, sem precisar rolar até o fim. */
+.d-fim--fixo { position: sticky; bottom: 0; margin-left: -20px; margin-right: -20px; width: auto; padding: 12px 20px 14px; background: linear-gradient(to bottom, rgba(255,255,255,0), var(--uh-bg) 28%); z-index: 5; }
+/* Cartões tocáveis dão retorno visual. */
+a.d-card, .d-bloco, .d-op { transition: border-color .15s, background-color .15s, transform .1s; }
+a.d-card:active, .d-bloco:active, .d-btn:active { transform: scale(.985); }
+@media (prefers-reduced-motion: reduce) { a.d-card, .d-bloco, .d-op, .d-btn { transition: none; transform: none !important; } }
+.d-linha2--cidade { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; }
+/* Conteúdo ocupa a altura toda: a barra de abas fica sempre embaixo, mesmo em telas curtas (ex.: Ajuda). */
+.d-conteudo { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.d-conteudo > .chat-app:not(.chat-app--unica) { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.d-conteudo > .chat-app:not(.chat-app--unica) .chat-card { flex: 1; height: auto; max-width: none; border-radius: 0; border-width: 0; box-shadow: none; }
+
+/* =====================================================================================
+   Refinamentos de UI/UX mobile (auditoria com as skills mobile-design, ux-designer e
+   web-design-guidelines). Mesma paleta e mesmos componentes: só toque, ritmo, estados e acabamento.
+   ===================================================================================== */
+
+/* ---------- toque e tipografia ---------- */
+.d-tela a, .d-tela button, .d-tela label, .d-tela select, .d-abas a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.d-h1, .d-h2, .d-tela h1, .d-tela h2 { text-wrap: balance; }
+.d-p, .d-small, .d-aviso { text-wrap: pretty; }
+.d-dl dd, .d-tempo-item time, .d-cal-dia, .d-badge, .d-passo-texto small { font-variant-numeric: tabular-nums; }
+/* Título recebe o foco ao trocar de tela (leitor de tela anuncia), sem moldura de foco num elemento que não é clicável. */
+.d-tela h1[tabindex="-1"]:focus { outline: none; }
+
+/* ---------- área segura (entalhe do celular) ---------- */
+@media (max-width: 639px) {
+  .d-topo { padding-top: max(24px, calc(env(safe-area-inset-top) + 12px)); }
+  .d-tela:not(:has(.d-topo)) > .d-corpo:first-child,
+  .d-tela:not(:has(.d-topo)) > form.d-corpo:first-child { padding-top: max(24px, calc(env(safe-area-inset-top) + 16px)); }
+}
+
+/* ---------- entrada suave das telas (só opacidade e deslocamento; some com "reduzir movimento") ---------- */
+@keyframes d-entrar { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.d-conteudo > .d-tela, .d-casca > .d-tela { animation: d-entrar .22s ease-out backwards; }
+@media (prefers-reduced-motion: reduce) { .d-conteudo > .d-tela, .d-casca > .d-tela { animation: none; } }
+
+/* ---------- topo da página inicial ---------- */
+/* Ícones do topo com alvo de toque de 44 px (antes 36); o desenho continua discreto. */
+.d-topo .d-quad { min-width: 44px; min-height: 44px; border-radius: 12px; }
+.d-topo .d-quad:active { background: rgba(11, 36, 35, 0.12); }
+.d-topo-linha { gap: 2px; }
+.d-topo-linha .d-marca { margin-right: auto; margin-left: 6px; }
+.d-cidade { box-shadow: 0 2px 0 rgba(11, 36, 35, 0.08); }
+.d-cidade > span { min-width: 0; overflow-wrap: anywhere; }
+.d-cidade button { padding: 0 4px; white-space: nowrap; }
+
+/* Emergência e assistente lado a lado, mesma largura (antes um embaixo do outro, ocupando a dobra). */
+.d-troca { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.d-troca > * { justify-content: center; text-align: center; line-height: 1.2; padding: 6px 10px; min-height: 48px; }
+.d-troca-btn:active, .d-emergencia-btn:active { transform: scale(.98); }
+
+
+/* ---------- campos ---------- */
+/* Seletor com seta própria (a nativa varia de aparelho para aparelho). */
+.d-campo select { appearance: none; -webkit-appearance: none; padding-right: 44px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23095F5C' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; }
+:root[data-theme="hc"] .d-campo select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.d-campo input, .d-campo select, .d-campo textarea, .d-compositor input { transition: border-color .15s, box-shadow .15s; }
+.d-campo input:focus, .d-campo select:focus, .d-campo textarea:focus { border-color: var(--uh-link); box-shadow: 0 0 0 3px var(--uh-chip-bg); }
+.d-campo input::placeholder, .d-campo textarea::placeholder { color: var(--uh-muted); opacity: .8; }
+.d-campo [aria-invalid="true"] { border-color: var(--d-danger); background: var(--d-danger-bg); }
+.d-erro { display: flex; align-items: flex-start; gap: 6px; margin: 0; color: var(--d-danger-chip); font-weight: 700; font-size: calc(16px * var(--d-s)); line-height: 1.35; }
+.d-erro svg { flex: none; margin-top: 1px; }
+/* Rádios e caixas: o cartão inteiro reage ao toque e mostra o foco do teclado. */
+.d-op:has(input:focus-visible), .d-consent:has(input:focus-visible) { outline: 3px solid var(--uh-focus); outline-offset: 3px; }
+.d-op:active { transform: scale(.99); }
+.d-consent:has(input:checked) { box-shadow: inset 0 0 0 2px var(--uh-link); }
+
+/* Tamanho das letras: três opções sempre na mesma linha, com a mesma largura. */
+.d-segs--3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.d-segs--3 .d-op { padding: 6px 4px; gap: 6px; }
+
+/* Progresso dos fluxos em passos. */
+.d-progresso-bloco { display: flex; flex-direction: column; gap: 8px; }
+.d-progresso > div { transition: width .3s ease; }
+
+/* ---------- cartões ---------- */
+/* Distância nunca sai do cartão (antes "92,3 km" passava da borda). */
+.d-card-topo { align-items: flex-start; }
+.d-card-topo > :first-child { flex: 1 1 auto; }
+.d-card-topo > :not(:first-child) { flex: none; }
+.d-distancia { display: inline-flex; align-items: center; gap: 4px; min-height: 28px; padding: 0 10px; border-radius: 999px; background: var(--uh-chip-bg); color: var(--uh-chip-text); font-weight: 700; font-size: calc(15px * var(--d-s)); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.d-card-meta { display: flex; gap: 8px; align-items: flex-start; }
+.d-card-meta svg { flex: none; margin-top: 1px; color: var(--uh-link); }
+/* Cartão recomendado: selo discreto acima do título. */
+.d-card--sel { box-shadow: 0 6px 18px rgba(9, 95, 92, 0.10); }
+/* Cartão-link (Meu cuidado): seta de "abrir" e retorno ao toque. */
+.d-item { padding-right: 12px; }
+.d-item-seta { flex: none; color: var(--uh-link); }
+a.d-card:active { background: var(--uh-chip-bg); }
+@media (hover: hover) { a.d-card:hover, .d-bloco:hover, .d-op:hover { border-color: var(--uh-link); } }
+/* Linhas de dados: texto longo vai para baixo do rótulo, alinhado à esquerda. */
+.d-dl > div.d-dl-longo { flex-direction: column; gap: 2px; }
+.d-dl > div.d-dl-longo dd { text-align: left; }
+
+/* ---------- carregando (esqueleto) ---------- */
+@keyframes d-brilho { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.d-esqueleto { display: flex; flex-direction: column; gap: 14px; }
+.d-esqueleto-cartao { display: flex; flex-direction: column; gap: 12px; padding: 18px 16px; border: 1.5px solid var(--uh-line); border-radius: 20px; }
+.d-esqueleto-cartao span, .d-esqueleto-titulo { display: block; height: 16px; border-radius: 8px;
+  background: linear-gradient(90deg, var(--uh-line) 0%, var(--uh-chip-bg) 50%, var(--uh-line) 100%); background-size: 200% 100%; animation: d-brilho 1.4s linear infinite; }
+.d-esqueleto-cartao span:first-child { height: 22px; }
+.d-esqueleto-titulo { width: 60%; height: 32px; }
+@media (prefers-reduced-motion: reduce) { .d-esqueleto-cartao span, .d-esqueleto-titulo { animation: none; } }
+
+/* ---------- estado vazio ---------- */
+.d-vazio { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 8px 4px 4px; }
+.d-vazio .d-btn { margin-top: 4px; }
+
+/* ---------- barra de abas ---------- */
+.d-abas a { transition: background-color .15s; }
+.d-abas a:active { background: rgba(11, 36, 35, 0.12); }
+.d-abas a:focus-visible { outline: 3px solid var(--uh-focus); outline-offset: -3px; }
+.d-abas a[aria-current="page"] svg { transform: translateY(-1px); }
+
+/* ---------- botões ---------- */
+.d-btn { transition: transform .1s, filter .15s, background-color .15s; }
+@media (hover: hover) { .d-btn:not(:disabled):hover { filter: brightness(.96); } }
+.d-btn--link:active, .d-voltar:active { opacity: .7; }
+/* Botão principal fixo no rodapé das páginas longas (ao alcance do polegar). */
+.d-fim--fixo .d-btn { box-shadow: 0 6px 16px rgba(11, 36, 35, 0.14); }
+
+/* ---------- calendário ---------- */
+.d-cal-dia--hoje:not(.d-cal-dia--on) { box-shadow: inset 0 0 0 2px var(--uh-link); }
+.d-cal-dia:active { transform: scale(.95); }
+.d-legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; font-size: calc(15px * var(--d-s)); color: var(--uh-muted); }
+.d-legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.d-legenda i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--uh-sun); }
+.d-legenda i.d-legenda-hoje { width: 14px; height: 14px; border-radius: 4px; background: none; box-shadow: inset 0 0 0 2px var(--uh-link); }
+.d-vazio .d-ilust svg { margin-top: 0 !important; width: 160px; height: auto; }
+/* Emergência + assistente: lado a lado quando cabem; com letra grande, cada um ocupa a linha inteira. */
+.d-troca { display: flex; flex-wrap: wrap; gap: 8px; }
+.d-troca > * { flex: 1 1 auto; padding: 6px 8px; gap: 4px; white-space: nowrap; }
+/* Seções simples dentro da tela: respiro entre o título e o conteúdo. */
+.d-corpo > section:not([class]) { display: flex; flex-direction: column; gap: 10px; }
+/* Enviando: roda um indicador dentro do botão (o texto já muda para "Enviando…"). */
+@keyframes d-girar { to { transform: rotate(360deg); } }
+.d-btn[aria-busy="true"] { opacity: 1; cursor: progress; }
+.d-btn[aria-busy="true"]::before { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent; animation: d-girar .8s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .d-btn[aria-busy="true"]::before { animation-duration: 2.4s; } }
+.d-segs--3 .d-op { flex-direction: column; justify-content: center; gap: 4px; min-height: calc(76px * var(--d-s)); padding: 8px 4px; text-align: center; }
+/* Emergência aparece na hora, sem animação de entrada. */
+.d-conteudo > .d-tela:has(.d-sinais) { animation: none; }

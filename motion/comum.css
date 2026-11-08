@@ -1,0 +1,74 @@
+/* Sorriu+ — sistema visual comum ao motion (index.html) e aos slides (slides.html).
+   Palco fixo 1920×1080; cores da marca; tipografia; marca; celular; notebook; chips; transição "sorriso". */
+:root {
+  --teal: #14beb9;      /* marca */
+  --verde: #075e59;     /* verde-escuro (fundo da marca) */
+  --tinta: #0b2423;     /* texto */
+  --sol: #ffb81c;       /* vaga / destaque */
+  --nevoa: #e8f9f8;     /* fundo suave */
+  --branco: #ffffff;
+  --muted: #3f5958;
+  --linha: #d2e5e4;
+  --perigo: #b3261e;
+  --f-display: "Lexend", system-ui, sans-serif;
+  --f-corpo: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --fundo-claro: radial-gradient(900px 900px at -5% -10%, rgba(147, 227, 224, .45), transparent 62%),
+                 radial-gradient(760px 760px at 105% 110%, rgba(255, 184, 28, .22), transparent 60%),
+                 var(--branco);
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { margin: 0; background: #031c1b; color: var(--tinta); overflow: hidden; font-family: var(--f-corpo); }
+#janela { position: fixed; inset: 0; display: grid; place-items: center; padding-left: max(0px, env(safe-area-inset-left, 0px)); padding-right: max(0px, env(safe-area-inset-right, 0px)); }
+#palco { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--branco); transform-origin: center; flex: none; }
+.cena { position: absolute; inset: 0; display: none; background: var(--fundo-claro); overflow: hidden; }
+.cena.nevoa { background: var(--nevoa); }
+.cena.verde { background: var(--verde); color: var(--branco); }
+#faixa { position: absolute; inset: 0; display: none; background: var(--sol); }
+
+/* tipografia */
+.eyebrow { font: 700 30px var(--f-display); letter-spacing: 4px; text-transform: uppercase; color: var(--verde); }
+.verde .eyebrow { color: var(--sol); }
+.titulo { font: 800 96px/1.02 var(--f-display); color: var(--tinta); letter-spacing: -2.5px; text-wrap: balance; margin: 0; }
+.titulo em { font-style: normal; color: var(--verde); }
+.verde .titulo { color: var(--branco); }
+.verde .titulo em { color: var(--sol); }
+.apoio { font: 400 40px/1.35 var(--f-corpo); color: var(--muted); margin: 0; max-width: 860px; }
+.verde .apoio { color: #c7f0ee; }
+.fonte { position: absolute; left: 140px; bottom: 52px; font: 400 28px var(--f-corpo); color: var(--muted); }
+.verde .fonte { color: #a6d9d5; }
+.numero { white-space: nowrap; font: 800 280px/0.9 var(--f-display); color: var(--verde); letter-spacing: -12px; font-variant-numeric: tabular-nums; }
+.numero small { font-size: 110px; letter-spacing: -3px; margin-left: 18px; color: var(--tinta); }
+.w { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
+.w > span { display: inline-block; }
+
+/* marca */
+.lockup { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 44px; background: var(--verde); }
+.lockup img { width: 190px; height: 190px; border-radius: 44px; box-shadow: 0 0 0 6px rgba(255,255,255,.12); }
+.palavra { font: 800 190px/1 var(--f-display); color: var(--branco); letter-spacing: -6px; display: flex; }
+.palavra span { display: inline-block; }
+.u { color: var(--sol); }
+.lockup .lema { position: absolute; bottom: 150px; left: 0; right: 0; text-align: center; font: 400 40px var(--f-display); color: #c7f0ee; letter-spacing: .5px; }
+.mini { display: inline-flex; align-items: center; padding: 6px 20px 10px; border-radius: 16px; background: var(--verde); font: 800 56px var(--f-display); color: var(--branco); letter-spacing: -1.5px; }
+
+/* celular */
+.cel-wrap { position: absolute; width: 446px; height: 940px; perspective: 2200px; }
+.cel { position: absolute; inset: 0; border-radius: 70px; background: var(--tinta); padding: 22px; box-sizing: border-box; box-shadow: 0 60px 120px -30px rgba(7,94,89,.55), 0 0 0 3px #2d4645 inset; transform-style: preserve-3d; }
+.cel .tela { position: relative; width: 390px; height: 844px; border-radius: 50px; overflow: hidden; background: var(--branco); margin: 26px auto 0; }
+.cel .notch { position: absolute; top: 18px; left: 50%; width: 120px; height: 30px; margin-left: -60px; border-radius: 20px; background: #000; z-index: 3; }
+.shot { position: absolute; left: 0; top: 0; width: 390px; display: block; }
+.toque { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; background: rgba(11,36,35,.18); border: 4px solid rgba(11,36,35,.55); z-index: 4; opacity: 0; }
+
+/* notebook */
+.note { position: absolute; width: 1280px; height: 800px; border-radius: 22px 22px 0 0; background: var(--tinta); padding: 18px 18px 0; box-sizing: content-box; box-shadow: 0 50px 110px -30px rgba(7,94,89,.5); }
+.note .tela { position: relative; width: 1280px; height: 800px; overflow: hidden; border-radius: 8px 8px 0 0; background: var(--branco); }
+.note .cam { position: absolute; inset: 0; }
+.note .shot { width: 1280px; }
+.realce { position: absolute; border: 8px solid var(--sol); border-radius: 18px; opacity: 0; z-index: 3; box-sizing: border-box; }
+
+/* chips */
+.chip { position: absolute; z-index: 5; display: inline-flex; align-items: center; gap: 14px; padding: 20px 30px; border-radius: 24px; background: var(--branco); color: var(--tinta); font: 700 36px var(--f-display); box-shadow: 0 24px 50px -16px rgba(11,36,35,.35); white-space: nowrap; }
+.chip .dot { width: 20px; height: 20px; border-radius: 50%; background: var(--sol); flex: none; }
+.chip.escuro { background: var(--verde); color: var(--branco); }
+.chip.sol { background: var(--sol); color: var(--tinta); }
+.selo-demo { position: absolute; right: 60px; bottom: 40px; font: 700 24px var(--f-display); color: var(--verde); background: var(--branco); border: 2px solid var(--verde); padding: 8px 18px; border-radius: 999px; letter-spacing: .5px; z-index: 6; }

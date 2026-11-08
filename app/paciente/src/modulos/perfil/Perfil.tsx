@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { mensagemDe, useSessao, type Perfil as PerfilApi } from "@uhealth/api-client";
-import { Btn, LinhaSamu, Voltar } from "../../design/Componentes";
+import { Btn, LinhaSamu, TelaCarregando, Voltar } from "../../design/Componentes";
 import { Icone } from "../../design/Icone";
 import { NOME_MODO, salvarModo, useModoAtendimento } from "../../modoAtendimento";
 import { corpoPerfil } from "../cadastro/CompletarCadastro";
@@ -98,15 +98,17 @@ function Formulario({ perfil }: { perfil: PerfilApi }) {
       <div className="d-aviso d-aviso--pequeno">{perfil.aviso}</div>
       <Link className="d-btn d-btn--outline" to="/perfil/endereco"><Icone nome="local" />Endereço e preferências</Link>
 
-      <div className="d-campo">
-        <label htmlFor="perfil-cidade">Cidade</label>
-        <input id="perfil-cidade" value={cidade} maxLength={80} autoComplete="address-level2" onChange={(e) => setCidade(e.target.value)} />
-      </div>
-      <div className="d-campo">
-        <label htmlFor="perfil-uf">Estado (sigla)</label>
-        <input id="perfil-uf" value={uf} maxLength={2} autoComplete="address-level1" aria-invalid={ufInvalida} aria-describedby={ufInvalida ? "perfil-uf-erro" : undefined}
-          onChange={(e) => setUf(e.target.value)} style={{ textTransform: "uppercase" }} />
-        {ufInvalida && <p id="perfil-uf-erro" className="d-small" role="alert">Use as 2 letras do estado, por exemplo SP.</p>}
+      <div className="d-linha2 d-linha2--cidade">
+        <div className="d-campo">
+          <label htmlFor="perfil-cidade">Cidade</label>
+          <input id="perfil-cidade" value={cidade} maxLength={80} autoComplete="address-level2" onChange={(e) => setCidade(e.target.value)} />
+        </div>
+        <div className="d-campo">
+          <label htmlFor="perfil-uf">Estado</label>
+          <input id="perfil-uf" value={uf} maxLength={2} autoComplete="address-level1" aria-invalid={ufInvalida} aria-describedby={ufInvalida ? "perfil-uf-erro" : undefined}
+            onChange={(e) => setUf(e.target.value)} style={{ textTransform: "uppercase" }} />
+          {ufInvalida && <p id="perfil-uf-erro" className="d-small" role="alert">Use as 2 letras do estado, por exemplo SP.</p>}
+        </div>
       </div>
 
       <Radios legenda="Como prefere ser contatado" nome="contato" valor={contato} aoMudar={setContato}
@@ -143,7 +145,7 @@ function Formulario({ perfil }: { perfil: PerfilApi }) {
       {salvar.isError && <div className="d-aviso d-aviso--perigo" role="alert"><Icone nome="alerta" tamanho={24} /><b>{mensagemDe(salvar.error)}</b></div>}
       {salvar.isSuccess && <div className="d-aviso d-aviso--ok" role="status"><b>Perfil salvo.</b></div>}
       <div className="d-fim">
-        <Btn type="submit" disabled={salvar.isPending || ufInvalida || faltaConsentimento}>{salvar.isPending ? "Salvando…" : "Salvar perfil"}</Btn>
+        <Btn aria-busy={salvar.isPending || undefined} type="submit" disabled={salvar.isPending || ufInvalida || faltaConsentimento}>{salvar.isPending ? "Salvando…" : "Salvar perfil"}</Btn>
         <section className="d-card" aria-labelledby="perfil-modo">
           <h2 id="perfil-modo" className="d-h2">Forma de atendimento</h2>
           <p className="d-small">Agora: {NOME_MODO[modo ?? "telas"]}. A assistente faz as mesmas coisas que estas telas, uma pergunta por vez.</p>
@@ -161,7 +163,7 @@ export function Perfil() {
   const { api } = useSessao();
   const perfil = useQuery({ queryKey: ["perfil"], queryFn: () => api.dados(api.cliente.GET("/perfil", {})) });
 
-  if (perfil.isPending) return <div className="d-tela"><main className="d-corpo"><p role="status" className="d-small">Carregando…</p></main></div>;
+  if (perfil.isPending) return <TelaCarregando />;
   if (perfil.isError) {
     return (
       <div className="d-tela"><main className="d-corpo">

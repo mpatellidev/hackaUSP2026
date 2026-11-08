@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { mensagemDe, rotuloEspecialidade, useSessao, type Alerta } from "@uhealth/api-client";
-import { Btn, BtnLink, Chip, LinhaSamu, Voltar } from "../../design/Componentes";
+import { Btn, BtnLink, Chip, LinhaSamu, TelaCarregando, Voltar } from "../../design/Componentes";
 import { Icone } from "../../design/Icone";
 import { Ilustracao } from "../../design/Ilustracoes";
 import { quando } from "../../design/datas";
@@ -54,7 +54,7 @@ export function Alertas() {
   /** Pedido ativo nesta clínica, para abrir as vagas do pedido certo. */
   const pedidoDa = (a: Alerta) => pedidos.data?.itens.find((p) => p.clinica_id === a.clinica_id && p.especialidade === a.especialidade && ATIVOS.includes(p.estado));
 
-  if (alertas.isPending || preferencia.isPending) return <div className="d-tela"><main className="d-corpo"><p role="status" className="d-small">Carregando…</p></main></div>;
+  if (alertas.isPending || preferencia.isPending) return <TelaCarregando />;
   if (alertas.isError || preferencia.isError) {
     return (
       <div className="d-tela"><main className="d-corpo">

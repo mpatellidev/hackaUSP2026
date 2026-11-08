@@ -42,7 +42,7 @@ export interface ChatAppProps extends Pick<ChatConfig, "api">, Partial<Pick<Chat
 }
 
 /**
- * Assistente acessível do UHealth (#9). Independente do site: só conversa com o backend
+ * Assistente acessível do Sorriu+ (#9). Independente do site: só conversa com o backend
  * (perfil, chat, áudio) usando o token e o endereço recebidos aqui.
  * Ajuda a encontrar clínicas, enviar pedidos e acompanhá-los. Não marca horário: pedido ≠ agendamento.
  */
@@ -139,7 +139,7 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl, modo = "tela
   // Roda uma vez por montagem: para trocar de pessoa, o site remonta o chat (key={user.id}).
   useEffect(() => {
     let cancelled = false;
-    const greeting = `Olá, ${user.nome}! Sou a assistente do UHealth.`;
+    const greeting = `Olá, ${user.nome}! Sou a assistente do Sorriu+.`;
     api
       .getProfile()
       .then((p) => {
@@ -259,7 +259,7 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl, modo = "tela
       <div className="chat-card">
         <header className="chat-header">
           <Avatar size={40} />
-          <h1>Assistente UHealth</h1>
+          <h1>Assistente Sorriu+</h1>
           <OptionsMenu
             prefs={prefs}
             onChange={update}
@@ -271,10 +271,15 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl, modo = "tela
         </header>
         {/* Sempre visíveis: trocar de modo e falar com uma pessoa (pede confirmação antes de avisar a equipe). */}
         <div className="chat-atalhos">
-          <button type="button" className="chat-atalho chat-atalho--emergencia" disabled={!inChat || busy}
-            onClick={() => { push({ from: "user", text: "Emergência" }); void runGuia(() => guia.current!.executar("@emergencia")); }}>
-            Emergência
-          </button>
+          {/* Emergência nunca fica desativada: enquanto a conversa está ocupada, vira ligação direta para o SAMU. */}
+          {inChat && !busy ? (
+            <button type="button" className="chat-atalho chat-atalho--emergencia"
+              onClick={() => { push({ from: "user", text: "Emergência" }); void runGuia(() => guia.current!.executar("@emergencia")); }}>
+              Emergência
+            </button>
+          ) : (
+            <a className="chat-atalho chat-atalho--emergencia" href="tel:192">Emergência: ligar 192</a>
+          )}
           <button type="button" className="chat-atalho" disabled={!inChat || busy}
             onClick={() => { push({ from: "user", text: "Quero falar com uma pessoa" }); void runGuia(() => guia.current!.executar("@atendente")); }}>
             Falar com uma pessoa

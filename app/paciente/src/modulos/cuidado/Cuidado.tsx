@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
-import { Btn, BtnLink, BtnTel, Chip, LinhaSamu, Linhas, Voltar } from "../../design/Componentes";
+import { Btn, BtnLink, BtnTel, Carregando as Esqueleto, Chip, LinhaSamu, Linhas, Voltar } from "../../design/Componentes";
 import { Icone, type NomeIcone } from "../../design/Icone";
 import { quando } from "../../design/datas";
 
 function Carregando() {
-  return <p role="status" className="d-small">Carregando…</p>;
+  return <Esqueleto />;
 }
 function Erro({ erro, tentar }: { erro: unknown; tentar: () => void }) {
   return (
@@ -28,6 +28,7 @@ function Item({ para, icone, titulo, texto, destaque }: { para: string; icone: N
           {destaque && <span><Chip tom="sun">{destaque}</Chip></span>}
           <span className="d-small">{texto}</span>
         </span>
+        <Icone nome="seguir" tamanho={22} className="d-item-seta" />
       </Link>
     </li>
   );

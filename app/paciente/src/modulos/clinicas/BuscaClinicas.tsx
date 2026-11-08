@@ -3,13 +3,14 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
 import { BotaoAudio, BotaoLetras } from "../../design/Preferencias";
-import { Btn, BtnLink, Chip, LinhaSamu } from "../../design/Componentes";
+import { Btn, BtnLink, Carregando, Chip, LinhaSamu } from "../../design/Componentes";
 import { Icone, Simbolo } from "../../design/Icone";
 import { Ilustracao } from "../../design/Ilustracoes";
 import { quando } from "../../design/datas";
 import { AtalhoAlertas } from "../alertas/Alertas";
 import { AtalhoPerfil } from "../perfil/Perfil";
 import { TROCAR_PARA, salvarModo } from "../../modoAtendimento";
+import { Marca } from "@uhealth/ui";
 
 type Ordem = "distancia" | "valor" | "data";
 type ItemComparacao = { clinica: { id: string; nome: string; universidade?: string | null; tipo_instituicao?: string | null; valor_consulta?: number | null;
@@ -79,6 +80,7 @@ export function BuscaClinicas() {
       : ordem === "data" ? (a.proximos_horarios[0]?.inicio ?? "9").localeCompare(b.proximos_horarios[0]?.inicio ?? "9")
         : (a.distancia_km ?? 1e9) - (b.distancia_km ?? 1e9)), [todos, dist, valor, esp, tipo, turno, ordem]);
   const ativos = [dist, valor, esp, tipo, turno].filter(Boolean).length;
+  const limparFiltros = () => { setDist(""); setValor(""); setEsp(""); setTipo(""); setTurno(""); };
 
   if (dados.isError) {
     return (
@@ -96,7 +98,7 @@ export function BuscaClinicas() {
       <header className="d-topo">
         <div className="d-topo-linha">
           <Simbolo tamanho={30} escuro />
-          <span className="d-marca">UHealth</span>
+          <Marca className="d-marca" />
           <BotaoAudio aoOuvir={() => document.querySelector("main")?.textContent ?? ""} />
           <BotaoLetras />
           <AtalhoAlertas />
@@ -105,21 +107,20 @@ export function BuscaClinicas() {
         <h1 className="d-h1 d-h1--30 d-h1--claro">Escolha a clínica</h1>
         <div className="d-cidade">
           <Icone nome="local" />
-          <span>{voce ? (gps ? "Perto da sua localização" : `Perto de ${perfil.data?.bairro || "você"}`) : "Sem endereço: distância indisponível"}</span>
+          <span>{voce ? (gps ? "Perto da sua localização" : `Perto de ${perfil.data?.bairro || "você"}`) : <Link to="/perfil/endereco" style={{ color: "inherit" }}>Cadastrar endereço</Link>}</span>
           {!gps && <button type="button" onClick={usarGps}>Usar GPS</button>}
         </div>
       </header>
       <AcoesInicio />
 
       <main className="d-corpo" style={{ gap: 14 }}>
-        {!voce && perfil.data && <div className="d-aviso d-aviso--pequeno">Para ver a distância, <Link to="/perfil/endereco" style={{ color: "inherit" }}>cadastre seu endereço</Link> ou use o GPS.</div>}
-        <div className="d-linhaBtn">
+        <div className="d-linhaBtn d-linhaBtn--fim">
           <Seletor id="ordem" rotulo="Ordenar por" valor={ordem} aoMudar={(v) => setOrdem(v as Ordem)}
             opcoes={[["distancia", "Mais perto"], ["valor", "Menor valor"], ["data", "Horário mais cedo"]]} />
+          <Btn variante="outline" aria-expanded={filtrosAbertos} onClick={() => setFiltrosAbertos(!filtrosAbertos)}>
+            <Icone nome="filtro" />Filtros{ativos ? ` (${ativos})` : ""}
+          </Btn>
         </div>
-        <Btn variante="outline" aria-expanded={filtrosAbertos} onClick={() => setFiltrosAbertos(!filtrosAbertos)}>
-          <Icone nome="filtro" />Filtros{ativos ? ` (${ativos})` : ""}
-        </Btn>
         {filtrosAbertos && (
           <section className="d-card" aria-label="Filtros" style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
             <Seletor id="f-dist" rotulo="Distância" valor={dist} aoMudar={setDist} opcoes={[["", "Qualquer"], ["5", "Até 5 km"], ["10", "Até 10 km"], ["20", "Até 20 km"]]} />
@@ -127,26 +128,36 @@ export function BuscaClinicas() {
             <Seletor id="f-esp" rotulo="Especialidade" valor={esp} aoMudar={setEsp} opcoes={[["", "Todas"], ...especialidades.map((e): [string, string] => [e, rotuloEspecialidade(e)])]} />
             <Seletor id="f-tipo" rotulo="Tipo" valor={tipo} aoMudar={setTipo} opcoes={[["", "Pública ou particular"], ["publica", "Pública"], ["privada", "Particular"]]} />
             <Seletor id="f-turno" rotulo="Turno" valor={turno} aoMudar={setTurno} opcoes={[["", "Qualquer"], ["manha", "Manhã"], ["tarde", "Tarde"], ["noite", "Noite"]]} />
-            {ativos > 0 && <Btn variante="link" onClick={() => { setDist(""); setValor(""); setEsp(""); setTipo(""); setTurno(""); }}>Limpar filtros</Btn>}
+            {ativos > 0 && <Btn variante="link" onClick={limparFiltros}>Limpar filtros</Btn>}
           </section>
         )}
-        {dados.isPending && <p role="status" className="d-small">Buscando clínicas…</p>}
+        {dados.isPending && <Carregando texto="Buscando clínicas…" cartoes={3} />}
         {dados.data && <p role="status" className="d-small">{itens.length === 1 ? "1 clínica" : `${itens.length} clínicas`}{ativos ? " com esses filtros" : ""}</p>}
+        {dados.data && itens.length === 0 && (
+          <section className="d-card d-vazio" aria-labelledby="h-vazio">
+            <Ilustracao nome="semClinica" />
+            <h2 id="h-vazio" className="d-h2">{ativos ? "Nenhuma clínica com esses filtros" : "Nenhuma clínica encontrada"}</h2>
+            <p className="d-small">{ativos ? "Tente tirar um filtro ou aumentar a distância." : "Confira o endereço no seu perfil ou use o GPS."}</p>
+            {ativos > 0
+              ? <Btn variante="outline" compacto onClick={limparFiltros}>Limpar filtros</Btn>
+              : <BtnLink variante="outline" compacto to="/perfil/endereco">Revisar endereço</BtnLink>}
+          </section>
+        )}
         <ul className="d-lista">
           {itens.map((i, n) => (
             <li key={i.clinica.id}>
               <article className={`d-card${n === 0 ? " d-card--sel" : ""}`} aria-labelledby={`c-${i.clinica.id}`}>
                 <div className="d-card-topo">
                   <h2 id={`c-${i.clinica.id}`} className="d-h2">{i.clinica.nome}</h2>
-                  {km(i.distancia_km) && <span className="d-small" style={{ whiteSpace: "nowrap" }}>{km(i.distancia_km)}</span>}
+                  {km(i.distancia_km) && <span className="d-distancia"><Icone nome="local" tamanho={16} /><span className="sr-only">Distância: </span>{km(i.distancia_km)}</span>}
                 </div>
-                <p className="d-small">{i.clinica.universidade} · {i.clinica.tipo_instituicao === "publica" ? "pública" : "particular"}</p>
+                <p className="d-small d-card-meta"><Icone nome="clinica" tamanho={20} /><span>{i.clinica.universidade} · {i.clinica.tipo_instituicao === "publica" ? "pública" : "particular"}</span></p>
                 <div className="d-chips">
                   <Chip tom={textoValor(i.clinica) === "Gratuito" ? "sun" : "neutral"}>{textoValor(i.clinica)}</Chip>
                   {(i.clinica.turnos ?? []).map((t) => <Chip key={t} tom="neutral">{TURNO[t as keyof typeof TURNO]}</Chip>)}
                 </div>
                 <p className="d-small">Atende: {i.clinica.especialidades.map(rotuloEspecialidade).join(", ")}</p>
-                <p className="d-small"><b>Próximos horários:</b> {i.proximos_horarios.length ? i.proximos_horarios.map((h) => quando(h.inicio)).join(" · ") : "a clínica liga para combinar"}</p>
+                <p className="d-small d-card-meta"><Icone nome="horario" tamanho={20} /><span><b>Próximos horários:</b> {i.proximos_horarios.length ? i.proximos_horarios.map((h) => quando(h.inicio)).join(" · ") : "a clínica liga para combinar"}</span></p>
                 <BtnLink compacto to={`/clinicas/${i.clinica.id}`}>Ver clínica e agendar</BtnLink>
               </article>
             </li>

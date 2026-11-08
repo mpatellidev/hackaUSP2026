@@ -13,7 +13,7 @@ def create_app() -> FastAPI:
     settings = get_settings()
     docs = settings.demo_mode  # documentação interativa só no modo demo (local); hospedado fica fechada
     app = FastAPI(
-        title="UHealth API (DEMO)",
+        title="Sorriu+ API (DEMO)",
         version="0.1.0",
         description="Protótipo de hackathon. **Dados fictícios e autenticação DEMO sem senha: "
                     "não é seguro para produção.**",

@@ -1,6 +1,6 @@
 # AGENTS.md — regras para pessoas e IAs
 
-UHealth conecta pessoas de baixa renda a **clínicas-escola de saúde** (medicina e áreas da saúde, não só uma especialidade). Protótipo de hackathon com **dados 100% fictícios**.
+Sorriu+ conecta pessoas de baixa renda a **clínicas-escola de saúde** (medicina e áreas da saúde, não só uma especialidade). Protótipo de hackathon com **dados 100% fictícios**.
 
 ## Leia primeiro
 1. `README.md` · 2. `arquitetura.md` · 3. `frentes.md` · 4. `backend/docs/contratos-mvp.md` · 5. a sua issue no GitHub.

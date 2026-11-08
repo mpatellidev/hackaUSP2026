@@ -2,9 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PUBLICO, mensagemDe, rotuloEspecialidade, useSessao, useUsuario, type PublicoAlvo } from "@uhealth/api-client";
-import { Btn, BtnLink, Linhas, Voltar } from "../../design/Componentes";
+import { Btn, BtnLink, ErroCampo, Linhas, Progresso as Barra, TelaCarregando, Voltar } from "../../design/Componentes";
 import { Icone } from "../../design/Icone";
 import { Ilustracao } from "../../design/Ilustracoes";
+import { useTopoAoMudar } from "../../design/rolagem";
 import { linkComoChegar } from "../urgencia/Urgencia";
 import { textoValor } from "./BuscaClinicas";
 
@@ -27,12 +28,7 @@ const diaHora = (iso: string) => `${DIA_LONGO.format(new Date(iso))}, às ${HORA
 function Progresso({ passo }: { passo: Passo }) {
   const i = ETAPAS.indexOf(passo);
   if (i < 0) return null;
-  return (
-    <>
-      <p className="d-small" aria-live="polite">Passo {i + 1} de {ETAPAS.length}</p>
-      <div className="d-progresso" role="presentation"><div style={{ width: `${((i + 1) / ETAPAS.length) * 100}%` }} /></div>
-    </>
-  );
+  return <Barra atual={i + 1} total={ETAPAS.length} />;
 }
 
 /** Página da clínica + agendamento manual: clínica → especialidade → data e horário → dados → revisão → comprovante.
@@ -55,6 +51,7 @@ export function AgendarClinica() {
   const [publico, setPublico] = useState<PublicoAlvo | null>(null);
   const [tentou, setTentou] = useState(false);
   const [autorizo, setAutorizo] = useState(false);
+  useTopoAoMudar(passo);
   const horarios = useQuery({
     queryKey: ["horarios", id, esp], enabled: !!esp && passo === "horario",
     queryFn: () => api.dados(api.cliente.GET("/clinicas/{clinica_id}/horarios", { params: { path: { clinica_id: id }, query: { especialidade: esp! } } })),
@@ -77,7 +74,7 @@ export function AgendarClinica() {
     onSuccess: () => { void qc.invalidateQueries(); setPasso("comprovante"); },
   });
 
-  if (clinica.isPending) return <div className="d-tela"><main className="d-corpo"><p role="status" className="d-small">Carregando…</p></main></div>;
+  if (clinica.isPending) return <TelaCarregando texto="Carregando a clínica…" />;
   if (clinica.isError) {
     return (
       <div className="d-tela"><main className="d-corpo">
@@ -109,8 +106,11 @@ export function AgendarClinica() {
           <Linhas itens={DIAS.map(([k, nomeDia]) => [nomeDia, c.horarios_funcionamento?.[k] ? `${c.horarios_funcionamento[k]![0]} às ${c.horarios_funcionamento[k]![1]}` : "Fechada"] as [string, string])} />
           {c.atende_urgencia && <p className="d-small">Atende urgência{c.horario_urgencia?.dom ? " 24 horas" : " no horário indicado pela clínica"}.</p>}
         </section>
-        <p className="d-small">Atende: {c.especialidades.map(rotuloEspecialidade).join(", ")}</p>
-        <div className="d-fim">
+        <section aria-labelledby="h-atende" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <h2 id="h-atende" className="d-h2">Atendimentos</h2>
+          <div className="d-chips">{c.especialidades.map((e) => <span key={e} className="d-chip d-chip--neutral">{rotuloEspecialidade(e)}</span>)}</div>
+        </section>
+        <div className="d-fim d-fim--fixo">
           {c.recebendo_pedidos
             ? <Btn onClick={() => setPasso("especialidade")}>Agendar nesta clínica</Btn>
             : <div className="d-aviso d-aviso--perigo" role="status"><b>Esta clínica não está recebendo pedidos agora.</b></div>}
@@ -167,7 +167,10 @@ export function AgendarClinica() {
           ))}
         </fieldset>
         <p className="d-small">Dor forte ou dente quebrado agora? Use o botão Emergência na página inicial ou <a href="tel:192">ligue 192 (SAMU)</a>.</p>
-        <div className="d-fim"><Btn disabled={!esp} onClick={() => setPasso("horario")}>Continuar</Btn></div>
+        <div className="d-fim">
+          {!esp && <p className="d-small" id="dica-esp" style={{ textAlign: "center" }}>Escolha um atendimento para continuar.</p>}
+          <Btn disabled={!esp} aria-describedby={!esp ? "dica-esp" : undefined} onClick={() => setPasso("horario")}>Continuar</Btn>
+        </div>
       </main></div>
     );
   }
@@ -190,6 +193,7 @@ export function AgendarClinica() {
         <h1 className="d-h1">Escolha o dia e o horário</h1>
         <p className="d-small">{rotuloEspecialidade(esp!)} · {c.nome}</p>
         {horarios.isPending && <p role="status" className="d-small">Buscando horários livres…</p>}
+        <p className="d-legenda" aria-hidden="true"><span><i />Tem horário livre</span><span><i className="d-legenda-hoje" />Hoje</span></p>
         {horarios.isError && <div className="d-aviso d-aviso--perigo" role="alert"><b>{mensagemDe(horarios.error)}</b></div>}
         <div className="d-calendario" role="grid" aria-label="Próximas 3 semanas. Dias com ponto têm horário livre.">
           {["S", "T", "Q", "Q", "S", "S", "D"].map((d, i) => <span key={i} className="d-cal-cab" aria-hidden="true">{d}</span>)}
@@ -197,9 +201,10 @@ export function AgendarClinica() {
           {dias.map((d) => {
             const k = DIA_CHAVE.format(d);
             const livres = porDia.get(k)?.length ?? 0;
+            const ehHoje = k === DIA_CHAVE.format(hoje);
             return (
-              <button key={k} type="button" role="gridcell" className={`d-cal-dia${livres ? "" : " d-cal-dia--vazio"}${dia === k ? " d-cal-dia--on" : ""}`}
-                aria-pressed={dia === k} aria-label={`${DIA_LONGO.format(d)}: ${livres ? `${livres} horário${livres > 1 ? "s" : ""} livre${livres > 1 ? "s" : ""}` : "sem horário"}`}
+              <button key={k} type="button" role="gridcell" className={`d-cal-dia${livres ? "" : " d-cal-dia--vazio"}${dia === k ? " d-cal-dia--on" : ""}${ehHoje ? " d-cal-dia--hoje" : ""}`}
+                aria-pressed={dia === k} aria-current={ehHoje ? "date" : undefined} aria-label={`${ehHoje ? "Hoje, " : ""}${DIA_LONGO.format(d)}: ${livres ? `${livres} horário${livres > 1 ? "s" : ""} livre${livres > 1 ? "s" : ""}` : "sem horário"}`}
                 onClick={() => { setDia(k); setHorario(null); }}>
                 {d.getDate()}{livres > 0 && <span className="d-cal-ponto" aria-hidden="true" />}
               </button>
@@ -230,7 +235,10 @@ export function AgendarClinica() {
         <label className={`d-op d-op--m${horario === "sem" ? " d-op--on" : ""}`}>
           <input type="radio" name="hora" checked={horario === "sem"} onChange={() => { setHorario("sem"); setDia(null); }} />Nenhum serve: a clínica me liga para combinar
         </label>
-        <div className="d-fim"><Btn disabled={!horario} onClick={() => setPasso("dados")}>Continuar</Btn></div>
+        <div className="d-fim">
+          {!horario && <p className="d-small" id="dica-hora" style={{ textAlign: "center" }}>Escolha um horário ou peça para a clínica ligar.</p>}
+          <Btn disabled={!horario} aria-describedby={!horario ? "dica-hora" : undefined} onClick={() => setPasso("dados")}>Continuar</Btn>
+        </div>
       </main></div>
     );
   }
@@ -241,7 +249,12 @@ export function AgendarClinica() {
     const nomeOk = paraQuem === "mim" || nome.trim().length >= 2;
     const motivoOk = motivo.trim().length >= 3;
     const pubOk = c.publico.length <= 1 || !!publico;
-    const seguir = (e: FormEvent) => { e.preventDefault(); setTentou(true); if (telOk && nomeOk && motivoOk && pubOk) setPasso("revisao"); };
+    const seguir = (e: FormEvent) => {
+      e.preventDefault(); setTentou(true);
+      if (telOk && nomeOk && motivoOk && pubOk) { setPasso("revisao"); return; }
+      // Leva o foco ao primeiro campo com problema (depois que as mensagens aparecem).
+      requestAnimationFrame(() => document.querySelector<HTMLElement>('.d-tela [aria-invalid="true"]')?.focus());
+    };
     return (
       <div className="d-tela"><form className="d-corpo" style={{ gap: 14 }} onSubmit={seguir} noValidate>
         {voltar("horario")}
@@ -260,8 +273,9 @@ export function AgendarClinica() {
         {paraQuem === "outra" && (
           <div className="d-campo">
             <label htmlFor="ag-nome">Nome completo de quem será atendido</label>
-            <input id="ag-nome" value={nome} maxLength={120} onChange={(e) => setNome(e.target.value)} aria-invalid={tentou && !nomeOk} />
-            {tentou && !nomeOk && <p className="d-small" role="alert">Digite o nome.</p>}
+            <input id="ag-nome" name="nome" autoComplete="off" enterKeyHint="next" value={nome} maxLength={120} onChange={(e) => setNome(e.target.value)}
+              aria-invalid={tentou && !nomeOk} aria-describedby={tentou && !nomeOk ? "ag-nome-erro" : undefined} />
+            {tentou && !nomeOk && <ErroCampo id="ag-nome-erro">Digite o nome.</ErroCampo>}
           </div>
         )}
         {c.publico.length > 1 && (
@@ -270,18 +284,21 @@ export function AgendarClinica() {
             {c.publico.map((p) => (
               <label key={p} className={`d-op d-op--m${publico === p ? " d-op--on" : ""}`}><input type="radio" name="pub" checked={publico === p} onChange={() => setPublico(p)} />{PUBLICO[p]}</label>
             ))}
-            {tentou && !pubOk && <p className="d-small" role="alert">Escolha uma opção.</p>}
+            {tentou && !pubOk && <ErroCampo>Escolha uma opção.</ErroCampo>}
           </fieldset>
         )}
         <div className="d-campo">
           <label htmlFor="ag-tel">Telefone para contato (com DDD)</label>
-          <input id="ag-tel" type="tel" inputMode="tel" placeholder="(11) 91234-5678" value={telefone} onChange={(e) => setTelefone(formatarTelefone(e.target.value))} aria-invalid={tentou && !telOk} />
-          {tentou && !telOk && <p className="d-small" role="alert">Digite o telefone com DDD.</p>}
+          <input id="ag-tel" name="tel" type="tel" inputMode="tel" autoComplete="tel-national" enterKeyHint="next" placeholder="(11) 91234-5678…" value={telefone}
+            onChange={(e) => setTelefone(formatarTelefone(e.target.value))} aria-invalid={tentou && !telOk} aria-describedby={tentou && !telOk ? "ag-tel-erro" : undefined} />
+          {tentou && !telOk && <ErroCampo id="ag-tel-erro">Digite o telefone com DDD.</ErroCampo>}
         </div>
         <div className="d-campo">
           <label htmlFor="ag-motivo">Em poucas palavras, do que você precisa?</label>
-          <textarea id="ag-motivo" value={motivo} maxLength={280} onChange={(e) => setMotivo(e.target.value)} aria-invalid={tentou && !motivoOk} placeholder="Ex.: avaliação de rotina" />
-          {tentou && !motivoOk && <p className="d-small" role="alert">Escreva pelo menos 3 letras.</p>}
+          <textarea id="ag-motivo" name="motivo" value={motivo} maxLength={280} onChange={(e) => setMotivo(e.target.value)}
+            aria-invalid={tentou && !motivoOk} aria-describedby={tentou && !motivoOk ? "ag-motivo-erro" : "ag-motivo-conta"} placeholder="Ex.: avaliação de rotina…" />
+          <p className="d-small" id="ag-motivo-conta" style={{ textAlign: "right", fontSize: "calc(14px * var(--d-s))" }}>{motivo.length}/280</p>
+          {tentou && !motivoOk && <ErroCampo id="ag-motivo-erro">Escreva pelo menos 3 letras.</ErroCampo>}
         </div>
         <div className="d-fim"><Btn type="submit">Continuar</Btn></div>
       </form></div>
@@ -311,7 +328,8 @@ export function AgendarClinica() {
       <p className="d-small">O horário fica reservado no seu pedido. Só é consulta marcada quando a clínica confirmar.</p>
       {confirmar.isError && <div className="d-aviso d-aviso--perigo" role="alert"><Icone nome="alerta" tamanho={24} /><b>{mensagemDe(confirmar.error)}</b></div>}
       <div className="d-fim">
-        <Btn disabled={!autorizo || confirmar.isPending} onClick={() => confirmar.mutate()}>{confirmar.isPending ? "Enviando…" : "Confirmar agendamento"}</Btn>
+        {!autorizo && <p className="d-small" id="dica-autorizo" style={{ textAlign: "center" }}>Marque a autorização acima para confirmar.</p>}
+        <Btn disabled={!autorizo || confirmar.isPending} aria-busy={confirmar.isPending || undefined} aria-describedby={!autorizo ? "dica-autorizo" : undefined} onClick={() => confirmar.mutate()}>{confirmar.isPending ? "Enviando…" : "Confirmar agendamento"}</Btn>
         <Btn variante="outline" onClick={() => setPasso("dados")}>Corrigir algo</Btn>
       </div>
     </main></div>

@@ -110,6 +110,24 @@
       "funcao": "estudante",
       "ativo": true,
       "email": "lucas.andrade@example.com"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000017",
+      "papel": "paciente",
+      "nome_exibicao": "Cliente Demo",
+      "conta_demo": "cliente.demo",
+      "ativo": true,
+      "email": "cliente.demo@example.com",
+      "cpf": "00000099001"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000018",
+      "papel": "funcionario",
+      "nome_exibicao": "Admin Demo",
+      "conta_demo": "admin.demo",
+      "funcao": "coordenacao",
+      "ativo": true,
+      "email": "admin.demo@example.com"
     }
   ]
 }

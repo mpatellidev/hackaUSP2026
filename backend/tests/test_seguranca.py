@@ -32,9 +32,13 @@ def test_hsts_quando_atras_de_proxy_https(client):
 
 
 def test_documentacao_fechada_fora_do_modo_demo(monkeypatch):
+    # get_settings() é cacheado (e o main.py já o usou na importação): trocamos o objeto, como nos outros testes
     monkeypatch.setattr(get_settings(), "demo_mode", False)
     c = TestClient(create_app())
-    assert c.get("/docs").status_code == 404 and c.get("/openapi.json").status_code == 404
+    # /docs sem o Swagger cai no fallback do SPA (index.html do paciente): o que não pode existir é a API documentada
+    assert "swagger-ui" not in c.get("/docs").text
+    assert c.get("/openapi.json").status_code == 404
+    assert "redoc" not in c.get("/redoc").text.lower()
 
 
 def test_login_bloqueia_depois_de_muitas_senhas_erradas(client):

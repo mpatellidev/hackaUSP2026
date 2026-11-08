@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { ESTADO_PEDIDO, mensagemDe, useSessao, type EventoSolicitacao } from "@uhealth/api-client";
-import { Btn, LinhaSamu, Voltar } from "../../design/Componentes";
+import { Btn, Carregando, LinhaSamu, Voltar } from "../../design/Componentes";
 import { Icone } from "../../design/Icone";
 import { quando } from "../../design/datas";
 
@@ -30,7 +30,7 @@ export function Historico() {
       <main className="d-corpo">
         <Voltar para={`/pedidos/${id}`}>Meu pedido</Voltar>
         <h1 className="d-h1 d-h1--30">Histórico do pedido</h1>
-        {eventos.isPending && <p role="status" className="d-small">Carregando…</p>}
+        {eventos.isPending && <Carregando />}
         {eventos.isError && (
           <>
             <div className="d-aviso d-aviso--perigo" role="alert"><Icone nome="alerta" tamanho={24} /><b>{mensagemDe(eventos.error)}</b></div>

@@ -1,4 +1,4 @@
-# UHealth — backend
+# Sorriu+ — backend
 
 API FastAPI do protótipo. **Dados 100% fictícios. Autenticação DEMO (contas fictícias com senha de demonstração): não é segura e não pode ir para produção.**
 Contrato de referência: [`docs/contratos-mvp.md`](docs/contratos-mvp.md) (versão 0.2.0); fonte técnica: o OpenAPI em `/openapi.json`. Arquitetura geral: [`../arquitetura.md`](../arquitetura.md). Todos os módulos são montados em `app/registro.py`; o build dos apps web (`../app`) é servido por `app/spa.py` na mesma origem.

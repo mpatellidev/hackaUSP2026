@@ -1,4 +1,4 @@
-# UHealth
+# Sorriu+
 
 Conecta pessoas de baixa renda a **clínicas-escola de saúde** (cursos de medicina e áreas da saúde). A pessoa busca clínicas na sua cidade, envia um pedido, acompanha o status e, se a clínica não puder atender, **escolhe** outra. As clínicas publicam vagas ociosas e confirmam quem será atendido.
 

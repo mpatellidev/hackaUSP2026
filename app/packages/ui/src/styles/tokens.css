@@ -1,4 +1,4 @@
-/* UHealth — design tokens. Cor da marca: #14BEB9.
+/* Sorriu+ — design tokens. Cor da marca: #14BEB9.
    Regra: #14BEB9 só como preenchimento com texto --uh-on-brand. Nunca texto branco sobre ele
    (2,3:1) e nunca como texto sobre fundo claro (2,2:1). Para links e texto de cor, use --uh-link. */
 
@@ -15,6 +15,7 @@
   --uh-teal-800: #074644;
   --uh-teal-900: #052f2e;
   --uh-sun: #ffb81c;
+  --uh-marca-bg: #075e59;      /* fundo do nome "Sorriu+" (texto branco, "u" amarelo) */
 
   /* Papéis (tema claro, padrão) */
   --uh-bg: #f4fbfb;

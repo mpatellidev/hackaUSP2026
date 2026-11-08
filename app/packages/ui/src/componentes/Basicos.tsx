@@ -9,6 +9,15 @@ interface BotaoProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /** Um botão principal por tela; os demais usam `outline`. */
+/** Nome da marca: "Sorriu+" em branco com o "u" em amarelo, sobre verde-escuro (contraste em qualquer fundo). */
+export function Marca({ className = "" }: { className?: string }) {
+  return (
+    <span className={`uh-marca ${className}`.trim()} role="img" aria-label="Sorriu+">
+      <span aria-hidden="true">Sorri<span className="uh-marca-u">u</span>+</span>
+    </span>
+  );
+}
+
 export function Botao({ variante = "primary", bloco, className = "", type = "button", ...resto }: BotaoProps) {
   return <button type={type} className={`btn btn--${variante}${bloco ? " btn--block" : ""} ${className}`.trim()} {...resto} />;
 }

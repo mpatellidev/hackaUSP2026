@@ -1,4 +1,4 @@
-/* UHealth — componentes base. Depende de tokens.css. */
+/* Sorriu+ — componentes base. Depende de tokens.css. */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
@@ -89,3 +89,7 @@ a { color: var(--uh-link); }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 @media (max-width: 480px) { .btn { width: 100%; } }
+
+/* Marca: texto branco com o "u" em amarelo, sempre sobre verde-escuro (branco 7,6:1; amarelo 4,4:1). */
+.uh-marca { display: inline-flex; align-items: center; padding: 0.1em 0.45em 0.14em; border-radius: 0.4em; background: var(--uh-marca-bg); color: #fff; font-family: var(--uh-font-display); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; white-space: nowrap; }
+.uh-marca-u { color: var(--uh-sun); }

@@ -9,12 +9,14 @@ A seção [Adaptações obrigatórias](#adaptações-obrigatórias) lista onde o
 
 ## Marca
 
+- Nome: **Sorriu+** (antes UHealth). Escrito em branco com só o "u" em amarelo, sempre sobre
+  verde-escuro `--uh-marca-bg` (#075E59). Use o componente `Marca` de `@uhealth/ui`; não escreva o nome à mão.
 - Lema: "A porta que não se fecha no primeiro 'não'."
 - Símbolo: o U de "you" é um copo aberto e um sorriso; o sol amarelo dentro é a vaga que surge.
   Traço 6,5 em 48, curva semicírculo raio 11, sol raio 4,2 e **sempre amarelo**.
 
 ```svg
-<svg viewBox="0 0 48 48" role="img" aria-label="Símbolo UHealth">
+<svg viewBox="0 0 48 48" role="img" aria-label="Símbolo Sorriu+">
   <path d="M13 9v16a11 11 0 0 0 22 0V9" fill="none" stroke="#14BEB9" stroke-width="6.5" stroke-linecap="round"/>
   <circle cx="24" cy="15" r="4.2" fill="#FFB81C"/>
 </svg>

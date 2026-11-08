@@ -11,7 +11,8 @@ export interface ChatConfig {
 let config: ChatConfig | null = null;
 
 export function configureChat(patch: Pick<ChatConfig, "api"> & Partial<ChatConfig>) {
-  config = { logoUrl: defaultLogo, ...patch };
+  // `logoUrl` indefinido não pode apagar a logo padrão (o espalhamento copiaria o `undefined`).
+  config = { ...patch, logoUrl: patch.logoUrl ?? defaultLogo };
 }
 
 export function chatConfig(): Readonly<ChatConfig> {

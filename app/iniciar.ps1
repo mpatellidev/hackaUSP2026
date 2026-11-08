@@ -1,5 +1,5 @@
 ﻿<#
-  UHealth (Windows): prepara e sobe a API e os dois apps web numa porta só. Não precisa do uv.
+  Sorriu+ (Windows): prepara e sobe a API e os dois apps web numa porta só. Não precisa do uv.
 
   Uso (PowerShell, na pasta app):
     powershell -ExecutionPolicy Bypass -File .\iniciar.ps1            # prepara, constrói e serve em http://localhost:8000
