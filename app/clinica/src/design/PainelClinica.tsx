@@ -4,6 +4,8 @@ import { ESTADO_PEDIDO, FUNCAO, PUBLICO, data, dataHora, hora, mensagemDe, rotul
 import { useClinicaAtual } from "../modulos/clinicaAtual";
 import { FUNCOES_QUE_EDITAM, PEDE_MOTIVO, PROXIMOS, diasDeEspera, protocolo, useAcoesPainel, useEventos, useInteressados, usePainel, type EstadoPedido, type ItemFila, type NovoEstado, type Pedido } from "./dados";
 import { Icone, Simbolo, type NomeIcone } from "./Icone";
+import { BarraScore, PrioridadeExplicada } from "./Prioridade";
+import { ProntuarioClinico } from "./ProntuarioClinico";
 import "./clinica.css";
 import { Marca } from "@uhealth/ui";
 
@@ -154,9 +156,10 @@ function Tabela({ lista, total, idSelecionado, aoEscolher }: { lista: Pedido[]; 
 }
 
 /** Registro da equipe sobre um pedido da fila. Recriado a cada pedido (chave = id). */
-function Triagem({ fila, aviso, p, ocupado, erro, aoEscolher, aoIr, aoSalvar }: {
-  fila: ItemFila[]; aviso: string; p?: Pedido; ocupado: boolean; erro: unknown;
+function Triagem({ fila, aviso, demo, funcao, p, ocupado, erro, aoEscolher, aoIr, aoSalvar, aoAvisar }: {
+  fila: ItemFila[]; aviso: string; demo: boolean; funcao: string; p?: Pedido; ocupado: boolean; erro: unknown;
   aoEscolher: (id: string) => void; aoIr: (pagina: Pagina) => void; aoSalvar: (estado: NovoEstado, motivo: string | null) => void;
+  aoAvisar: (texto: string) => void;
 }) {
   const opcoes = p ? PROXIMOS[p.estado] ?? [] : [];
   const [resultado, setResultado] = useState<NovoEstado | undefined>(opcoes[0]);
@@ -173,13 +176,17 @@ function Triagem({ fila, aviso, p, ocupado, erro, aoEscolher, aoIr, aoSalvar }: 
     const motivo = String(new FormData(e.currentTarget).get("motivo") ?? "").trim();
     if (resultado) aoSalvar(resultado, motivo || null);
   }
+  const maximo = Math.max(0, ...fila.map((f) => f.score));
+  const item = fila.find((f) => f.solicitacao_id === p.id);
   return (
     <div className="d-triage-layout">
-      <div className="d-queue" aria-label="Fila sugerida">
+      <div className="d-queue" aria-label="Fila sugerida por prioridade">
+        <p className="d-queue-head">Fila por prioridade <small>urgência avaliada primeiro, depois o score</small></p>
         {fila.map((f) => (
-          <button type="button" key={f.solicitacao_id} className={`d-queue-card${f.solicitacao_id === p.id ? " d-active" : ""}`} onClick={() => aoEscolher(f.solicitacao_id)}>
+          <button type="button" key={f.solicitacao_id} className={`d-queue-card${f.solicitacao_id === p.id ? " d-active" : ""}${f.posicao === 1 ? " d-is-first" : ""}`} onClick={() => aoEscolher(f.solicitacao_id)}>
             <div>
-              <b>{f.posicao}. {f.paciente_nome_exibicao}</b>
+              <span className="d-queue-linha"><b>{f.posicao}. {f.paciente_nome_exibicao}</b><span className="d-queue-pts">{f.score.toLocaleString("pt-BR", { maximumFractionDigits: 1 })} pts</span></span>
+              <BarraScore score={f.score} maximo={maximo} destaque={f.posicao === 1} />
               <p>{rotuloEspecialidade(f.especialidade)}</p>
               {f.urgencia_avaliada && <span className="d-badge d-danger"><Icone nome="ajuda" />Urgência avaliada</span>}
               <small>{diasDeEspera(f.criado_em)} dias de espera · {ESTADO_PEDIDO[f.estado as EstadoPedido]?.rotulo ?? f.estado}</small>
@@ -187,6 +194,8 @@ function Triagem({ fila, aviso, p, ocupado, erro, aoEscolher, aoIr, aoSalvar }: 
           </button>
         ))}
       </div>
+      <div className="d-triage-main">
+      {item && <div className="d-panel d-bloco-panel"><PrioridadeExplicada item={item} demo={demo} /></div>}
       <form className="d-panel d-form-panel" onSubmit={salvar}>
         <span className="d-eyebrow">Registro da equipe</span>
         <h2 style={{ marginTop: 8 }}>Triagem de {p.paciente_nome_exibicao}</h2>
@@ -214,6 +223,8 @@ function Triagem({ fila, aviso, p, ocupado, erro, aoEscolher, aoIr, aoSalvar }: 
         </div>
         <p className="d-profile-footer">A ordem da fila é sugestão; a decisão é da equipe. Nenhuma mensagem é enviada pelo painel.</p>
       </form>
+      <div className="d-panel d-bloco-panel"><ProntuarioClinico key={p.id} p={p} funcao={funcao} aoAvisar={aoAvisar} /></div>
+      </div>
     </div>
   );
 }
@@ -532,9 +543,9 @@ export function PainelClinica() {
       ),
       triagem: fila.isError ? <Falha erro={fila.error} aoTentar={() => void fila.refetch()} />
         : !fila.data ? <Carregando />
-        : <Triagem key={itensFila.length ? idSelecionado ?? "" : "vazia"} fila={itensFila} aviso={fila.data.aviso}
-            p={itensFila.length ? paciente : undefined} ocupado={ocupado} erro={acoes.mudarEstado.error}
-            aoEscolher={escolherPaciente} aoIr={irPara} aoSalvar={salvarTriagem} />,
+        : <Triagem key={itensFila.length ? idSelecionado ?? "" : "vazia"} fila={itensFila} aviso={fila.data.aviso} demo={fila.data.fontes_demo}
+            funcao={funcao} p={itensFila.length ? paciente : undefined} ocupado={ocupado} erro={acoes.mudarEstado.error}
+            aoEscolher={escolherPaciente} aoIr={irPara} aoSalvar={salvarTriagem} aoAvisar={avisar} />,
       servicos: vagas.isError || profissionais.isError
         ? <Falha erro={vagas.error ?? profissionais.error} aoTentar={() => { void vagas.refetch(); void profissionais.refetch(); }} />
         : !vagas.data || !profissionais.data ? <Carregando />
@@ -622,6 +633,7 @@ export function PainelClinica() {
             {janela.tipo === "perfil" && paciente && (
               <>
                 <Perfil p={paciente} completo acao={acaoDo(paciente)} />
+                <ProntuarioClinico key={paciente.id} p={paciente} funcao={funcao} aoAvisar={avisar} />
                 <Historico p={paciente} />
               </>
             )}
