@@ -5,7 +5,7 @@ Só urgência CONFIRMADA por profissional conta; relato não avaliado ou `sem_ur
 nem gera penalidade. Quem age (papel, função, clínicas) vem do `Actor` do servidor, nunca do corpo.
 """
 from app.core.auth import Actor
-from app.core.errors import acesso_negado, nao_encontrado, transicao_invalida
+from app.core.errors import acesso_negado, erro_validacao, nao_encontrado, transicao_invalida
 from app.core.time import utc_now
 from app.modulos.urgencia.models import AvaliacaoUrgencia, RelatoUrgencia
 from app.modulos.urgencia.repositorio import RepositorioUrgencia
@@ -23,6 +23,9 @@ def criar_relato(repo: RepositorioUrgencia, actor: Actor, solicitacao_id: str | 
     """Devolve (relato, criado). Relato repetido e ainda pendente é reaproveitado."""
     if actor.papel != "paciente":
         raise acesso_negado("Só a pessoa atendida pode relatar urgência.")
+    if not solicitacao_id:  # sem pedido, nenhuma clínica veria o relato
+        raise erro_validacao(["solicitacao_id"], "Escolha o pedido para que a clínica receba o seu relato. "
+                                                 "Em risco agora, ligue 192 (SAMU).")
     if solicitacao_id and repo.paciente_da_solicitacao(solicitacao_id) != actor.usuario_id:
         raise nao_encontrado("Não encontramos este registro.")
     for r in repo.listar_relatos():

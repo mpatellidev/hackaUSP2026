@@ -23,7 +23,8 @@ class AppWeb(StaticFiles):
         try:
             return await super().get_response(path, scope)
         except HTTPException as exc:
-            if exc.status_code != 404 or path.startswith("api/") or "." in Path(path).name:
+            # No Windows o Starlette entrega o caminho com "\": normaliza para "api/" nunca virar index.html.
+            if exc.status_code != 404 or path.replace("\\", "/").startswith("api/") or "." in Path(path).name:
                 raise
             return await super().get_response("index.html", scope)
 

@@ -39,7 +39,7 @@ def test_paciente_relata_urgencia_aguardando_sem_prometer_contato(client, login)
 
 
 def test_paciente_id_do_corpo_e_ignorado(client, login):
-    j = client.post(API, headers=login(ANA), json={"paciente_id": ID_BRUNO}).json()
+    j = client.post(API, headers=login(ANA), json={"solicitacao_id": PED1, "paciente_id": ID_BRUNO}).json()
     assert j["paciente_id"] == ID_ANA
 
 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -6,6 +6,7 @@ from app.core.auth import AVISO_DEMO, Actor, criar_sessao, encerrar_sessao, get_
 from app.core.config import get_settings
 from app.core.db import get_db
 from app.core.errors import ApiError, nao_encontrado
+from app.core.seguranca import ip, limitador, muitas_tentativas
 from app.core.time import to_sp_iso
 from app.models.clinicas import Clinica
 from app.models.usuarios import Usuario, VinculoClinica
@@ -44,10 +45,20 @@ def contas_demo(db: Session = Depends(get_db)):
             "login_sem_senha": cfg.demo_mode, "itens": itens}
 
 
+FALHAS_LOGIN, JANELA_LOGIN_S = 10, 300  # por IP: todas as contas fictícias compartilham a mesma senha
+
+
 @router.post("/login", response_model=LoginOut, summary="Login DEMO com conta fictícia e senha de demonstração")
-def login_com_senha(body: LoginIn, db: Session = Depends(get_db)):
+def login_com_senha(body: LoginIn, request: Request, db: Session = Depends(get_db)):
+    if get_settings().senha_insegura:
+        raise ApiError(503, "servico_indisponivel", "Login desativado: defina DEMO_SENHA no ambiente do servidor "
+                                                    "(a senha padrão do repositório não vale fora do modo demo).")
+    lim, chave = limitador(request), f"login:{ip(request)}"
+    if lim.excedido(chave, FALHAS_LOGIN, JANELA_LOGIN_S):
+        raise muitas_tentativas()
     usuario = db.scalar(select(Usuario).where(Usuario.conta_demo == body.conta, Usuario.ativo))
     if usuario is None or not senha_confere(body.senha, usuario.senha_hash):
+        lim.registrar(chave)  # só falhas contam
         raise ApiError(401, "nao_autenticado", "Conta ou senha incorretas. Use uma conta fictícia de demonstração.")
     return _resposta_login(db, usuario)
 
