@@ -1,6 +1,6 @@
 # UHealth · Portal da clínica
 
-Protótipo administrativo em português, desenvolvido em HTML, CSS e JavaScript puro a partir do arquivo **UHealth — Identidade e Design.html** fornecido. A pasta inicial não continha uma aplicação. Foram preservados o símbolo da marca, o verde petróleo, o turquesa, o amarelo, a tipografia Atkinson Hyperlegible incorporada e a organização por solicitações e triagem. Os títulos usam Lexend quando disponível, com fonte de sistema como alternativa.
+Protótipo administrativo em português, desenvolvido em HTML, CSS e JavaScript puro a partir do arquivo **UHealth — Identidade e Design.html** fornecido. A pasta inicial não continha uma aplicação. Foram preservados o símbolo da marca, a família de verdes, o amarelo da marca e a organização por solicitações e triagem. O refinamento operacional usa Segoe UI/Arial, superfícies neutras, cantos discretos e situações com ícone e texto. Indicadores foram reunidos em uma faixa e detalhes complementares ficam em expansores. Nenhuma fonte externa é necessária.
 
 ## Abrir
 
@@ -46,4 +46,6 @@ npm test
 
 `build` usa a estrutura comportamental da skill local `frontend-design` em `%USERPROFILE%/.codex/skills/frontend-design/assets/preview-template.html`. Atualiza a revisão e a aplicação autocontida a partir de `styles.css` e `app.js`. `jsdom` é usado somente nos testes de DOM; esses testes não substituem uma conferência visual em navegador.
 
-As licenças das fontes incorporadas estão em `design/FONT-LICENSES.txt`.
+As licenças das fontes da referência anterior continuam arquivadas em `design/FONT-LICENSES.txt`; a interface atual usa fontes de sistema.
+
+A revisão operacional também corrige o painel do paciente ao filtrar a lista, preserva a observação administrativa da triagem, inclui o filtro de encerradas e impede novo encaminhamento de pedidos já agendados ou encerrados. Os nove testes de DOM cobrem os fluxos e essas regressões. A conferência visual foi realizada em Chromium headless nas larguras de 1440, 1280 e 390 px, nos temas claro e escuro. Capturas de referência estão em `design/operacional-*.png`.
