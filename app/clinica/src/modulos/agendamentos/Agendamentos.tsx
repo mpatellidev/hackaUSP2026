@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Aviso, Botao, Carregando, Erro, Selo, Tabela, Vazio } from "@uhealth/ui";
+import { Aviso, Botao, CampoTexto, Carregando, Erro, Selo, Tabela, Vazio } from "@uhealth/ui";
 import { dataHora, mensagemDe, rotuloEspecialidade, useSessao, type Agendamento } from "@uhealth/api-client";
+import { useClinicaAtual } from "../clinicaAtual";
 
 const ESTADO = { agendado: "Agendado", concluido: "Concluído", cancelado: "Cancelado" } as const;
 const DESFECHO: Record<string, string> = {
@@ -9,10 +10,16 @@ const DESFECHO: Record<string, string> = {
   cancelado_antecipado: "Cancelado pelo paciente", cancelado_pela_clinica: "Cancelado pela clínica",
 };
 
+/** Mesma regra da API (POST /faltas): só profissional, depois que o horário começou, com justificativa. */
+const podeRegistrarFalta = (a: Agendamento, funcao: string, agora = Date.now()) =>
+  funcao === "profissional" && a.estado === "agendado" && a.desfecho === "pendente" && new Date(a.vaga.inicio).getTime() <= agora;
+
 export function Agendamentos() {
   const { api } = useSessao();
+  const { funcao } = useClinicaAtual();
   const qc = useQueryClient();
-  const [alvo, setAlvo] = useState<{ a: Agendamento; acao: "cancelar" | "concluir" } | null>(null);
+  const [alvo, setAlvo] = useState<{ a: Agendamento; acao: "cancelar" | "concluir" | "falta" } | null>(null);
+  const [justificativa, setJustificativa] = useState("");
   const lista = useQuery({ queryKey: ["agendamentos"], queryFn: () => api.dados(api.cliente.GET("/agendamentos", {})) });
   const depois = () => { setAlvo(null); return Promise.all(["agendamentos", "solicitacoes", "vagas", "fila"].map((k) => qc.invalidateQueries({ queryKey: [k] }))); };
   const cancelar = useMutation({
@@ -23,7 +30,12 @@ export function Agendamentos() {
     mutationFn: (a: Agendamento) => api.dados(api.cliente.PATCH("/solicitacoes/{solicitacao_id}/estado", { params: { path: { solicitacao_id: a.solicitacao_id } }, body: { estado: "concluida" } })),
     onSuccess: depois,
   });
-  const erro = cancelar.error ?? concluir.error;
+  const falta = useMutation({
+    mutationFn: (a: Agendamento) => api.dados(api.cliente.POST("/faltas", { body: { agendamento_id: a.id, justificativa: justificativa.trim() } })),
+    onSuccess: () => { setJustificativa(""); return depois(); },
+  });
+  const erro = cancelar.error ?? concluir.error ?? falta.error;
+  const ocupado = cancelar.isPending || concluir.isPending || falta.isPending;
 
   return (
     <>
@@ -39,21 +51,33 @@ export function Agendamentos() {
           { titulo: "Especialidade", celula: (a) => rotuloEspecialidade(a.vaga.especialidade) },
           { titulo: "Estado", celula: (a) => <><Selo tom={a.estado === "cancelado" ? "aviso" : "padrao"}>{ESTADO[a.estado]}</Selo> <small>{DESFECHO[a.desfecho]}</small></> },
           { titulo: "Ações", celula: (a) => a.estado !== "agendado" ? "—" : (alvo?.a.id === a.id ? (
-            <span className="linha">
-              <Botao disabled={cancelar.isPending || concluir.isPending} onClick={() => (alvo.acao === "cancelar" ? cancelar : concluir).mutate(a)}>
-                {alvo.acao === "cancelar" ? "Confirmar cancelamento" : "Confirmar conclusão"}
-              </Botao>
-              <Botao variante="outline" onClick={() => setAlvo(null)}>Voltar</Botao>
-            </span>
+            alvo.acao === "falta" ? (
+              <form className="pilha" onSubmit={(e) => { e.preventDefault(); falta.mutate(a); }}>
+                <CampoTexto rotulo="Justificativa da falta" dica="Fica registrada e pode ser revista por outra pessoa da clínica." required minLength={5} maxLength={280}
+                  value={justificativa} onChange={(e) => setJustificativa(e.target.value)} />
+                <span className="linha">
+                  <Botao type="submit" disabled={ocupado}>Registrar falta</Botao>
+                  <Botao variante="outline" onClick={() => setAlvo(null)}>Voltar</Botao>
+                </span>
+              </form>
+            ) : (
+              <span className="linha">
+                <Botao disabled={ocupado} onClick={() => (alvo.acao === "cancelar" ? cancelar : concluir).mutate(a)}>
+                  {alvo.acao === "cancelar" ? "Confirmar cancelamento" : "Confirmar conclusão"}
+                </Botao>
+                <Botao variante="outline" onClick={() => setAlvo(null)}>Voltar</Botao>
+              </span>
+            )
           ) : (
             <span className="linha">
               <Botao variante="outline" onClick={() => setAlvo({ a, acao: "concluir" })}>Concluir</Botao>
               <Botao variante="outline" onClick={() => setAlvo({ a, acao: "cancelar" })}>Cancelar</Botao>
+              {podeRegistrarFalta(a, funcao) && <Botao variante="outline" onClick={() => setAlvo({ a, acao: "falta" })}>Registrar falta</Botao>}
             </span>
           )) },
         ]} />
       )}
-      <p className="hint">Cancelar não gera falta nem penalidade. Falta só é registrada por profissional, com justificativa e revisão.</p>
+      <p className="hint">Cancelar não gera falta nem penalidade. Falta só é registrada por profissional, depois do horário, com justificativa e revisão. A falta confirmada entra no comparecimento do score do paciente; urgência avaliada continua passando na frente.</p>
     </>
   );
 }

@@ -33,6 +33,7 @@ function dadosIniciais() {
       pedido("cccc3333-0000", "Carla Teste", "agendada", "triagem", 8),
     ],
     vagas: [{ id: "v1", clinica_id: CLINICA, especialidade: "triagem", inicio: atras(-2), fim: atras(-2), estado: "aberta", profissional_id: null, criado_em: atras(1), interesses_registrados: 0 }],
+    registros: [] as Record<string, unknown>[],
   };
 }
 
@@ -46,7 +47,8 @@ const rotas: Record<string, (c: Chamada & { params?: { path?: Record<string, str
   "GET /clinicas/{clinica_id}/fila": () => {
     const itens = db.pedidos.filter((p) => NA_FILA.includes(p.estado)).map((p, i) => ({
       posicao: i + 1, solicitacao_id: p.id, clinica_id: CLINICA, paciente_nome_exibicao: p.paciente_nome_exibicao, estado: p.estado,
-      especialidade: p.especialidade, criado_em: p.criado_em, urgencia_avaliada: false, score: 1, versao_pesos: "v1", componentes: [], sinalizacoes: [],
+      especialidade: p.especialidade, criado_em: p.criado_em, urgencia_avaliada: false, score: 1, versao_pesos: "v1", sinalizacoes: [],
+      componentes: [{ nome: "falta_verificada", valor: 0, peso: 1, fonte: "teste" }, { nome: "socioeconomico", valor: 1, peso: 1, fonte: "teste" }],
     }));
     return { itens, total: itens.length, versao_pesos: "v1", ordenacao: "urgência avaliada primeiro", fontes_demo: true, aviso: "Sugestão; a decisão é humana." };
   },
@@ -57,6 +59,18 @@ const rotas: Record<string, (c: Chamada & { params?: { path?: Record<string, str
     const p = db.pedidos.find((x) => x.id === c.params?.path?.solicitacao_id)!;
     p.estado = (c.corpo as { estado: string }).estado;
     return p;
+  },
+  "GET /pacientes/{paciente_id}/prontuario": () => ({ itens: db.registros, total: db.registros.length, aviso: "Acesso registrado." }),
+  "POST /prontuario": (c) => {
+    const corpo = c.corpo as Record<string, unknown>;
+    const r = { ...corpo, id: `r${db.registros.length + 1}`, tipo_rotulo: "Triagem", clinica_nome: "Clínica-Escola Teste", autor_nome: "Hugo", validado_por_nome: null, validado_em: null, criado_em: atras(0) };
+    db.registros.push(r);
+    return r;
+  },
+  "POST /prontuario/{registro_id}/validar": (c) => {
+    const r = db.registros.find((x) => x.id === c.params?.path?.registro_id)!;
+    r.validado_por_nome = "Hugo";
+    return r;
   },
   "POST /vagas": (c) => ({ ...db.vagas[0], ...(c.corpo as object), id: "v2" }),
   "PATCH /clinicas/{clinica_id}": (c) => (db.clinica = { ...db.clinica, ...(c.corpo as object) }),
@@ -188,4 +202,44 @@ test("Rota da página abre diretamente e erro da API oferece tentar de novo", as
   falharPedidos = false;
   fireEvent.click(screen.getByRole("button", { name: "Tentar de novo" }));
   expect(await screen.findAllByRole("button", { name: /Gerenciar serviço/ })).toHaveLength(2);
+});
+
+test("Triagem mostra a fila por prioridade e o score explicado: comparecimento + situação socioeconômica", async () => {
+  history.replaceState(null, "", `/#/clinicas/${CLINICA}/triagem`);
+  abrir();
+  const formula = await screen.findByLabelText(/igual a score/);
+  expect(formula.getAttribute("aria-label")).toBe("Comparecimento 0 mais Situação socioeconômica 1, igual a score 1");
+  expect(screen.getByText(/Pontuação ilustrativa · dados fictícios/)).toBeInTheDocument();
+  expect(q(".d-queue-card.d-is-first").textContent).toMatch(/1\. Ana Teste/);
+});
+
+test("Prontuário só abre a pedido; professor escreve a triagem com procedimentos e valida", async () => {
+  funcao = "profissional";
+  history.replaceState(null, "", `/#/clinicas/${CLINICA}/triagem`);
+  abrir();
+  const abrirProntuario = await screen.findByRole("button", { name: /Abrir prontuário/ });
+  expect(ultima("GET", "/pacientes/{paciente_id}/prontuario")).toBeUndefined(); // abrir registra acesso: só quando pedem
+  fireEvent.click(abrirProntuario);
+  expect(await screen.findByText(/Ainda não há registros/)).toBeInTheDocument();
+  fireEvent.click(screen.getByLabelText("Canal (várias raízes)"));
+  fireEvent.change(screen.getByLabelText("Registro clínico"), { target: { value: "Dor ao mastigar (fictício)." } });
+  fireEvent.click(screen.getByRole("button", { name: /Salvar no prontuário/ }));
+  await waitFor(() => expect(ultima("POST", "/prontuario")?.corpo).toEqual({
+    solicitacao_id: "aaaa1111-0000", tipo: "triagem", conteudo: "Dor ao mastigar (fictício).", risco_clinico: null,
+    procedimentos: ["canal_multirradicular"], especialidades: ["endodontia"],
+  }));
+  fireEvent.click(await screen.findByRole("button", { name: /Validar registro/ }));
+  await waitFor(() => expect(ultima("POST", "/prontuario/{registro_id}/validar")).toBeDefined());
+  expect(await screen.findByText(/procura outra parceira\. O paciente confirma antes de ir/)).toBeInTheDocument();
+});
+
+test("Recepção vê o prontuário sem escrever nem validar", async () => {
+  db.registros.push({ id: "r1", tipo: "triagem", tipo_rotulo: "Triagem", clinica_nome: "Clínica-Escola Teste", risco_clinico: null, especialidades: [], procedimentos: [],
+    conteudo: "Registro fictício.", autor_nome: "Lucas", validado_por_nome: null, validado_em: null, criado_em: atras(1) });
+  history.replaceState(null, "", `/#/clinicas/${CLINICA}/triagem`);
+  abrir();
+  fireEvent.click(await screen.findByRole("button", { name: /Abrir prontuário/ }));
+  expect(await screen.findByText("Registro fictício.")).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /Validar registro/ })).not.toBeInTheDocument();
+  expect(screen.getByText(/Só estudante ou professor escreve/)).toBeInTheDocument();
 });

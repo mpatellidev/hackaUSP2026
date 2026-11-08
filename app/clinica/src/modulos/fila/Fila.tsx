@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Aviso, Carregando, Erro, Selo, Tabela, Vazio } from "@uhealth/ui";
 import { ESTADO_PEDIDO, dataHora, mensagemDe, rotuloEspecialidade, useSessao, type EstadoSolicitacao } from "@uhealth/api-client";
 import { useClinicaAtual } from "../clinicaAtual";
+import { NOME_COMPONENTE, fmtPontos, grupoScore } from "../../design/dados";
 
 /** Fila EXPLICÁVEL: urgência avaliada por profissional vem sempre antes do score. É sugestão; a decisão é humana. */
 export function Fila() {
@@ -18,7 +19,7 @@ export function Fila() {
       {fila.data && (
         <>
           <Aviso>{fila.data.aviso}</Aviso>
-          <p className="hint">Ordem sugerida: urgência avaliada por profissional primeiro, depois pontuação, depois a data do pedido.{fila.data.fontes_demo ? " Pontuação calculada com dados de demonstração." : ""}</p>
+          <p className="hint">Ordem sugerida: urgência avaliada por profissional primeiro, depois o score (comparecimento + situação socioeconômica), depois a data do pedido.{fila.data.fontes_demo ? " Pontuação ilustrativa · dados fictícios." : ""}</p>
           {fila.data.itens.length === 0 && <Vazio>Nenhum pedido ativo na fila.</Vazio>}
           {fila.data.itens.length > 0 && (
             <Tabela legenda="Fila de pedidos ativos" chave={(i) => i.solicitacao_id} linhas={fila.data.itens} colunas={[
@@ -28,9 +29,10 @@ export function Fila() {
               { titulo: "Urgência", celula: (i) => i.urgencia_avaliada ? <Selo tom="perigo">Urgência avaliada</Selo> : "—" },
               { titulo: "Pontuação", celula: (i) => (
                 <details>
-                  <summary>{i.score.toFixed(1)} · detalhes</summary>
+                  <summary>{fmtPontos(i.score)} pts · detalhes</summary>
+                  <p><small>{grupoScore(i.componentes).map((g) => `${g.titulo} ${fmtPontos(g.pontos)}`).join(" + ")} = {fmtPontos(i.score)}</small></p>
                   <ul>
-                    {i.componentes.map((c) => <li key={c.nome}>{c.nome.replace(/_/g, " ")}: {c.valor ?? "desconhecido (vale 0)"} × peso {c.peso}</li>)}
+                    {i.componentes.map((c) => <li key={c.nome}>{NOME_COMPONENTE[c.nome] ?? c.nome.replace(/_/g, " ")}: {c.valor ?? "não informado (vale 0)"} × peso {c.peso}</li>)}
                     {i.sinalizacoes.map((s) => <li key={s}><em>{s}</em></li>)}
                   </ul>
                 </details>) },
