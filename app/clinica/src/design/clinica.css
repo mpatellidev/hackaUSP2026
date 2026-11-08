@@ -220,6 +220,7 @@
 .d-score-barra > span { display: block; height: 100%; background: var(--d-teal); border-radius: inherit; }
 .d-score-barra.d-is-first > span { background: var(--d-sun); }
 .d-prioridade, .d-prontuario { display: grid; gap: 12px; }
+:where(.d-admin) dialog .d-prontuario { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--d-border); }
 .d-prioridade-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; font-size: 12px; }
 .d-prioridade-topo .d-muted { display: inline-flex; align-items: center; gap: 5px; }
 .d-formula { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
