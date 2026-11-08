@@ -1,7 +1,7 @@
-# paciente · avaliar (P1, pendente)
+# paciente · avaliar (P1, pronto)
 
-Avaliar a clínica depois de um pedido concluído (nota de 1 a 5, comentário opcional, editável).
+Tela `/pedidos/:id/avaliar` (botão "Avaliar a clínica" no pedido concluído): nota de 1 a 5, comentário opcional (até 280 letras) e edição da avaliação já enviada. Antes da conclusão, a tela só explica que ainda não dá para avaliar (o backend também recusa).
 
-**Backend pronto:** `POST /avaliacoes`, `GET /avaliacoes`, `GET /clinicas/{id}/avaliacoes`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
+**Endpoints:** `POST /avaliacoes` (reenviar edita), `GET /avaliacoes`. Ainda não usado: `GET /clinicas/{id}/avaliacoes`.
 
 Ver [`frentes.md`](../../../../frentes.md).

@@ -9,7 +9,7 @@ import sys
 import tomllib
 from pathlib import Path
 
-BACKEND = Path(__file__).resolve().parents[1] / "backend"
+BACKEND = Path(__file__).resolve().parents[1]  # backend/scripts/este_arquivo.py -> backend/
 PYPROJECT = BACKEND / "pyproject.toml"
 MARCA = Path(sys.prefix) / ".uhealth-deps"  # dentro do .venv: some junto se o .venv for apagado
 

@@ -1,5 +1,5 @@
 /* App do paciente — medidas e cores do design (Claude Design). Prefixo `d-`.
-   Os valores do tema claro são os do protótipo; escuro e alto contraste vêm dos tokens de @uhealth/ui. */
+   Fundo sempre branco: só o tema claro e o alto contraste (preto sobre branco). */
 :root {
   --d-sun-bg: #fff1cc; --d-sun-text: #5a3a00; --d-note-text: #3f2a00;
   --d-neutral-bg: #e1eeed; --d-neutral-text: #2d4645;
@@ -7,20 +7,20 @@
   --d-dark: #0b2423; --d-light: #f4fbfb; --d-light-text: #074644;
   --d-s: var(--uh-scale, 1);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="hc"]) {
-    --d-sun-bg: #3d2d00; --d-sun-text: #ffe08a; --d-note-text: #ffe08a;
-    --d-neutral-bg: #1b3a39; --d-neutral-text: #cfe6e4;
-    --d-danger-bg: #3a1411; --d-danger-text: #ffb4ab; --d-danger-chip: #ffb4ab; --d-danger: #ffb4ab; --d-on-danger: #3a1411;
-    --d-dark: #e6f6f5; --d-light: #071b1b; --d-light-text: #5ad3cf;
-  }
+/* Fundo SEMPRE branco: o app do paciente não tem tema escuro (nem automático pelo aparelho, nem data-theme="dark").
+   O CSS de @uhealth/ui carrega depois deste arquivo e escurece por @media; o seletor repetido (:root:root) vence
+   aquela regra. O alto contraste (data-theme="hc") continua: preto sobre branco. */
+html:root:root:not([data-theme="hc"]) {
+  color-scheme: light;
+  --uh-bg: #ffffff; --uh-surface: #ffffff; --uh-text: #0b2423; --uh-muted: #3f5958;
+  --uh-line: #d2e5e4; --uh-border-strong: #6b8584; --uh-link: var(--uh-teal-700);
+  --uh-chip-bg: var(--uh-teal-50); --uh-chip-text: var(--uh-teal-800);
+  --uh-warn-bg: #fff1cc; --uh-warn-text: #5a3a00;
+  --uh-danger-bg: #fbe3e0; --uh-danger-text: #7a1712; --uh-danger: #b3261e;
+  --uh-focus: #0b2423;
 }
-:root[data-theme="dark"] {
-  --d-sun-bg: #3d2d00; --d-sun-text: #ffe08a; --d-note-text: #ffe08a;
-  --d-neutral-bg: #1b3a39; --d-neutral-text: #cfe6e4;
-  --d-danger-bg: #3a1411; --d-danger-text: #ffb4ab; --d-danger-chip: #ffb4ab; --d-danger: #ffb4ab; --d-on-danger: #3a1411;
-  --d-dark: #e6f6f5; --d-light: #071b1b; --d-light-text: #5ad3cf;
-}
+html:root[data-theme="hc"] { color-scheme: light; }
+body { background: #ffffff; }
 :root[data-theme="hc"] {
   --d-sun-bg: #fff; --d-sun-text: #000; --d-note-text: #000;
   --d-neutral-bg: #fff; --d-neutral-text: #000;
@@ -31,7 +31,11 @@
 /* ---------- moldura ---------- */
 .d-casca { max-width: 480px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column; background: var(--uh-bg); }
 .d-tela { flex: 1; display: flex; flex-direction: column; background: var(--uh-bg); color: var(--uh-text); font-family: var(--uh-font-body); }
-.d-tela--teal { background: var(--uh-brand); color: var(--uh-on-brand); }
+/* Telas que eram de fundo verde (vaga, horário, boas-vindas): fundo branco, com faixa da marca no topo. */
+.d-tela--teal { background: var(--uh-bg); color: var(--uh-text); border-top: 8px solid var(--uh-brand); }
+.d-tela--teal .d-painel { border: 1.5px solid var(--uh-line); }
+.d-tela--teal .d-btn--light { border: 2px solid var(--uh-link); }
+.d-casca--conversa { height: 100dvh; min-height: 0; }
 .d-corpo { flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 24px 20px 20px; min-width: 0; }
 .d-corpo--24 { padding: 28px 24px 24px; gap: 18px; }
 .d-corpo--centro { align-items: center; text-align: center; padding: 40px 24px 24px; }
@@ -59,6 +63,8 @@
 .d-marca--24 { font-size: calc(24px * var(--d-s)); }
 .d-quad { margin-left: auto; min-width: 44px; min-height: 44px; border: 0; border-radius: 12px; background: var(--uh-on-brand); color: var(--uh-bg); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font: 700 calc(18px * var(--d-s)) var(--uh-font-display); }
 .d-quad + .d-quad { margin-left: 0; }
+a.d-quad { position: relative; text-decoration: none; }
+.d-badge { position: absolute; top: -6px; right: -6px; min-width: 22px; height: 22px; padding: 0 5px; box-sizing: border-box; border-radius: 999px; background: var(--uh-sun); color: var(--d-dark); border: 2px solid var(--uh-on-brand); font: 700 13px/18px var(--uh-font-body); text-align: center; }
 .d-cidade { display: flex; align-items: center; gap: 10px; min-height: 52px; background: var(--uh-bg); color: var(--uh-text); border-radius: 14px; padding: 0 16px; font-size: calc(18px * var(--d-s)); }
 .d-cidade button { margin-left: auto; border: 0; background: none; color: var(--uh-link); font: 700 calc(16px * var(--d-s)) var(--uh-font-body); cursor: pointer; min-height: 44px; }
 .d-cidade input { flex: 1; min-width: 0; border: 0; background: none; font: inherit; color: inherit; min-height: 44px; }
@@ -119,6 +125,11 @@
 .d-passo--feita .d-passo-linha { background: var(--uh-link); }
 .d-passo-texto { padding-top: 3px; font-size: calc(18px * var(--d-s)); color: var(--uh-muted); }
 .d-passo--feita .d-passo-texto, .d-passo--atual .d-passo-texto { color: var(--uh-text); font-weight: 700; }
+/* ---------- histórico do pedido (linha do tempo) ---------- */
+.d-tempo { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 3px solid var(--uh-link); display: flex; flex-direction: column; gap: 18px; }
+.d-tempo-item { position: relative; display: flex; flex-direction: column; gap: 2px; font-size: calc(18px * var(--d-s)); }
+.d-tempo-item::before { content: ""; position: absolute; left: -28px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--uh-sun); border: 2px solid var(--uh-text); }
+.d-tempo-item time { font-size: calc(16px * var(--d-s)); color: var(--uh-muted); }
 .d-passo-texto small { display: block; font-weight: 400; font-size: calc(16px * var(--d-s)); color: var(--uh-muted); }
 
 /* ---------- barra de abas ---------- */
@@ -176,3 +187,47 @@
 .d-faixa { padding: 6px 12px; text-align: center; font-size: calc(14px * var(--d-s)); font-weight: 700; background: var(--d-sun-bg); color: var(--d-sun-text); }
 .d-samu { margin: 4px 0 0; text-align: center; font-size: calc(16px * var(--d-s)); color: var(--uh-muted); }
 .d-samu a { color: var(--d-danger); font-weight: 700; text-decoration: none; }
+
+/* ---------- troca de modo (sempre visível) e escolha do modo ---------- */
+.d-troca { position: sticky; top: 0; z-index: 5; display: flex; justify-content: space-between; gap: 8px; padding: 6px 12px; background: var(--uh-bg); border-bottom: 1.5px solid var(--uh-line); }
+.d-troca-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--uh-link); background: var(--uh-surface); color: var(--uh-link); font: 700 calc(16px * var(--d-s)) var(--uh-font-body); cursor: pointer; }
+.d-escolha { position: relative; flex-direction: column; align-items: flex-start; gap: 8px; padding: 18px 16px; min-height: calc(96px * var(--d-s)); }
+.d-escolha-linha { display: flex; align-items: center; gap: 12px; font-size: calc(20px * var(--d-s)); }
+.d-escolha--rec { border-width: 3px; }
+.d-selo { position: absolute; top: -12px; right: 14px; padding: 2px 10px; border-radius: 999px; background: var(--uh-sun); color: var(--d-dark); font: 700 calc(14px * var(--d-s)) var(--uh-font-body); }
+.d-motivos { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 2px; font-size: calc(16px * var(--d-s)); color: var(--uh-text); }
+.d-score { font: 700 calc(48px * var(--d-s)) var(--uh-font-display); color: var(--uh-link); }
+
+/* ---------- moldura de celular (só desktop/tablet; no celular, tela cheia) ---------- */
+.d-moldura, .d-moldura-tela, .d-moldura-rolagem { min-height: 100dvh; }
+@media (min-width: 640px) {
+  .d-moldura { display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; background: #ffffff; }
+  .d-moldura-tela {
+    position: relative; display: flex; flex-direction: column; box-sizing: border-box;
+    width: 402px; height: min(868px, calc(100dvh - 48px)); min-height: 0;
+    border: 12px solid #0b2423; border-radius: 52px; overflow: hidden; background: var(--uh-bg);
+    box-shadow: 0 24px 60px rgba(11, 36, 35, 0.22), inset 0 0 0 2px #2d4645;
+  }
+  .d-moldura-tela::before {  /* câmera/alto-falante do celular */
+    content: ""; position: absolute; z-index: 60; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 112px; height: 28px; border-radius: 16px; background: #0b2423; pointer-events: none;
+  }
+  .d-moldura-rolagem { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-top: 40px; display: flex; flex-direction: column; }
+  .d-moldura-rolagem > .d-casca, .d-moldura-rolagem > .d-tela { flex: 1; min-height: 0; max-width: none; }
+  .d-moldura-rolagem .d-casca { min-height: 100%; }
+  .d-moldura-rolagem .d-casca--conversa { height: 100%; }
+  .d-moldura-rolagem .chat-card { height: 640px; min-height: 0; }
+  .d-moldura-rolagem .chat-app--unica .chat-card { height: auto; }
+}
+
+.d-emergencia-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 999px; background: var(--d-danger); color: var(--d-on-danger); font: 700 calc(16px * var(--d-s)) var(--uh-font-body); text-decoration: none; }
+
+/* ---------- mapa e calendário ---------- */
+.d-mapa { height: 320px; border-radius: 18px; border: 1.5px solid var(--uh-line); overflow: hidden; z-index: 0; }
+.d-calendario { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.d-cal-cab { text-align: center; font-weight: 700; font-size: calc(14px * var(--d-s)); color: var(--uh-muted); }
+.d-cal-dia { position: relative; min-height: 44px; border-radius: 12px; border: 2px solid var(--uh-border-strong); background: var(--uh-surface); color: var(--uh-text); font: 700 calc(16px * var(--d-s)) var(--uh-font-body); cursor: pointer; }
+.d-cal-dia:disabled { border-color: var(--uh-line); color: var(--uh-muted); background: transparent; cursor: default; font-weight: 400; }
+.d-cal-dia--on { background: var(--uh-brand); color: var(--uh-on-brand); border-color: var(--uh-text); }
+.d-cal-ponto { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--uh-sun); }
+@media print { .d-troca, .d-abas, .d-fim { display: none !important; } .d-moldura-tela { border: 0 !important; box-shadow: none !important; } }

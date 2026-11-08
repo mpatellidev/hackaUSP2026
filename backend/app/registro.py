@@ -17,9 +17,15 @@ from app.modulos.alertas import router as alertas
 from app.modulos.avaliacoes import router as avaliacoes
 from app.modulos.auth import router as auth
 from app.modulos.cenarios import router as cenarios
+from app.modulos.emergencia import router as emergencia
+from app.modulos.indexador import router as indexador
+from app.modulos.notificacoes import router as notificacoes
 from app.modulos.perfil import router as perfil
 from app.modulos.prioridade import router as prioridade
 from app.modulos.profissionais import router as profissionais
+from app.modulos.prontuario import router as prontuario
+from app.modulos.ranqueamento import router as ranqueamento
+from app.modulos.receitas import router as receitas
 from app.modulos.resumos import router as resumos
 from app.modulos.saude import router as saude
 from app.modulos.solicitacoes import router as solicitacoes
@@ -27,6 +33,12 @@ from app.modulos.urgencia import router as urgencia
 from app.modulos.vagas import router as vagas
 
 ROUTERS: list[APIRouter] = [
+    emergencia.router,
+    receitas.router,
+    indexador.router,
+    notificacoes.router,
+    prontuario.router,
+    ranqueamento.router,
     saude.router,
     auth.router,
     solicitacoes.router,

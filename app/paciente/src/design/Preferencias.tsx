@@ -3,9 +3,10 @@ import { Icone } from "./Icone";
 
 type Tema = "" | "dark" | "hc";
 type Escala = "" | "lg" | "xl";
-const TEMAS: Tema[] = ["", "dark", "hc"];
+// Fundo sempre branco: sem tema escuro (o valor "dark" antigo é ignorado pelo CSS).
+const TEMAS: Tema[] = ["", "hc"];
 const ESCALAS: Escala[] = ["", "lg", "xl"];
-const NOME_TEMA = { "": "automático", dark: "escuro", hc: "alto contraste" } as const;
+const NOME_TEMA = { "": "claro", dark: "claro", hc: "alto contraste" } as const;
 const NOME_ESCALA = { "": "normal", lg: "grande", xl: "extra grande" } as const;
 
 // Mesmas chaves de `@uhealth/ui` (Preferencias), para a escolha valer nos dois lugares.

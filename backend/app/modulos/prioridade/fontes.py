@@ -40,6 +40,9 @@ class FontesBanco:
     def cenario_correspondente(self, clinica_id: str, especialidade: str) -> bool:
         return cenarios_service.cenario_correspondente(self._cenarios, clinica_id, especialidade)
 
+    def deficiencia(self, paciente_id: str) -> bool:
+        return perfil_service.tem_deficiencia(self._db, paciente_id)
+
 
 def get_fontes(db: Session = Depends(get_db)) -> Fontes:
     return FontesBanco(db)

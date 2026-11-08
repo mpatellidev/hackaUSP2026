@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     # repositório) NÃO é aceita: defina DEMO_SENHA no ambiente do serviço e rode o seed de novo.
     demo_senha: str = SENHA_DEMO_PADRAO
     session_ttl_hours: int = 8
+    # Chave para cifrar CPF e prontuário (LGPD). Obrigatória fora do modo de desenvolvimento.
+    chave_criptografia: str = ""
     # Origens que podem chamar a API de OUTRA origem (separadas por vírgula). Os apps usam a mesma origem
     # (build servido pela API ou proxy do Vite), então só é preciso preencher para clientes externos.
     cors_origins: str = "http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174"

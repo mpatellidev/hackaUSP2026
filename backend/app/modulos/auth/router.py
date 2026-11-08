@@ -2,15 +2,18 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.auth import AVISO_DEMO, Actor, criar_sessao, encerrar_sessao, get_actor, senha_confere, token_atual
+from app.core.auth import (AVISO_DEMO, Actor, criar_sessao, encerrar_sessao, get_actor, hash_senha, hash_senha_demo,
+                           senha_confere, token_atual)
 from app.core.config import get_settings
+from app.core import cpf as cpf_util
+from app.core.cripto import cifrar, hash_cpf
 from app.core.db import get_db
 from app.core.errors import ApiError, nao_encontrado
 from app.core.seguranca import ip, limitador, muitas_tentativas
 from app.core.time import to_sp_iso
 from app.models.clinicas import Clinica
 from app.models.usuarios import Usuario, VinculoClinica
-from app.modulos.auth.schemas import ContasDemo, LoginDemoIn, LoginIn, LoginOut, MeOut
+from app.modulos.auth.schemas import CadastroIn, ContasDemo, EntrarIn, LoginDemoIn, LoginIn, LoginOut, MeOut
 
 router = APIRouter(prefix="/auth", tags=["autenticação DEMO"])
 
@@ -61,6 +64,52 @@ def login_com_senha(body: LoginIn, request: Request, db: Session = Depends(get_d
         lim.registrar(chave)  # só falhas contam
         raise ApiError(401, "nao_autenticado", "Conta ou senha incorretas. Use uma conta fictícia de demonstração.")
     return _resposta_login(db, usuario)
+
+
+@router.post("/entrar", response_model=LoginOut, summary="Entrar com e-mail e senha (app do paciente)")
+def entrar(body: EntrarIn, request: Request, db: Session = Depends(get_db)):
+    lim, chave = limitador(request), f"login:{ip(request)}"
+    if lim.excedido(chave, FALHAS_LOGIN, JANELA_LOGIN_S):
+        raise muitas_tentativas()
+    login = body.login.strip().lower()
+    if "@" in login:
+        filtro = Usuario.email == login
+    elif cpf_util.valido(login):
+        filtro = Usuario.cpf_hash == hash_cpf(login)
+    else:
+        filtro = None
+    usuario = db.scalar(select(Usuario).where(filtro, Usuario.ativo)) if filtro is not None else None
+    if usuario is None or not senha_confere(body.senha, usuario.senha_hash):
+        lim.registrar(chave)  # só falhas contam
+        raise ApiError(401, "nao_autenticado", "CPF/e-mail ou senha incorretos.")
+    cfg = get_settings()
+    if cfg.senha_insegura and usuario.senha_hash == hash_senha_demo(cfg.demo_senha):
+        raise ApiError(503, "servico_indisponivel", "Esta conta usa a senha inicial padrão, que está desativada "
+                                                    "neste servidor. Defina DEMO_SENHA no ambiente.")
+    return _resposta_login(db, usuario)
+
+
+@router.post("/cadastro", status_code=201, response_model=LoginOut, summary="Criar conta de paciente (e-mail e senha)")
+def cadastro(body: CadastroIn, request: Request, db: Session = Depends(get_db)):
+    lim, chave = limitador(request), f"cadastro:{ip(request)}"
+    if lim.excedido(chave, 10, 3600):
+        raise muitas_tentativas()
+    email = body.email.strip().lower()
+    if not cpf_util.valido(body.cpf):
+        raise ApiError(422, "validacao", "CPF inválido. Confira os números.", {"campos": ["cpf"]})
+    if db.scalar(select(Usuario.id).where(Usuario.cpf_hash == hash_cpf(body.cpf))):
+        raise ApiError(409, "cpf_em_uso", "Já existe uma conta com este CPF. Tente entrar.", {"campos": ["cpf"]})
+    if db.scalar(select(Usuario.id).where((Usuario.email == email) | (Usuario.conta_demo == email))):
+        raise ApiError(409, "email_em_uso", "Já existe uma conta com este e-mail. Tente entrar.", {"campos": ["email"]})
+    lim.registrar(chave)
+    usuario = Usuario(papel="paciente", nome_exibicao=body.nome.strip(), conta_demo=email, email=email,
+                      senha_hash=hash_senha(body.senha),  # sal aleatório por conta
+                      cpf_hash=hash_cpf(body.cpf), cpf_cifrado=cifrar(cpf_util.so_digitos(body.cpf)))
+    db.add(usuario)
+    db.flush()
+    resposta = _resposta_login(db, usuario)
+    db.commit()
+    return resposta
 
 
 @router.post("/demo/login", response_model=LoginOut, summary="Login DEMO sem senha (só com DEMO_MODE=true)")

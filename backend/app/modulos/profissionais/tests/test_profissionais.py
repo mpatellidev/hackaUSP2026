@@ -17,7 +17,7 @@ def test_paciente_nao_acessa(client, login):
 def test_cadastro_e_edicao(client, login):
     h = login(ATEND_A)
     r = client.post("/api/v1/profissionais", headers=h, json={
-        "nome_exibicao": "Dra. Teste (fictícia)", "especialidade": "cardiologia", "vinculo": "residente"})
+        "nome_exibicao": "Dra. Teste (fictícia)", "especialidade": "periodontia", "vinculo": "residente"})
     assert r.status_code == 201 and r.json()["clinica_id"] == CLINICA_A
     pid = r.json()["id"]
     r = client.patch(f"/api/v1/profissionais/{pid}", headers=h, json={"ativo": False})
@@ -27,7 +27,7 @@ def test_cadastro_e_edicao(client, login):
 
 def test_especialidade_fora_da_clinica_422(client, login):
     r = client.post("/api/v1/profissionais", headers=login(ATEND_A), json={
-        "nome_exibicao": "Dr. Teste (fictício)", "especialidade": "pediatria", "vinculo": "docente"})
+        "nome_exibicao": "Dr. Teste (fictício)", "especialidade": "odontopediatria", "vinculo": "docente"})
     assert r.status_code == 422 and r.json()["erro"]["codigo"] == "validacao"
 
 
@@ -60,10 +60,10 @@ def test_disponibilidade_da_clinica(client, login):
 
 def test_vaga_com_profissional(client, login):
     h = login(ATEND_A)
-    corpo = {"especialidade": "clinica_geral", "inicio": "2026-12-01T09:00:00-03:00", "fim": "2026-12-01T09:30:00-03:00"}
+    corpo = {"especialidade": "clinica_integrada", "inicio": "2026-12-01T09:00:00-03:00", "fim": "2026-12-01T09:30:00-03:00"}
     r = client.post("/api/v1/vagas", headers=h, json={**corpo, "profissional_id": PROF_A_GERAL})
     assert r.status_code == 201 and r.json()["profissional_id"] == PROF_A_GERAL
-    outra = "e1000000-0000-4000-8000-000000000002"  # cardiologia: não atende clínica geral
+    outra = "e1000000-0000-4000-8000-000000000002"  # periodontia: não atende clínica integrada
     assert client.post("/api/v1/vagas", headers=h, json={**corpo, "profissional_id": outra}).status_code == 422
     de_b = "e1000000-0000-4000-8000-000000000004"
     assert client.post("/api/v1/vagas", headers=h, json={**corpo, "profissional_id": de_b}).status_code == 422

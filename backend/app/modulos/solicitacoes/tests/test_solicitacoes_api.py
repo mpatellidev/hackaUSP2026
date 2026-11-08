@@ -5,7 +5,7 @@ PEDIDO_BRUNO_A = "b1000000-0000-4000-8000-000000000003"
 PEDIDO_EVA_B = "b1000000-0000-4000-8000-000000000005"
 
 
-def pedido(clinica_id=CLINICA_A, especialidade="cardiologia", publico_alvo="adultos"):
+def pedido(clinica_id=CLINICA_A, especialidade="periodontia", publico_alvo="adultos"):
     return {
         "clinica_id": clinica_id,
         "especialidade": especialidade,
@@ -15,7 +15,7 @@ def pedido(clinica_id=CLINICA_A, especialidade="cardiologia", publico_alvo="adul
 
 
 def test_paciente_lista_clinicas_e_cria_pedido_com_evento(client, login):
-    r = client.get("/api/v1/clinicas?cidade=São%20Paulo&especialidade=cardiologia", headers=login(ANA))
+    r = client.get("/api/v1/clinicas?cidade=São%20Paulo&especialidade=periodontia", headers=login(ANA))
     assert r.status_code == 200
     assert [c["id"] for c in r.json()["itens"]] == [CLINICA_A]
     assert client.get("/api/v1/clinicas", headers=login(ATEND_A)).status_code == 403
@@ -33,10 +33,10 @@ def test_paciente_lista_clinicas_e_cria_pedido_com_evento(client, login):
 
 def test_criacao_valida_clinica_e_impede_duplicidade_ativa(client, login):
     fechado = client.post("/api/v1/solicitacoes", json=pedido(
-        "c1000000-0000-4000-8000-000000000003", "ortopedia"), headers=login(ANA))
+        "c1000000-0000-4000-8000-000000000003", "cirurgia"), headers=login(ANA))
     assert fechado.status_code == 409 and fechado.json()["erro"]["codigo"] == "clinica_sem_recebimento"
 
-    incompativel = client.post("/api/v1/solicitacoes", json=pedido(CLINICA_A, "pediatria"), headers=login(ANA))
+    incompativel = client.post("/api/v1/solicitacoes", json=pedido(CLINICA_A, "odontopediatria"), headers=login(ANA))
     assert incompativel.status_code == 422 and "especialidade" in incompativel.json()["erro"]["detalhes"]["campos"]
 
     primeiro = client.post("/api/v1/solicitacoes", json=pedido(), headers=login(ANA))

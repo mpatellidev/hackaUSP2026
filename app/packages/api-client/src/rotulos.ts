@@ -11,10 +11,18 @@ export const ESTADO_PEDIDO: Record<EstadoSolicitacao, { rotulo: string; tom: "pa
   concluida: { rotulo: "Concluída", tom: "padrao", explica: "O atendimento foi concluído." },
 };
 
+/** Especialidades odontológicas, com nome simples entre parênteses quando o termo técnico não é conhecido. */
 export const ESPECIALIDADES: Record<string, string> = {
-  clinica_geral: "Clínica geral", pediatria: "Pediatria", ginecologia_obstetricia: "Ginecologia e obstetrícia",
-  cardiologia: "Cardiologia", dermatologia: "Dermatologia", ortopedia: "Ortopedia", oftalmologia: "Oftalmologia",
-  saude_mental: "Saúde mental", odontologia: "Odontologia", fisioterapia: "Fisioterapia", nutricao: "Nutrição",
+  triagem: "Triagem (primeira avaliação)",
+  clinica_integrada: "Clínica integrada (atendimento geral)",
+  dentistica: "Dentística (restaurações e cáries)",
+  endodontia: "Endodontia (canal)",
+  periodontia: "Periodontia (gengiva)",
+  cirurgia: "Cirurgia (extrações)",
+  protese: "Prótese (dentadura e coroa)",
+  odontopediatria: "Odontopediatria (crianças)",
+  estomatologia: "Estomatologia (feridas na boca)",
+  ortodontia: "Ortodontia (aparelho)",
 };
 export const rotuloEspecialidade = (e: string) => ESPECIALIDADES[e] ?? e.replace(/_/g, " ");
 

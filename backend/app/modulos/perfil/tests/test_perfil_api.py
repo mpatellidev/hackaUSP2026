@@ -48,10 +48,11 @@ def test_nao_informar_renda_vale_e_nao_impede_pedido(client, login):
     assert j["socioeconomico"]["informado"] is False and "faixa_renda_familiar" not in j["socioeconomico"]
 
 
-def test_renda_informada_alimenta_a_fila_sem_expor_a_faixa(client, login):
+def test_renda_informada_alimenta_a_fila_sem_expor_a_faixa(client, login, monkeypatch):
+    monkeypatch.setenv("PESOS_VERSAO", "demo-0.1")  # renda só pesa na versão demo; a odonto-1.0 usa risco e assiduidade
     antes = _componente(client, login, "socioeconomico")
     assert antes["valor"] is None                      # desconhecido = 0, documentado
-    r = client.put(URL, headers=login(BRUNO), json={"socioeconomico": {
+    r = client.put(URL, headers=login(BRUNO), json={"consentimento_dados_sensiveis": True, "socioeconomico": {
         "informado": True, "faixa_renda_familiar": "ate_1_salario_minimo"}})
     assert r.status_code == 200 and "finalidade" in r.json()["socioeconomico"]
     assert _componente(client, login, "socioeconomico")["valor"] == 15

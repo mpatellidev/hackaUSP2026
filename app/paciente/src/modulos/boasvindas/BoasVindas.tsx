@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FaixaDemo } from "@uhealth/ui";
 import { Btn } from "../../design/Componentes";
 import { Simbolo } from "../../design/Icone";
 import { Ilustracao } from "../../design/Ilustracoes";
@@ -51,7 +50,6 @@ export function BoasVindas({ aoConcluir }: { aoConcluir: () => void }) {
 
   return (
     <div className="d-casca">
-      <FaixaDemo />
       {passo === 0 && (
         <div className="d-tela d-tela--teal">
           <main className="d-corpo d-corpo--24">

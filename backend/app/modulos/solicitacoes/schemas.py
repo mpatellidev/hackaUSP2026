@@ -11,6 +11,12 @@ class CriarSolicitacaoIn(BaseModel):
     especialidade: str = Field(min_length=1, max_length=80)
     publico_alvo: PublicoAlvo
     descricao_administrativa: str = Field(min_length=3, max_length=280)
+    # Contato do pedido (opcionais, para não quebrar quem já usa a API). "outra" exige nome_paciente.
+    para_quem: Literal["mim", "outra"] | None = None
+    nome_paciente: str | None = Field(default=None, min_length=2, max_length=120)
+    telefone_contato: str | None = Field(default=None, pattern=r"^[0-9()+ -]{10,20}$")
+    # estruturada: trilha de cuidado, começa pela triagem (o "atendimento avulso de urgência" virou o fluxo de emergência)
+    trilha: Literal["estruturada"] | None = None
 
 
 class AtualizarEstadoIn(BaseModel):
@@ -39,11 +45,35 @@ class ClinicaOut(BaseModel):
     custo_informado: CustoInformado
     recebendo_pedidos: bool
     telefone: str
+    endereco: str | None = None
+    bairro: str | None = None
+    cep: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    distancia_km: float | None = None  # só quando a busca informa a localização
+    universidade: str | None = None
+    tipo_instituicao: Literal["publica", "privada"] | None = None
+    turnos: list[str] = []
+    transportes: list[str] = []
+    acessivel: bool | None = None
+    acessibilidade_info: str | None = None
+    como_chegar: str | None = None
+    valor_consulta: float | None = None
+    horarios_funcionamento: dict[str, list[str] | None] = {}
+    atende_urgencia: bool = False
+    horario_urgencia: dict[str, list[str] | None] = {}
+
+
+class LocalizacaoOut(BaseModel):
+    fonte: Literal["aparelho", "cep"]
+    aproximada: bool  # true quando veio do CEP (centro da região)
+    descricao: str
 
 
 class ListaClinicas(BaseModel):
     itens: list[ClinicaOut]
     total: int
+    localizacao: LocalizacaoOut | None = None
 
 
 class SolicitacaoOut(BaseModel):
@@ -57,6 +87,10 @@ class SolicitacaoOut(BaseModel):
     solicitacao_origem_id: str | None
     criado_em: str
     atualizado_em: str | None
+    para_quem: Literal["mim", "outra"] | None = None
+    nome_paciente: str | None = None
+    telefone_contato: str | None = None
+    trilha: str | None = None
 
 
 class ListaSolicitacoes(BaseModel):

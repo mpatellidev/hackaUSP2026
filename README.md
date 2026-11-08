@@ -37,7 +37,7 @@ cd app
 cd app
 powershell -ExecutionPolicy Bypass -File .\iniciar.ps1
 ```
-Endereços (modo padrão): **paciente** http://localhost:8000/ · **clínicas** http://localhost:8000/clinica/ · **API** http://localhost:8000/docs. O script imprime também o endereço da rede local: abra no celular (mesmo Wi-Fi) para testar o layout de celular. Entre com uma conta fictícia (ex.: **Ana M.** no app do paciente; **Gabi** ou **Dra. Joana** no painel das clínicas) e a senha de demonstração.
+Endereços (modo padrão): **paciente** http://localhost:8000/ · **clínicas** http://localhost:8000/clinica/ · **API** http://localhost:8000/docs. O script imprime também o endereço da rede local: abra no celular (mesmo Wi-Fi) para testar o layout de celular. No **app do paciente**, entre com e-mail e senha (ex.: `ana.martins@example.com` e a senha inicial `DEMO_SENHA` do `backend/.env`) ou toque em **Criar conta**. No **painel das clínicas**, use uma conta da equipe (ex.: **Gabriela Nunes** ou **Dra. Joana Prado**) e a mesma senha inicial.
 
 ### Passo a passo manual
 ```bash

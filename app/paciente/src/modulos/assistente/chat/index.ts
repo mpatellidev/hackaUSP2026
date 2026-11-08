@@ -6,7 +6,7 @@
 //   <ChatApp user={{ nome }} api={api} onLogout={sair} />
 //
 // O chat usa o cliente tipado da sessão (@uhealth/api-client): GET/PUT /acessibilidade/chat/perfil,
-// POST /acessibilidade/chat e os arquivos de áudio. O token é o da auth DEMO (conta de paciente).
+// POST /acessibilidade/chat e os arquivos de áudio. O token é o da sessão do paciente.
 import "./styles/tokens.css";
 import "./styles/chat.css";
 

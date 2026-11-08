@@ -94,3 +94,17 @@ class ConfirmadoOut(VagaOut):
     agendamento: AgendamentoBase
     solicitacao_estado: EstadoPedido
     aviso: str
+
+
+class HorarioLivreOut(BaseModel):
+    vaga_id: str
+    especialidade: str
+    inicio: str
+    fim: str
+
+
+class HorariosLivresOut(BaseModel):
+    clinica_id: str
+    itens: list[HorarioLivreOut]
+    total: int
+    aviso: str

@@ -1,0 +1,32 @@
+{
+  "_aviso": "Receita fictícia (o conteúdo é cifrado ao entrar no banco).",
+  "itens": [
+    {
+      "id": "e7000000-0000-4000-8000-000000000001",
+      "paciente_id": "a1000000-0000-4000-8000-000000000001",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "solicitacao_id": "b1000000-0000-4000-8000-000000000002",
+      "itens": [
+        {
+          "medicamento": "Ibuprofeno 400 mg",
+          "dosagem": "1 comprimido",
+          "via": "oral",
+          "frequencia": "de 8 em 8 horas",
+          "duracao": "3 dias"
+        },
+        {
+          "medicamento": "Digluconato de clorexidina 0,12% (enxaguante)",
+          "dosagem": "15 ml",
+          "via": "bochecho",
+          "frequencia": "2 vezes ao dia, depois de escovar",
+          "duracao": "7 dias"
+        }
+      ],
+      "orientacoes": "Tome o ibuprofeno depois de comer. Não engula o enxaguante. Se a dor piorar ou o rosto inchar, volte à clínica.",
+      "autor_id": "a1000000-0000-4000-8000-000000000016",
+      "assinado_por": "a1000000-0000-4000-8000-000000000014",
+      "criado_em": "2026-11-05T11:00:00-03:00",
+      "assinado_em": "2026-11-05T11:40:00-03:00"
+    }
+  ]
+}

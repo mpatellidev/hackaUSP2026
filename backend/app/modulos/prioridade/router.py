@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.auth import Actor, get_actor, require_funcionario
+from app.core.auth import Actor, get_actor, require_funcionario, require_paciente
 from app.core.db import get_db
 from app.core.errors import ApiError, acesso_negado, nao_encontrado
 from app.core.time import as_utc, to_sp_iso, utc_now
@@ -142,3 +143,59 @@ def revisar_falta(falta_id: str, body: RevisaoIn, actor: Actor = Depends(require
         db.get(Agendamento, f.agendamento_id).desfecho = "pendente"
     db.commit()
     return _falta_out(db, f)
+
+
+# ---------- paciente: minha prioridade (educativo) ----------
+EXPLICA = {
+    "risco_clinico": "Gravidade do seu caso, avaliada por um professor na triagem. Casos mais graves vêm antes.",
+    "assiduidade": "Pontos por ir às consultas e por avisar com antecedência quando não puder ir.",
+    "falta_verificada": "Faltar sem avisar tira pontos. Só conta falta confirmada pela clínica.",
+    "tempo_espera": "Quanto mais tempo esperando, mais pontos (até um limite).",
+    "socioeconomico": "Quanto menor a renda da família, mais pontos. Só conta se você informou e autorizou.",
+    "deficiencia": "Pessoas com deficiência ganham pontos. Só conta se você informou e autorizou.",
+    "necessidade_academica": "Quando seu caso combina com o que a universidade ensina agora.",
+}
+NOME = {"deficiencia": "Deficiência", "risco_clinico": "Gravidade do caso", "assiduidade": "Comparecimento", "falta_verificada": "Faltas sem aviso",
+        "tempo_espera": "Tempo de espera", "socioeconomico": "Renda", "necessidade_academica": "Encaixe com as aulas"}
+
+
+class ComponenteMeuOut(BaseModel):
+    nome: str
+    titulo: str
+    pontos: float
+    explicacao: str
+
+
+class MeuScoreOut(BaseModel):
+    score: float
+    urgencia_avaliada: bool
+    componentes: list[ComponenteMeuOut]
+    comparecimentos: int
+    cancelamentos_com_aviso: int
+    faltas_sem_aviso: int
+    dicas: list[str]
+    aviso: str
+    versao_pesos: str
+
+
+@router.get("/meu-score", response_model=MeuScoreOut, summary="Minha prioridade: como ela é calculada (paciente)")
+def meu_score(actor: Actor = Depends(require_paciente), db: Session = Depends(get_db), fontes: Fontes = Depends(get_fontes)):
+    from app.models.solicitacoes import Solicitacao
+    from app.modulos.prioridade import fila as fila_mod
+    pesos = fila_mod.carregar_pesos()
+    pedido = db.scalar(select(Solicitacao).where(Solicitacao.paciente_id == actor.usuario_id)
+                       .order_by(Solicitacao.criado_em.desc()).limit(1))
+    faltas = fila_mod.faltas_confirmadas(db, {actor.usuario_id}).get(actor.usuario_id, 0)
+    e = fila_mod.entrada_do_paciente(db, actor.usuario_id, pedido, fontes, faltas)
+    item = service.calcular(e, pesos, utc_now())
+    dicas = ["Se não puder ir, cancele pelo app antes do horário: assim não conta como falta.",
+             "Informar renda e deficiência no perfil (com sua autorização) pode aumentar seus pontos."]
+    if faltas:
+        dicas.insert(0, "Você tem falta sem aviso. Ela tira pontos, mas não impede você de pedir atendimento.")
+    return {"score": item.score, "urgencia_avaliada": item.urgencia_avaliada,
+            "componentes": [{"nome": c.nome, "titulo": NOME.get(c.nome, c.nome), "pontos": round((c.valor or 0) * c.peso, 1),
+                             "explicacao": EXPLICA.get(c.nome, "")} for c in item.componentes],
+            "comparecimentos": e.comparecimentos, "cancelamentos_com_aviso": e.cancelamentos_antecipados,
+            "faltas_sem_aviso": faltas, "dicas": dicas,
+            "aviso": "Urgência avaliada por profissional sempre passa na frente, qualquer que seja o score. "
+                     "Pedir como urgente nunca tira pontos.", "versao_pesos": pesos.versao}

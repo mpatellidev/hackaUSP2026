@@ -55,10 +55,12 @@ export function DetalhePedido() {
           {recusado && <BtnLink to={`/pedidos/${p.id}/alternativas`}>Ver outras clínicas</BtnLink>}
           {COM_VAGAS.includes(p.estado) && <BtnLink variante="outline" to={`/pedidos/${p.id}/vagas`}>Ver vagas desta clínica</BtnLink>}
           {p.estado === "agendada" && <BtnLink to="/agenda">Ver horário confirmado</BtnLink>}
+          {p.estado === "concluida" && <BtnLink to={`/pedidos/${p.id}/avaliar`}>Avaliar a clínica</BtnLink>}
           <div className="d-linhaBtn">
             <BotaoOuvir />
             {clinica && <BtnTel numero={clinica.telefone}>Ligar para a clínica</BtnTel>}
           </div>
+          <BtnLink variante="link" to={`/pedidos/${p.id}/historico`}>Ver histórico do pedido</BtnLink>
           {p.estado !== "concluida" && <BtnLink variante="link" to={`/urgencia?pedido=${p.id}`}>Estou com uma urgência</BtnLink>}
           <LinhaSamu />
         </div>

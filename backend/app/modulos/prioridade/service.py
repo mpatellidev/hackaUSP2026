@@ -23,6 +23,10 @@ class Entrada:
     faixa_renda: str | None = None  # None = não informado / prefiro não informar
     necessidade_academica: bool = False
     faltas_confirmadas: int = 0
+    risco_clinico: str | None = None   # da triagem/plano VALIDADO por professor
+    comparecimentos: int = 0
+    cancelamentos_antecipados: int = 0
+    deficiencia: bool = False          # só com consentimento (perfil)
 
 
 @dataclass(frozen=True)
@@ -61,9 +65,23 @@ def calcular(e: Entrada, pesos: Pesos, agora: datetime) -> Item:
         Componente("tempo_espera", v_tmp, t["peso"], "solicitacao.criado_em"),
         Componente("falta_verificada", v_fal, f["peso"], "faltas (somente confirmadas)"),
     ]
+    r, a2 = pesos.risco_clinico, pesos.assiduidade
+    if r["peso"]:
+        v_ris = float(r["valores"].get(e.risco_clinico, 0)) if e.risco_clinico else None
+        comps.append(Componente("risco_clinico", v_ris, r["peso"], "prontuário (triagem validada)"))
+    if a2["peso"]:
+        v_ass = float(min(e.comparecimentos, a2["teto_comparecimentos"]) * a2["por_comparecimento"]
+                      + min(e.cancelamentos_antecipados, a2["teto_cancelamentos"]) * a2["por_cancelamento_antecipado"])
+        comps.append(Componente("assiduidade", v_ass, a2["peso"], "agendamentos (comparecimentos e cancelamentos com aviso)"))
+    d = pesos.deficiencia
+    if d["peso"]:
+        comps.append(Componente("deficiencia", float(d["valor"]) if e.deficiencia else 0.0, d["peso"], "perfil (com consentimento)"))
+    comps = [c for c in comps if c.peso]  # peso 0 = fora desta versão
     score = round(sum((c.valor or 0.0) * c.peso for c in comps), 1)
     sinais = [SINAL_AUTODECLARADA] if e.urgencia == "autodeclarada" else []
-    return Item(e, e.urgencia == "avaliada", score, comps, sinais)
+    # Risco "urgente" validado por professor conta como urgência avaliada: nunca fica atrás de score
+    urgente = e.urgencia == "avaliada" or e.risco_clinico == "urgente"
+    return Item(e, urgente, score, comps, sinais)
 
 
 def ordenar(itens: list[Item]) -> list[Item]:

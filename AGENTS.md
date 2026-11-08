@@ -6,13 +6,13 @@ UHealth conecta pessoas de baixa renda a **clínicas-escola de saúde** (medicin
 1. `README.md` · 2. `arquitetura.md` · 3. `frentes.md` · 4. `backend/docs/contratos-mvp.md` · 5. a sua issue no GitHub.
 
 ## Regras do produto (não negociáveis)
-- O app **não diagnostica, não prescreve, não garante vaga** e **não substitui emergência** (SAMU 192, texto estático, sem depender de rede/IA).
+- O app **não diagnostica, não garante vaga** e **não substitui emergência** (SAMU 192, texto estático, sem depender de rede/IA). Receita só é emitida pelo profissional: o estudante redige, o professor/cirurgião-dentista aprova e assina (nome e CRO); o app registra e mostra, e a IA só explica, nunca muda dose nem recomenda remédio.
 - Verificação e priorização clínica são **humanas**. Urgência **avaliada** por profissional vem **sempre antes** de score/falta. Relato de urgência **nunca** é punido.
 - O **paciente escolhe** antes de ir para outra clínica; nada de cascata automática.
 - Pedido ≠ interesse ≠ agendamento ≠ alerta. Só mostre "agendada" se o backend confirmou.
 - Papel e `clinica_id` vêm do **servidor** (token), nunca do cliente. Auth atual é **demo**, não segura.
 - Rotule mock/demo/simulado na UI e na API. Não prometa o que não existe (push, prontuário real, ligação automática).
-- Não fixe o produto em odontologia: `especialidade` é um campo.
+- O produto é de **odontologia** (clínicas-escola de universidades parceiras); `especialidade` continua sendo um campo.
 - Tudo é **web**. O contrato da API é o OpenAPI do backend; os tipos do frontend são gerados (`npm run gen:api` em `app/`) e o CI falha se estiverem desatualizados.
 
 ## Regras de código e repositório

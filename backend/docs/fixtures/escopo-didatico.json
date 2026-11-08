@@ -1,0 +1,185 @@
+{
+  "_aviso": "Escopo didático fictício (disciplinas e procedimentos do semestre 2026.2).",
+  "itens": [
+    {
+      "id": "e5000000-0000-4000-8000-000000000001",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "semestre": "2026.2",
+      "especialidade": "triagem",
+      "procedimento": "avaliacao_inicial",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000002",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "semestre": "2026.2",
+      "especialidade": "clinica_integrada",
+      "procedimento": "restauracao_resina",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000003",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "semestre": "2026.2",
+      "especialidade": "clinica_integrada",
+      "procedimento": "raspagem_supragengival",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000004",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "semestre": "2026.2",
+      "especialidade": "periodontia",
+      "procedimento": "raspagem_subgengival",
+      "complexidade_max": 2,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000005",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "semestre": "2026.2",
+      "especialidade": "dentistica",
+      "procedimento": "restauracao_resina",
+      "complexidade_max": 2,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000006",
+      "clinica_id": "c1000000-0000-4000-8000-000000000001",
+      "semestre": "2026.2",
+      "especialidade": "dentistica",
+      "procedimento": "faceta_resina",
+      "complexidade_max": 3,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000007",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "semestre": "2026.2",
+      "especialidade": "triagem",
+      "procedimento": "avaliacao_inicial",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000008",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "semestre": "2026.2",
+      "especialidade": "clinica_integrada",
+      "procedimento": "restauracao_resina",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000009",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "semestre": "2026.2",
+      "especialidade": "odontopediatria",
+      "procedimento": "aplicacao_fluor",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000010",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "semestre": "2026.2",
+      "especialidade": "odontopediatria",
+      "procedimento": "restauracao_dente_de_leite",
+      "complexidade_max": 2,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000011",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "semestre": "2026.2",
+      "especialidade": "estomatologia",
+      "procedimento": "biopsia_lesao_bucal",
+      "complexidade_max": 2,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000012",
+      "clinica_id": "c1000000-0000-4000-8000-000000000003",
+      "semestre": "2026.2",
+      "especialidade": "triagem",
+      "procedimento": "avaliacao_inicial",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000013",
+      "clinica_id": "c1000000-0000-4000-8000-000000000003",
+      "semestre": "2026.2",
+      "especialidade": "cirurgia",
+      "procedimento": "extracao_simples",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000014",
+      "clinica_id": "c1000000-0000-4000-8000-000000000003",
+      "semestre": "2026.2",
+      "especialidade": "cirurgia",
+      "procedimento": "extracao_terceiro_molar",
+      "complexidade_max": 3,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000015",
+      "clinica_id": "c1000000-0000-4000-8000-000000000003",
+      "semestre": "2026.2",
+      "especialidade": "protese",
+      "procedimento": "protese_total",
+      "complexidade_max": 2,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000016",
+      "clinica_id": "c1000000-0000-4000-8000-000000000003",
+      "semestre": "2026.2",
+      "especialidade": "protese",
+      "procedimento": "coroa_unitaria",
+      "complexidade_max": 3,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000017",
+      "clinica_id": "c1000000-0000-4000-8000-000000000004",
+      "semestre": "2026.2",
+      "especialidade": "triagem",
+      "procedimento": "avaliacao_inicial",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000018",
+      "clinica_id": "c1000000-0000-4000-8000-000000000004",
+      "semestre": "2026.2",
+      "especialidade": "clinica_integrada",
+      "procedimento": "restauracao_resina",
+      "complexidade_max": 1,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000019",
+      "clinica_id": "c1000000-0000-4000-8000-000000000004",
+      "semestre": "2026.2",
+      "especialidade": "endodontia",
+      "procedimento": "canal_unirradicular",
+      "complexidade_max": 2,
+      "ativo": true
+    },
+    {
+      "id": "e5000000-0000-4000-8000-000000000020",
+      "clinica_id": "c1000000-0000-4000-8000-000000000004",
+      "semestre": "2026.2",
+      "especialidade": "endodontia",
+      "procedimento": "canal_multirradicular",
+      "complexidade_max": 3,
+      "ativo": true
+    }
+  ]
+}

@@ -15,6 +15,10 @@ dependencies = [
   "anthropic>=2.6",
   "httpx>=0.27",
   "tzdata>=2024.1",
+  # LGPD: CPF e prontuário cifrados em repouso
+  "cryptography>=42",
+  # PDF das receitas
+  "fpdf2>=2.7",
 ]
 
 [dependency-groups]

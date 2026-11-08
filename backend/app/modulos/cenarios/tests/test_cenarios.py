@@ -1,8 +1,8 @@
-A = "c2000000-0000-4000-8000-000000000001"   # ativo, clínica A, SP, clinica_geral
+A = "c2000000-0000-4000-8000-000000000001"   # ativo, clínica A, SP, clinica_integrada
 B = "c2000000-0000-4000-8000-000000000002"   # pausado, clínica B
 NOVO = {"titulo": "Orientação de rotina com estudantes", "descricao_leiga": "Atividade supervisionada por professores.",
         "requisitos": ["Ter 18 anos ou mais"], "publico": "adultos", "cidade": "São Paulo", "uf": "sp",
-        "especialidade": "oftalmologia"}
+        "especialidade": "protese"}
 COORD = "funcionario.coordenacao.c"
 
 
@@ -63,8 +63,8 @@ def test_filtro_cidade_sem_acento_e_caixa(client, login):
 
 
 def test_filtro_interesse_autodeclarado(client, login):
-    j = client.get("/api/v1/cenarios?interesse=pediatria", headers=login("paciente.ana")).json()
-    assert [c["especialidade"] for c in j["itens"]] == ["pediatria"]
+    j = client.get("/api/v1/cenarios?interesse=odontopediatria", headers=login("paciente.ana")).json()
+    assert [c["especialidade"] for c in j["itens"]] == ["odontopediatria"]
 
 
 def test_pausar_some_para_paciente_e_continua_para_clinica(client, login):

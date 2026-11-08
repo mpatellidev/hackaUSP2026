@@ -1,4 +1,7 @@
 import type { RotaModulo } from "../tipos";
 import { Urgencia } from "./Urgencia";
 
-export const rotas: RotaModulo[] = [{ caminho: "/urgencia", elemento: <Urgencia /> }];
+export const rotas: RotaModulo[] = [
+  { caminho: "/urgencia", elemento: <Urgencia /> },
+  { caminho: "/emergencia", elemento: <Urgencia /> },
+];

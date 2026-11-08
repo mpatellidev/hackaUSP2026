@@ -16,7 +16,8 @@
         "linguagem": "simples",
         "audio": true,
         "tema": "sistema"
-      }
+      },
+      "consentimento_dados_sensiveis": true
     },
     {
       "usuario_id": "a1000000-0000-4000-8000-000000000002",
@@ -82,7 +83,10 @@
         "linguagem": "simples",
         "audio": true,
         "tema": "escuro"
-      }
+      },
+      "consentimento_dados_sensiveis": true,
+      "possui_deficiencia": true,
+      "tipo_deficiencia": "visual"
     },
     {
       "usuario_id": "a1000000-0000-4000-8000-000000000006",

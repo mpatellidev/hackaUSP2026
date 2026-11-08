@@ -8,6 +8,18 @@ class LoginIn(BaseModel):
     senha: str = Field(min_length=1, max_length=120)
 
 
+class EntrarIn(BaseModel):
+    login: str = Field(min_length=3, max_length=160, description="E-mail ou CPF")
+    senha: str = Field(min_length=1, max_length=120)
+
+
+class CadastroIn(BaseModel):
+    nome: str = Field(min_length=2, max_length=120)
+    cpf: str = Field(min_length=11, max_length=14)
+    email: str = Field(min_length=5, max_length=160, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    senha: str = Field(min_length=8, max_length=120)
+
+
 class LoginDemoIn(BaseModel):
     conta: str = Field(min_length=1, max_length=80)
 
@@ -28,12 +40,12 @@ class LoginOut(BaseModel):
 
 class VinculoOut(BaseModel):
     clinica_id: str
-    funcao: Literal["atendimento", "profissional", "coordenacao"]
+    funcao: Literal["atendimento", "profissional", "coordenacao", "estudante"]
 
 
 class UsuarioMe(UsuarioSessao):
     clinica_id: str | None = None
-    funcao: Literal["atendimento", "profissional", "coordenacao"] | None = None
+    funcao: Literal["atendimento", "profissional", "coordenacao", "estudante"] | None = None
     vinculos: list[VinculoOut] | None = None
 
 
@@ -46,7 +58,7 @@ class ContaDemo(BaseModel):
     conta: str
     nome_exibicao: str
     papel: Literal["paciente", "funcionario"]
-    funcao: Literal["atendimento", "profissional", "coordenacao"] | None
+    funcao: Literal["atendimento", "profissional", "coordenacao", "estudante"] | None
     clinica_nome: str | None
 
 

@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import type { ItemMenu } from "@uhealth/ui";
 import { Icone, type NomeIcone } from "./Icone";
 
-const ICONES: Record<string, NomeIcone> = { "/clinicas": "buscar", "/pedidos": "pedido", "/assistente": "conversa" };
+const ICONES: Record<string, NomeIcone> = { "/clinicas": "buscar", "/pedidos": "pedido", "/cuidado": "analise", "/assistente": "conversa" };
 
 /** Abas do rodapé do design: Buscar · Meu pedido · Ajuda (ícone de 24 px com texto). */
 export function AbasPaciente({ itens }: { itens: ItemMenu[] }) {

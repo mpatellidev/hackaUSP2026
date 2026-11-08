@@ -5,8 +5,8 @@ from app.core.auth import Actor, get_actor, require_funcionario, require_pacient
 from app.core.db import get_db
 from app.modulos.prioridade.fontes import Fontes, get_fontes
 from app.modulos.vagas import service
-from app.modulos.vagas.schemas import (ConfirmadoOut, ConfirmarIn, CriarVagaIn, InteresseIn, InteresseRegistradoOut,
-                                       ListaInteresses, ListaVagas, VagaOut)
+from app.modulos.vagas.schemas import (ConfirmadoOut, ConfirmarIn, CriarVagaIn, HorariosLivresOut, InteresseIn,
+                                       InteresseRegistradoOut, ListaInteresses, ListaVagas, VagaOut)
 
 router = APIRouter(tags=["vagas"])
 
@@ -19,6 +19,18 @@ def listar_vagas(clinica_id: str | None = Query(default=None), estado: str | Non
                  actor: Actor = Depends(get_actor), db: Session = Depends(get_db)):
     itens = service.listar(db, actor, clinica_id, estado)
     return {"itens": itens, "total": len(itens), "aviso": AVISO_VAGAS}
+
+
+AVISO_HORARIOS = ("Escolher um horário não confirma o atendimento: a clínica analisa o pedido "
+                  "(urgências avaliadas vêm antes) e confirma.")
+
+
+@router.get("/clinicas/{clinica_id}/horarios", response_model=HorariosLivresOut,
+            summary="Horários livres de uma clínica, para o paciente escolher antes de pedir")
+def horarios_livres(clinica_id: str, especialidade: str | None = Query(default=None, max_length=80),
+                    _: Actor = Depends(require_paciente), db: Session = Depends(get_db)):
+    itens = service.horarios_livres(db, clinica_id, especialidade)
+    return {"clinica_id": clinica_id, "itens": itens, "total": len(itens), "aviso": AVISO_HORARIOS}
 
 
 @router.post("/vagas", status_code=201, response_model=VagaOut, response_model_exclude_unset=True, summary="Publicar vaga (funcionário da clínica)")
@@ -34,6 +46,11 @@ def criar_vaga(body: CriarVagaIn, actor: Actor = Depends(require_funcionario), d
 def demonstrar_interesse(vaga_id: str, body: InteresseIn, actor: Actor = Depends(require_paciente),
                          db: Session = Depends(get_db)):
     saida = service.registrar_interesse(db, actor, vaga_id, body.solicitacao_id)
+    from app.modulos.notificacoes.service import notificar
+    i = saida["inicio"]
+    notificar(db, actor.usuario_id, "Horário pedido",
+              f"Pedimos o horário de {i[8:10]}/{i[5:7]} às {i[11:16]} para você. Só é consulta marcada quando a clínica confirmar.",
+              f"solicitacao:{body.solicitacao_id}")
     db.commit()
     return saida
 

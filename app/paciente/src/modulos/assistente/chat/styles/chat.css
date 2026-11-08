@@ -100,6 +100,24 @@
   border-width: 2px;
 }
 
+/* Conversa como única tela do app: ocupa a altura toda, sem moldura de cartão. */
+.chat-app--unica {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--page);
+}
+.chat-app--unica .chat-card {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  max-width: none;
+  border-width: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .chat-header {
   position: relative;
   display: flex;
@@ -108,6 +126,26 @@
   padding: 0.9rem 0.75rem 0.9rem 1.25rem;
   border-bottom: 1px solid var(--border);
 }
+.chat-atalhos {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.chat-atalho {
+  flex: 1 1 auto;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 2px solid var(--option-border);
+  background: var(--surface);
+  color: var(--option-text);
+  font: 700 calc(1rem * var(--font-scale)) var(--font-body);
+  cursor: pointer;
+}
+.chat-atalho:disabled { opacity: 0.5; cursor: not-allowed; }
+.chat-atalho--emergencia { background: #b3261e; border-color: #b3261e; color: #ffffff; }
 .chat-header h1 {
   flex: 1;
   margin: 0;
