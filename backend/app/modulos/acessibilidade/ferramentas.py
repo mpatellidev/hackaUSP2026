@@ -105,6 +105,7 @@ class ToolContext:
     actor: Actor
     audios: list[str] = field(default_factory=list)
     quick_replies: list[QuickReply] = field(default_factory=list)
+    mensagem_usuario: str = ""  # o que a PESSOA digitou nesta rodada (não o que a IA gerou)
 
 
 def nome_especialidade(e: str) -> str:
@@ -113,6 +114,21 @@ def nome_especialidade(e: str) -> str:
 
 def _norm(s: str) -> str:
     return unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().strip().casefold()
+
+
+# O prompt manda pedir confirmação; o servidor CONFERE: só envia pedido se a pessoa acabou de confirmar.
+# Protege contra a IA agir sozinha (alucinação ou texto colado com instruções escondidas).
+_CONFIRMACOES = ("sim", "s", "confirmo", "confirmar", "confirmado", "ok", "okay", "isso", "claro", "certo",
+                 "beleza", "envia", "enviar", "envie", "manda", "mande")
+_CONFIRMACOES_FRASE = ("pode enviar", "pode mandar", "pode sim", "quero enviar", "quero sim")
+
+
+def eh_confirmacao(texto: str) -> bool:
+    """Mensagem curta que COMEÇA confirmando ("Sim", "Sim, pode enviar", "Confirmo", "Pode enviar")."""
+    t = " ".join(_norm(texto).replace(",", " ").replace(".", " ").replace("!", " ").split())
+    if not t or len(t) > 80:
+        return False
+    return t.split()[0] in _CONFIRMACOES or t.startswith(_CONFIRMACOES_FRASE)
 
 
 def _clinica_out(c: Clinica) -> dict:
@@ -212,6 +228,10 @@ def run_tool(name: str, args: dict[str, Any], ctx: ToolContext) -> tuple[str, bo
             case "listar_meus_agendamentos":
                 result = listar_meus_agendamentos(db, actor)
             case "enviar_pedido":
+                if not eh_confirmacao(ctx.mensagem_usuario):
+                    return json.dumps({"erro": "A pessoa ainda não confirmou. Repita clínica, especialidade e "
+                                               "descrição e peça um 'sim' antes de enviar.",
+                                       "codigo": "confirmacao_necessaria"}, ensure_ascii=False), True
                 result = enviar_pedido(db, actor, args["clinica_id"], args["especialidade"],
                                        args["descricao_administrativa"])
             case "explicar_em_audio":

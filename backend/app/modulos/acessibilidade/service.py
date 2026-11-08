@@ -41,7 +41,7 @@ def handle_chat(db: Session, actor: Actor, adaptation: Adaptation, text: str, co
     linhas = list(db.scalars(select(MensagemChat).where(MensagemChat.conversa_id == conv.id)
                              .order_by(MensagemChat.ordem)))
     history = [StoredMessage(m.papel, m.conteudo) for m in linhas]
-    ctx = ToolContext(db=db, actor=actor)
+    ctx = ToolContext(db=db, actor=actor, mensagem_usuario=text)
 
     try:
         turn = engine.run_turn(

@@ -1,15 +1,26 @@
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
-import { Aviso, Botao, Cartao, Carregando, Erro, Selo, TEXTO_EMERGENCIA } from "@uhealth/ui";
-import { dataHora, mensagemDe, useSessao } from "@uhealth/api-client";
+import { Link, useSearchParams } from "react-router-dom";
+import { Aviso, Botao, Cartao, CampoSelecao, Carregando, Erro, Selo, TEXTO_EMERGENCIA } from "@uhealth/ui";
+import { dataHora, mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
+import { useClinicasPorId } from "../pedidos/nomesClinicas";
 
-/** O texto de emergência (SAMU 192) é ESTÁTICO. Registrar o relato só avisa a clínica; não promete contato imediato. */
+/** O texto de emergência (SAMU 192) é ESTÁTICO. Registrar o relato só avisa a clínica; não promete contato imediato.
+ *  O relato precisa de um pedido: é por ele que a clínica certa recebe o aviso. */
 export function Urgencia() {
   const { api } = useSessao();
   const qc = useQueryClient();
   const [params] = useSearchParams();
-  const pedidoId = params.get("pedido");
+  const pedidoDaUrl = params.get("pedido");
+  const [escolhido, setEscolhido] = useState("");
+  const pedidoId = pedidoDaUrl ?? escolhido;
+  const clinicas = useClinicasPorId();
   const relatos = useQuery({ queryKey: ["urgencias"], queryFn: () => api.dados(api.cliente.GET("/urgencias", {})) });
+  const pedidos = useQuery({
+    queryKey: ["solicitacoes"], enabled: !pedidoDaUrl,
+    queryFn: () => api.dados(api.cliente.GET("/solicitacoes", {})),
+  });
+  const abertos = (pedidos.data?.itens ?? []).filter((p) => p.estado !== "concluida");
   const registrar = useMutation({
     mutationFn: () => api.dados(api.cliente.POST("/urgencias", { body: { solicitacao_id: pedidoId } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["urgencias"] }),
@@ -24,8 +35,21 @@ export function Urgencia() {
       <Cartao>
         <h2>Avisar a clínica</h2>
         <p>Se o seu caso não é uma emergência agora, mas você acha que precisa ser olhado com prioridade, registre o relato. Um profissional da clínica avalia. Relatar não prejudica a sua posição e não promete contato imediato.</p>
+        {!pedidoDaUrl && pedidos.data && abertos.length === 0 && (
+          <Aviso>Para avisar uma clínica, você precisa ter um pedido em andamento. <Link to="/clinicas">Escolher uma clínica</Link></Aviso>
+        )}
+        {!pedidoDaUrl && abertos.length > 0 && (
+          <CampoSelecao rotulo="Sobre qual pedido?" value={escolhido} onChange={(e) => setEscolhido(e.target.value)}>
+            <option value="">Escolha o pedido</option>
+            {abertos.map((p) => (
+              <option key={p.id} value={p.id}>
+                {rotuloEspecialidade(p.especialidade)} · {clinicas.get(p.clinica_id)?.nome ?? "Clínica"}
+              </option>
+            ))}
+          </CampoSelecao>
+        )}
         {registrar.isError && <Aviso tom="perigo">{mensagemDe(registrar.error)}</Aviso>}
-        <Botao bloco disabled={registrar.isPending} onClick={() => registrar.mutate()}>{registrar.isPending ? "Enviando…" : "Registrar relato de urgência"}</Botao>
+        <Botao bloco disabled={!pedidoId || registrar.isPending} onClick={() => registrar.mutate()}>{registrar.isPending ? "Enviando…" : "Registrar relato de urgência"}</Botao>
       </Cartao>
 
       <section className="pilha" aria-labelledby="h-rel">

@@ -17,3 +17,14 @@ it("mostra a orientação de emergência (SAMU 192) mesmo sem rede", async () =>
   expect(screen.getByRole("link", { name: /Ligar para o SAMU 192/ })).toHaveAttribute("href", "tel:192");
   expect(await screen.findByText(/Não foi possível conectar/)).toBeVisible();
 });
+
+it("sem pedido escolhido não envia relato que nenhuma clínica veria", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("offline")));
+  render(
+    <ProvedorUHealth app="paciente" papelEsperado="paciente">
+      <MemoryRouter initialEntries={["/urgencia"]}><Urgencia /></MemoryRouter>
+    </ProvedorUHealth>,
+  );
+  expect(screen.getByRole("button", { name: /Registrar relato de urgência/ })).toBeDisabled();
+  expect(screen.getByRole("link", { name: /Ligar para o SAMU 192/ })).toBeVisible();
+});

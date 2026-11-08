@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.auth import Actor, require_paciente
 from app.core.db import get_db
 from app.core.errors import ApiError, nao_encontrado
+from app.core.seguranca import limitar_por_usuario
 from app.modulos.acessibilidade.adaptacao import build_adaptation, describe_profile
 from app.core.config import get_settings
 from app.modulos.acessibilidade.models import PerfilChat
@@ -51,7 +52,8 @@ def put_perfil(body: PerfilChatIn, actor: Actor = Depends(require_paciente), db:
     return _perfil_out(p)
 
 
-@router.post("/chat", response_model=ChatOut, summary="Enviar mensagem ao assistente (demo)")
+@router.post("/chat", response_model=ChatOut, summary="Enviar mensagem ao assistente (demo)",
+             dependencies=[Depends(limitar_por_usuario("chat", 30, 60))])  # IA paga: limita custo e abuso
 def chat(body: ChatIn, actor: Actor = Depends(require_paciente), db: Session = Depends(get_db),
          engine: ChatEngine = Depends(get_chat_engine), tts: TTSProvider = Depends(get_tts_provider)):
     p = db.get(PerfilChat, actor.usuario_id)
@@ -62,7 +64,8 @@ def chat(body: ChatIn, actor: Actor = Depends(require_paciente), db: Session = D
                        engine, tts)
 
 
-@router.post("/tts", response_model=TTSOut, summary="Gerar áudio de um texto")
+@router.post("/tts", response_model=TTSOut, summary="Gerar áudio de um texto",
+             dependencies=[Depends(limitar_por_usuario("tts", 30, 60))])
 def tts(body: TTSIn, _: Actor = Depends(require_paciente), provider: TTSProvider = Depends(get_tts_provider)):
     """url=None => o front usa a voz do navegador."""
     return TTSOut(url=provider.synthesize(body.text))
