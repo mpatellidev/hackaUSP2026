@@ -1,4 +1,4 @@
-# app — frontend web do UHealth
+# app — frontend web do Sorriu+
 
 Workspaces npm: `paciente` (app do paciente, mobile-first), `clinica` (painel das clínicas, desktop-first), `packages/ui` e `packages/api-client`. Arquitetura: [`../arquitetura.md`](../arquitetura.md). Dados fictícios; login de demonstração.
 

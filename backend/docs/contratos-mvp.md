@@ -1,4 +1,4 @@
-# Contratos do MVP — UHealth
+# Contratos do MVP — Sorriu+
 
 > **Versão `0.2.0-rascunho`** · protótipo de hackathon · dados 100% fictícios.
 > Documento de referência da API. A fonte da verdade técnica é o OpenAPI do backend (`/openapi.json`); os tipos TypeScript dos apps são gerados dele (`npm run gen:api` em `app/`). Mudanças seguem [`frentes.md`](../../frentes.md#protocolo-de-trabalho): mesmo PR altera o código, este documento (com bump de versão) e os tipos gerados.
@@ -13,7 +13,7 @@
 
 ## 1. Escopo e limites
 
-**O que é.** UHealth conecta pessoas de baixa renda a **clínicas-escola de saúde** (cursos de medicina e áreas da saúde: clínica geral, odontopediatria, ginecologia/obstetrícia, periodontia, dentistica, cirurgia, protese, saúde mental etc.). O produto é **geral para saúde**, não específico de uma especialidade. Odontologia é só mais um valor possível de `especialidade`.
+**O que é.** Sorriu+ conecta pessoas de baixa renda a **clínicas-escola de saúde** (cursos de medicina e áreas da saúde: clínica geral, odontopediatria, ginecologia/obstetrícia, periodontia, dentistica, cirurgia, protese, saúde mental etc.). O produto é **geral para saúde**, não específico de uma especialidade. Odontologia é só mais um valor possível de `especialidade`.
 
 > **Nota sobre as issues.** O texto original das issues falava em "solicitação odontológica", em "Sorriso Aberto" e usava um exemplo de terceiro molar; elas foram atualizadas para saúde geral e UHealth. Se algum resíduo restar, **vale este contrato**. Nenhuma frente deve fixar UI, modelo de dados ou textos em odontologia.
 

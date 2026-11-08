@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { CRITERIO_ALTERNATIVA, CUSTO, PUBLICO, mensagemDe, useSessao } from "@uhealth/api-client";
-import { Btn, BtnLink } from "../../design/Componentes";
+import { Btn, BtnLink, Carregando } from "../../design/Componentes";
 import { Icone } from "../../design/Icone";
 import { Ilustracao } from "../../design/Ilustracoes";
 import { letraOuNome, nomeCurto, useClinicasPorId } from "../pedidos/nomesClinicas";
@@ -44,7 +44,7 @@ export function Alternativas() {
         <div className="d-aviso d-aviso--perigo" role="status"><Icone nome="naoRecebe" tamanho={28} /><b>{nomeCurto(origem)} não pode receber agora.</b></div>
         <h1 className="d-h1" style={{ lineHeight: 1.15 }}>Encontramos outras opções para você</h1>
         <p className="d-p">Nada é enviado sem a sua confirmação.</p>
-        {lista.isPending && <p role="status" className="d-small">Carregando…</p>}
+        {lista.isPending && <Carregando />}
         {lista.isError && (
           <>
             <div className="d-aviso d-aviso--perigo" role="alert"><b>{mensagemDe(lista.error)}</b></div>

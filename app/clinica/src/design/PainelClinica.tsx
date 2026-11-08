@@ -5,6 +5,7 @@ import { useClinicaAtual } from "../modulos/clinicaAtual";
 import { FUNCOES_QUE_EDITAM, PEDE_MOTIVO, PROXIMOS, diasDeEspera, protocolo, useAcoesPainel, useEventos, useInteressados, usePainel, type EstadoPedido, type ItemFila, type NovoEstado, type Pedido } from "./dados";
 import { Icone, Simbolo, type NomeIcone } from "./Icone";
 import "./clinica.css";
+import { Marca } from "@uhealth/ui";
 
 /* Painel administrativo da clínica. Dados reais da API, no escopo do token (a clínica vem do servidor).
    Regras de estado, vaga e prioridade são do backend; aqui só mostramos e pedimos. */
@@ -560,7 +561,7 @@ export function PainelClinica() {
       <div className={`d-shell${menuAberto ? " d-menu-open" : ""}`}>
         <button type="button" className="d-menu-backdrop" onClick={() => setMenuAberto((m) => !m)} aria-label="Fechar menu" />
         <aside className="d-sidebar">
-          <div className="d-brand"><Simbolo />UHealth</div>
+          <div className="d-brand"><Simbolo /><Marca /></div>
           <p className="d-nav-label">Atendimento</p>
           <nav className="d-navigation" aria-label="Principal">
             {MENU.map(([p, icone]) => (
@@ -607,7 +608,7 @@ export function PainelClinica() {
               )}
             </div>
             {conteudo}
-            <footer className="d-bottom-note"><span><Icone nome="escudo" /> Dados fictícios · ambiente de demonstração</span><span>UHealth · Portal da clínica</span></footer>
+            <footer className="d-bottom-note"><span><Icone nome="escudo" /> Dados fictícios · ambiente de demonstração</span><span>Sorriu+ · Portal da clínica</span></footer>
           </main>
         </div>
       </div>

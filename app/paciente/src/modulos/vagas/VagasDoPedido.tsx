@@ -78,7 +78,7 @@ export function VagasDoPedido() {
         </section>
         {interesse.isError && <div className="d-aviso d-aviso--perigo" role="alert"><b>{mensagemDe(interesse.error)}</b></div>}
         <div className="d-fim" style={{ marginTop: 0 }}>
-          <Btn variante="escuro" disabled={interesse.isPending} onClick={() => interesse.mutate(vaga.id)}>{interesse.isPending ? "Enviando…" : "Tenho interesse"}</Btn>
+          <Btn aria-busy={interesse.isPending || undefined} variante="escuro" disabled={interesse.isPending} onClick={() => interesse.mutate(vaga.id)}>{interesse.isPending ? "Enviando…" : "Tenho interesse"}</Btn>
           <Btn variante="claro" className="d-btn--lg" onClick={() => navegar(`/pedidos/${id}`)}>Não consigo nesse horário</Btn>
           {clinica && <BtnTel variante="fantasma" numero={clinica.telefone}>Preciso falar por telefone</BtnTel>}
         </div>

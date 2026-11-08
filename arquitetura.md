@@ -1,4 +1,4 @@
-# Arquitetura — UHealth 0.2
+# Arquitetura — Sorriu+ 0.2
 
 Como o sistema é montado e por quê. Quem trabalha numa frente lê este arquivo, [`frentes.md`](frentes.md) e o contrato [`backend/docs/contratos-mvp.md`](backend/docs/contratos-mvp.md). Regras do produto: [`AGENTS.md`](AGENTS.md).
 

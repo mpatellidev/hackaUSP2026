@@ -19,6 +19,7 @@ const CORPOS = {
   aviso: `<path d="M6 17V9a6 6 0 0 1 12 0v8l2 2H4z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M10 21h4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`,
   filtro: `<path d="M3 5h18l-7 8v6l-4-2v-4z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>`,
   voltar: `<path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  seguir: `<path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
   vaga: `<circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="2.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2 2M16.4 16.4l2 2M5.6 18.4l2-2M16.4 7.6l2-2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`,
   microfone: `<rect x="9" y="3" width="6" height="12" rx="3" stroke="currentColor" stroke-width="2.2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`,
   ajuda: `<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2.2"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 16.8v.2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`,

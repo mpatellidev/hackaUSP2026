@@ -1,4 +1,4 @@
-# Frentes de desenvolvimento — UHealth 0.2
+# Frentes de desenvolvimento — Sorriu+ 0.2
 
 Como quatro pessoas trabalham **ao mesmo tempo** sem conflito de arquivos, de contrato ou de estrutura. Pré-leitura: [`arquitetura.md`](arquitetura.md), [`backend/docs/contratos-mvp.md`](backend/docs/contratos-mvp.md), [`AGENTS.md`](AGENTS.md).
 

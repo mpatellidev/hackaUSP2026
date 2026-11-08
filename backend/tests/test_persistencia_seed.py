@@ -7,7 +7,7 @@ from app.seed import run as seed
 def test_seed_idempotente(db):
     antes = seed(db)
     depois = seed(db)
-    assert antes == depois and antes["clinicas"] == 4 and antes["usuarios"] == 12
+    assert antes == depois and antes["clinicas"] == 4 and antes["usuarios"] == 14
 
 
 def test_dados_persistem_em_nova_sessao(engine, db):

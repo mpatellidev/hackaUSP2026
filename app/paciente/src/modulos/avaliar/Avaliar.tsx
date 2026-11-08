@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { useParams } from "react-router-dom";
 import { mensagemDe, useSessao } from "@uhealth/api-client";
-import { Btn, BtnLink, LinhaSamu, Voltar } from "../../design/Componentes";
+import { Btn, BtnLink, LinhaSamu, TelaCarregando, Voltar } from "../../design/Componentes";
 import { Icone } from "../../design/Icone";
 import { useClinicasPorId } from "../pedidos/nomesClinicas";
 
@@ -50,7 +50,7 @@ function Formulario({ pedidoId, notaInicial, comentarioInicial, jaAvaliado }: { 
       </div>
       {enviar.isError && <div className="d-aviso d-aviso--perigo" role="alert"><Icone nome="alerta" tamanho={24} /><b>{mensagemDe(enviar.error)}</b></div>}
       <div className="d-fim">
-        <Btn type="submit" disabled={!nota || enviar.isPending}>{enviar.isPending ? "Enviando…" : jaAvaliado ? "Salvar avaliação" : "Enviar avaliação"}</Btn>
+        <Btn aria-busy={enviar.isPending || undefined} type="submit" disabled={!nota || enviar.isPending}>{enviar.isPending ? "Enviando…" : jaAvaliado ? "Salvar avaliação" : "Enviar avaliação"}</Btn>
         <LinhaSamu />
       </div>
     </form>
@@ -65,7 +65,7 @@ export function Avaliar() {
   const pedido = useQuery({ queryKey: ["solicitacao", id], queryFn: () => api.dados(api.cliente.GET("/solicitacoes/{solicitacao_id}", { params: { path: { solicitacao_id: id } } })) });
   const minhas = useQuery({ queryKey: ["avaliacoes"], queryFn: () => api.dados(api.cliente.GET("/avaliacoes", {})) });
 
-  if (pedido.isPending || minhas.isPending) return <div className="d-tela"><main className="d-corpo"><p role="status" className="d-small">Carregando…</p></main></div>;
+  if (pedido.isPending || minhas.isPending) return <TelaCarregando />;
   if (pedido.isError || minhas.isError) {
     return (
       <div className="d-tela"><main className="d-corpo">

@@ -3,7 +3,7 @@ from datetime import datetime
 from app.modulos.acessibilidade.formatos import por_extenso
 
 BASE_SYSTEM_PROMPT = """\
-Você é a assistente do UHealth, que conecta pessoas a clínicas-escola de ODONTOLOGIA de universidades \
+Você é a assistente do Sorriu+, que conecta pessoas a clínicas-escola de ODONTOLOGIA de universidades \
 parceiras (públicas e privadas). Você conversa em português do Brasil e conduz tudo pela pessoa: endereço e \
 preferências, escolha da universidade, trilha (atendimento avulso ou trilha de cuidado que começa pela triagem), \
 pedido e horário, remarcação, cancelamento, encaminhamento para outra universidade, situação dos pedidos e a \

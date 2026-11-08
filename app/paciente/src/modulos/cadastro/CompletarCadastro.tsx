@@ -128,8 +128,8 @@ function Formulario({ perfil, aoTerminar, voltar }: { perfil: Perfil; aoTerminar
         Preciso de acesso sem degraus
       </label>
       {(erro || salvar.isError) && <div className="d-aviso d-aviso--perigo" role="alert"><Icone nome="alerta" tamanho={24} /><b>{erro ?? mensagemDe(salvar.error)}</b></div>}
-      <div className="d-fim">
-        <Btn type="submit" disabled={salvar.isPending}>{salvar.isPending ? "Salvando…" : "Salvar"}</Btn>
+      <div className="d-fim d-fim--fixo">
+        <Btn aria-busy={salvar.isPending || undefined} type="submit" disabled={salvar.isPending}>{salvar.isPending ? "Salvando…" : "Salvar"}</Btn>
         {!voltar && (
           <Btn variante="link" onClick={() => { try { sessionStorage.setItem(CHAVE_ADIADO, "1"); } catch { /* ok */ } aoTerminar(); }}>Fazer depois</Btn>
         )}

@@ -1,7 +1,7 @@
 [project]
 name = "uhealth-backend"
 version = "0.1.0"
-description = "API do UHealth (protótipo de hackathon, dados fictícios, autenticação DEMO)"
+description = "API do Sorriu+ (protótipo de hackathon, dados fictícios, autenticação DEMO)"
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.115",

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# UHealth (Linux/macOS): prepara e sobe a API e os dois apps web numa porta só.
+# Sorriu+ (Linux/macOS): prepara e sobe a API e os dois apps web numa porta só.
 #
 #   ./iniciar.sh            prepara tudo, constrói os apps e serve em http://localhost:8000
 #                           (paciente em /, clínicas em /clinica/, documentação da API em /docs)

@@ -55,6 +55,16 @@
       "conta": "funcionario.coordenacao.c",
       "usuario_id": "a1000000-0000-4000-8000-000000000015",
       "papel": "funcionario"
+    },
+    {
+      "conta": "cliente.demo",
+      "usuario_id": "a1000000-0000-4000-8000-000000000017",
+      "papel": "paciente"
+    },
+    {
+      "conta": "admin.demo",
+      "usuario_id": "a1000000-0000-4000-8000-000000000018",
+      "papel": "funcionario"
     }
   ]
 }

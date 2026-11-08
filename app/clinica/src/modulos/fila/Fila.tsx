@@ -18,7 +18,7 @@ export function Fila() {
       {fila.data && (
         <>
           <Aviso>{fila.data.aviso}</Aviso>
-          <p className="hint">Ordenação: {fila.data.ordenacao}. Pesos {fila.data.versao_pesos}{fila.data.fontes_demo ? " (dados de demonstração)" : ""}.</p>
+          <p className="hint">Ordem sugerida: urgência avaliada por profissional primeiro, depois pontuação, depois a data do pedido.{fila.data.fontes_demo ? " Pontuação calculada com dados de demonstração." : ""}</p>
           {fila.data.itens.length === 0 && <Vazio>Nenhum pedido ativo na fila.</Vazio>}
           {fila.data.itens.length > 0 && (
             <Tabela legenda="Fila de pedidos ativos" chave={(i) => i.solicitacao_id} linhas={fila.data.itens} colunas={[
@@ -28,7 +28,7 @@ export function Fila() {
               { titulo: "Urgência", celula: (i) => i.urgencia_avaliada ? <Selo tom="perigo">Urgência avaliada</Selo> : "—" },
               { titulo: "Pontuação", celula: (i) => (
                 <details>
-                  <summary>{i.score.toFixed(1)}</summary>
+                  <summary>{i.score.toFixed(1)} · detalhes</summary>
                   <ul>
                     {i.componentes.map((c) => <li key={c.nome}>{c.nome.replace(/_/g, " ")}: {c.valor ?? "desconhecido (vale 0)"} × peso {c.peso}</li>)}
                     {i.sinalizacoes.map((s) => <li key={s}><em>{s}</em></li>)}

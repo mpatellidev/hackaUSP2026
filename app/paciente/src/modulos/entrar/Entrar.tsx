@@ -3,6 +3,7 @@ import { mensagemDe, useSessao } from "@uhealth/api-client";
 import { Btn } from "../../design/Componentes";
 import { Icone, Simbolo } from "../../design/Icone";
 import { cpfValido, formatarCpf, pareceCpf } from "../../cpf";
+import { Marca } from "@uhealth/ui";
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -54,7 +55,7 @@ export function Entrar() {
       <div className="d-tela">
         <form className="d-corpo d-corpo--24" onSubmit={enviar} noValidate>
           <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--uh-link)" }}>
-            <Simbolo tamanho={34} /><span className="d-marca d-marca--24">UHealth</span>
+            <Simbolo tamanho={34} /><Marca className="d-marca d-marca--24" />
           </div>
           <h1 className="d-h1 d-h1--30">{cadastro ? "Criar sua conta" : "Entrar"}</h1>
           <p className="d-p">{cadastro ? "Leva menos de um minuto. Seus dados ficam protegidos." : "Use seu CPF ou e-mail e a sua senha."}</p>

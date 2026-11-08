@@ -1,4 +1,4 @@
-from app.core.config import get_settings
+from app.core.config import SENHA_DEMO_PADRAO, get_settings
 from tests.conftest import ANA, ATEND_A
 
 
@@ -17,10 +17,11 @@ def test_senha_errada_ou_ausente(client):
 
 def test_login_sem_senha_so_com_demo_mode(client, monkeypatch):
     monkeypatch.setattr(get_settings(), "demo_mode", False)
+    monkeypatch.setattr(get_settings(), "demo_senha", SENHA_DEMO_PADRAO)  # o .env local pode ter outra senha
     r = client.post("/api/v1/auth/demo/login", json={"conta": ANA})
     assert r.status_code == 404
     # fora do modo demo, a senha pública do repositório não vale (login fecha até definir DEMO_SENHA)
-    r = client.post("/api/v1/auth/login", json={"conta": ANA, "senha": get_settings().demo_senha})
+    r = client.post("/api/v1/auth/login", json={"conta": ANA, "senha": SENHA_DEMO_PADRAO})
     assert r.status_code == 503 and r.json()["erro"]["codigo"] == "servico_indisponivel"
 
 

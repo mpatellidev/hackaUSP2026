@@ -41,7 +41,7 @@ export function Vagas() {
         {clinica.isPending && <Carregando />}
         {clinica.isError && <Erro mensagem={mensagemDe(clinica.error)} aoTentar={() => clinica.refetch()} />}
         {clinica.data && (
-          <form className="pilha" onSubmit={aoPublicar}>
+          <form className="pilha form-duas" onSubmit={aoPublicar}>
             <CampoSelecao rotulo="Especialidade" value={esp} onChange={(e) => { setEspecialidade(e.target.value); setProfissional(""); }}>
               {clinica.data.especialidades.map((e) => <option key={e} value={e}>{rotuloEspecialidade(e)}</option>)}
             </CampoSelecao>

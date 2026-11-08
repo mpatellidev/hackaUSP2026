@@ -2,7 +2,7 @@
   "name": "uhealth-app",
   "private": true,
   "version": "0.2.0",
-  "description": "Frontend web do UHealth: app do paciente (mobile-first) e app das clínicas (desktop-first).",
+  "description": "Frontend web do Sorriu+: app do paciente (mobile-first) e app das clínicas (desktop-first).",
   "workspaces": [
     "paciente",
     "clinica",

@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useSessao, useUsuario } from "@uhealth/api-client";
+import logo from "../../design/logo.png";
 import { TROCAR_PARA, salvarModo, useModoAtendimento } from "../../modoAtendimento";
 import { ChatApp } from "./chat";
 
@@ -15,6 +16,7 @@ export function Assistente() {
       key={usuario.id}
       user={{ nome: usuario.nome_exibicao }}
       api={api}
+      logoUrl={logo}
       modo={modo ?? "telas"}
       trocarModo={{ rotulo: TROCAR_PARA[destino], acao: () => salvarModo(api, destino) }}
       onLogout={() => void sair()}

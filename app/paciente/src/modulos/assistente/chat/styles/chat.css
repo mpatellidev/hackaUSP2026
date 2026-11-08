@@ -145,6 +145,7 @@
   cursor: pointer;
 }
 .chat-atalho:disabled { opacity: 0.5; cursor: not-allowed; }
+a.chat-atalho { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; text-align: center; }
 .chat-atalho--emergencia { background: #b3261e; border-color: #b3261e; color: #ffffff; }
 .chat-header h1 {
   flex: 1;
@@ -700,3 +701,11 @@ button.menu-row:hover {
   color: inherit;
   font-weight: 700;
 }
+
+/* Atalhos em duas linhas: Emergência ocupa a largura toda; os outros dois dividem a linha de baixo. */
+.chat-atalhos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.chat-atalho { min-width: 0; padding: 6px 10px; line-height: 1.2; text-align: center; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: transform .1s, background-color .15s; }
+.chat-atalho--emergencia, .chat-atalho:only-of-type, .chat-atalho:nth-child(2):last-child { grid-column: 1 / -1; }
+.chat-atalho:not(:disabled):active { transform: scale(.98); }
+.avatar-logo { background: #ffffff; }
+@media (prefers-reduced-motion: reduce) { .chat-atalho { transition: none; } }

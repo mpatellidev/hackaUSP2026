@@ -1,4 +1,4 @@
-# Modelo de dados e endpoints — UHealth (visão relacional)
+# Modelo de dados e endpoints — Sorriu+ (visão relacional)
 
 Mapa **funcionalidade → tabelas → endpoints** para enxergar rápido o que **já existe** e o que **falta**.
 Fonte: modelos SQLAlchemy em `backend/app/models/` e `backend/app/modulos/*/models.py`, rotas em `backend/app/modulos/*/router.py`, pendências em `frentes.md` e `README.md` (estado em 2026-11-07, contrato 0.2.0).

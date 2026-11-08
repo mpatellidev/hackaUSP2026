@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { ESTADO_PEDIDO, mensagemDe, useSessao } from "@uhealth/api-client";
 import { quando } from "../../design/datas";
 import { BotaoOuvir } from "../../design/Preferencias";
-import { Btn, BtnLink, BtnTel, LinhaSamu, Voltar } from "../../design/Componentes";
+import { Btn, BtnLink, BtnTel, LinhaSamu, TelaCarregando, Voltar } from "../../design/Componentes";
 import { Etapas } from "../../design/Etapas";
 import { Icone } from "../../design/Icone";
 import { nomeCurto, useClinicasPorId } from "./nomesClinicas";
@@ -27,7 +27,7 @@ export function DetalhePedido() {
   const clinicas = useClinicasPorId();
   const pedido = useQuery({ queryKey: ["solicitacao", id], queryFn: () => api.dados(api.cliente.GET("/solicitacoes/{solicitacao_id}", { params: { path: { solicitacao_id: id } } })) });
 
-  if (pedido.isPending) return <div className="d-tela"><main className="d-corpo"><p role="status" className="d-small">Carregando…</p></main></div>;
+  if (pedido.isPending) return <TelaCarregando />;
   if (pedido.isError) {
     return (
       <div className="d-tela"><main className="d-corpo">
