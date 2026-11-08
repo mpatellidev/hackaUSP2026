@@ -1,0 +1,1 @@
+{"name":"uhealth-admin","version":"1.0.0","private":true,"scripts":{"dev":"node scripts/serve.js","build":"node scripts/build-preview.js","check":"node --check app.js && node --check scripts/build-preview.js && node --check scripts/serve.js","test":"node --test scripts/verify.cjs"},"devDependencies":{"jsdom":"^31.0.0"}}
