@@ -1,0 +1,416 @@
+<title>Sorriu+ em movimento</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="comum.css">
+<style>
+/* Trailer de 45 s para o stand: sem som, em loop. Cada cena é uma camada; uma timeline GSAP controla tudo. */
+/* espera */
+#s-espera .bloco { position: absolute; left: 140px; top: 170px; width: 940px; display: flex; flex-direction: column; gap: 22px; }
+#dias { position: absolute; right: 120px; top: 200px; width: 600px; display: grid; grid-template-columns: repeat(14, 1fr); gap: 14px; }
+#dias i { display: block; aspect-ratio: 1; border-radius: 10px; background: #e1eeed; }
+#dias i.on { background: var(--teal); }
+#dias-legenda { position: absolute; right: 120px; top: 730px; width: 600px; font: 700 30px var(--f-display); color: var(--verde); display: flex; justify-content: space-between; }
+/* faltas */
+#s-faltas .bloco { position: absolute; left: 140px; top: 200px; width: 860px; display: flex; flex-direction: column; gap: 22px; }
+#cadeiras { position: absolute; right: 130px; top: 230px; width: 700px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 30px 26px; }
+.cad { position: relative; height: 120px; }
+.cad svg { width: 100%; height: 100%; }
+.cad .cheia { fill: var(--teal); stroke: var(--tinta); stroke-width: 4; }
+.cad .vazia { fill: var(--branco); stroke: #9fb5b4; stroke-width: 4; stroke-dasharray: 10 8; opacity: 0; }
+/* virada */
+#portas { position: absolute; left: 50%; top: 70px; width: 600px; margin-left: -300px; }
+#portas svg { width: 100%; height: auto; overflow: visible; }
+#s-virada .texto { position: absolute; left: 0; right: 0; bottom: 90px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+#s-virada .apoio { max-width: 1300px; }
+/* app */
+#s-app .lado { position: absolute; left: 140px; top: 0; bottom: 0; width: 920px; display: flex; flex-direction: column; justify-content: center; gap: 26px; }
+.passos { position: relative; height: 430px; }
+.passo { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 26px; visibility: hidden; }
+.passo .titulo { font-size: 92px; }
+.contador { display: flex; gap: 12px; }
+.contador b { width: 64px; height: 8px; border-radius: 8px; background: var(--linha); overflow: hidden; position: relative; }
+.contador b i { position: absolute; inset: 0; background: var(--verde); transform-origin: left; transform: scaleX(0); }
+#cel-wrap { left: 1180px; top: 70px; }
+#confirma { position: absolute; left: 22px; right: 22px; top: 230px; z-index: 6; background: var(--branco); border-radius: 28px; padding: 30px 28px; box-shadow: 0 30px 70px -20px rgba(11,36,35,.45); display: flex; flex-direction: column; gap: 22px; visibility: hidden; }
+.etapa { display: flex; align-items: center; gap: 18px; font: 700 26px var(--f-display); color: #9fb5b4; }
+.etapa .bola { width: 46px; height: 46px; border-radius: 50%; border: 4px solid #c9d8d7; box-sizing: border-box; display: grid; place-items: center; flex: none; }
+.etapa .bola svg { width: 24px; height: 24px; opacity: 0; }
+.etapa.feita { color: var(--tinta); }
+.etapa.final .bola { background: var(--sol); border-color: var(--tinta); }
+#confirma .hora { white-space: nowrap; font: 800 32px var(--f-display); color: var(--verde); letter-spacing: -1px; }
+#confirma .onde { font: 400 22px var(--f-corpo); color: var(--muted); margin-top: -14px; }
+/* clínica */
+#s-clinica .topo { position: absolute; left: 140px; top: 80px; width: 1640px; display: flex; flex-direction: column; gap: 14px; }
+#s-clinica .passos { height: 110px; }
+#s-clinica .titulo { font-size: 80px; }
+#note { left: 320px; top: 300px; }
+/* impacto */
+#s-impacto .linhas { position: absolute; left: 140px; top: 110px; display: flex; flex-direction: column; gap: 4px; }
+#s-impacto .linha { font: 800 124px/1.08 var(--f-display); letter-spacing: -4px; color: var(--branco); }
+#cartao66 { position: absolute; right: 120px; bottom: 60px; width: 560px; background: var(--branco); color: var(--tinta); border-radius: 36px; padding: 44px 46px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 40px 80px -30px rgba(0,0,0,.5); }
+#cartao66 .n { font: 800 150px/0.9 var(--f-display); color: var(--verde); letter-spacing: -6px; }
+#cartao66 p { margin: 0; font: 400 32px/1.3 var(--f-corpo); }
+#cartao66 .src { font-size: 24px; color: var(--muted); }
+#sorriso { position: absolute; left: 140px; bottom: 120px; width: 520px; height: 120px; }
+/* fim */
+#s-fim .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px; text-align: center; }
+#s-fim .lema2 { font: 800 100px/1.05 var(--f-display); letter-spacing: -2.5px; color: var(--tinta); max-width: 1500px; text-wrap: balance; }
+#s-fim .lema2 em { font-style: normal; color: var(--verde); }
+#s-fim .rodape { display: flex; gap: 22px; align-items: center; font: 700 32px var(--f-display); color: var(--verde); }
+#s-fim .rodape span.tag { border: 3px solid var(--verde); border-radius: 999px; padding: 10px 24px; }
+#u-brilho { text-shadow: 0 0 0 rgba(255,184,28,0); }
+
+/* controles (só na página) */
+#ctrl { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 999px; background: rgba(3,28,27,.78); color: #e6f6f5; font: 700 14px var(--f-display); backdrop-filter: blur(8px); width: min(560px, calc(100vw - 32px)); box-sizing: border-box; opacity: 0; transition: opacity .3s; }
+#janela:hover ~ #ctrl, #ctrl:hover, #ctrl:focus-within { opacity: 1; }
+#ctrl button { border: 0; border-radius: 999px; background: var(--sol); color: var(--tinta); font: 700 14px var(--f-display); min-width: 44px; min-height: 36px; padding: 0 14px; cursor: pointer; }
+#ctrl button:focus-visible, #barra:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+#barra { flex: 1; accent-color: var(--sol); min-width: 0; }
+#tempo { font-variant-numeric: tabular-nums; min-width: 92px; text-align: right; }
+body.render #ctrl { display: none; }
+</style>
+
+<div id="janela">
+  <div id="palco" role="img" aria-label="Trailer do Sorriu+: espera por tratamento odontológico, como o app conecta pacientes a clínicas-escola, o painel da clínica e o impacto esperado. Protótipo com dados fictícios.">
+    <div id="faixa"></div>
+
+    <section class="cena" id="s-abre" style="display:block; z-index:10"><div class="lockup"><img src="assets/logo.webp" alt=""><div class="palavra"><span>S</span><span>o</span><span>r</span><span>r</span><span>i</span><span class="u">u</span><span>+</span></div><div class="lema">clínicas-escola de odontologia perto de você</div></div></section>
+
+    <section class="cena" id="s-espera" style="z-index:20">
+      <div class="bloco">
+        <div class="eyebrow">Na odontologia</div>
+        <div class="numero"><span id="cont">0</span><small>dias</small></div>
+        <p class="apoio" id="espera-apoio">de espera média para começar um tratamento.</p>
+      </div>
+      <div id="dias"></div>
+      <div id="dias-legenda"><span>1 quadrado = 1 dia</span><span id="dias-n">dia 0</span></div>
+      <div class="fonte">Fonte: BMC Public Health (NCBI), 2025.</div>
+    </section>
+
+    <section class="cena" id="s-faltas" style="z-index:30">
+      <div class="bloco">
+        <div class="eyebrow">E do outro lado</div>
+        <div class="numero" style="font-size:210px">20–35%</div>
+        <p class="apoio">das consultas odontológicas na atenção básica terminam em falta. A cadeira fica vazia.</p>
+      </div>
+      <div id="cadeiras"></div>
+      <div class="fonte">Fontes: BMC Public Health (NCBI), 2025; Holtzman et al., J. Public Health Dentistry, 2013.</div>
+    </section>
+
+    <section class="cena nevoa" id="s-virada" style="z-index:40">
+      <div id="portas">
+        <svg viewBox="0 0 260 220" aria-hidden="true">
+          <defs><linearGradient id="luz" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFB81C" stop-opacity=".75"/><stop offset="1" stop-color="#FFB81C" stop-opacity="0"/></linearGradient></defs>
+          <ellipse cx="130" cy="205" rx="110" ry="9" fill="#0E9E99"/>
+          <g id="porta1">
+            <path d="M30 200V100a40 40 0 0 1 80 0v100z" fill="#F4FBFB" stroke="#0B2423" stroke-width="3"/>
+            <path d="M44 200V104a26 26 0 0 1 52 0v96z" fill="#0B7C78" stroke="#0B2423" stroke-width="3"/>
+            <g id="xis" opacity="0"><path d="M58 140l24 24M82 140l-24 24" stroke="#B3261E" stroke-width="6" stroke-linecap="round"/></g>
+          </g>
+          <path id="seta" d="M118 120h22m-8-9l9 9-9 9" fill="none" stroke="#0B2423" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <g id="porta2">
+            <path id="feixe" d="M216 200 L262 214 L262 96 L216 104z" fill="url(#luz)" opacity="0"/>
+            <path d="M150 200V100a40 40 0 0 1 80 0v100z" fill="#F4FBFB" stroke="#0B2423" stroke-width="3"/>
+            <path d="M164 200V104a26 26 0 0 1 52 0v96z" fill="#FFF1CC" stroke="#0B2423" stroke-width="3"/>
+            <path id="folha" d="M164 200V104a26 26 0 0 1 52 0v96z" fill="#FFB81C" stroke="#0B2423" stroke-width="3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="texto">
+        <h1 class="titulo" id="virada-1">Existe <em>outra porta.</em></h1>
+        <p class="apoio" id="virada-2">As clínicas-escola de odontologia das universidades atendem a comunidade e precisam de pacientes para formar novos dentistas.</p>
+      </div>
+    </section>
+
+    <section class="cena" id="s-app" style="z-index:50">
+      <div class="lado">
+        <div class="eyebrow">Para quem precisa de atendimento</div>
+        <div class="passos">
+          <div class="passo" id="pa1"><h2 class="titulo">Ache a clínica-escola <em>mais perto.</em></h2><p class="apoio">Distância, custo, turnos e acessibilidade, em linguagem simples.</p></div>
+          <div class="passo" id="pa2"><h2 class="titulo">Ouviu um não? <em>Outra porta se abre.</em></h2><p class="apoio">O app mostra outras clínicas. Você escolhe para onde vai.</p></div>
+          <div class="passo" id="pa3"><h2 class="titulo">Encaminhado para outra <em>universidade.</em></h2><p class="apoio">A clínica nova vê o diagnóstico já feito, e você não repete exames.</p></div>
+          <div class="passo" id="pa4"><h2 class="titulo">Um prontuário que <em>vai com você.</em></h2><p class="apoio">Protegido, com registro de quem viu. Outra clínica só vê com a sua confirmação.</p></div>
+          <div class="passo" id="pa5"><h2 class="titulo">Escolha o dia. <em>A clínica confirma.</em></h2><p class="apoio">“Confirmado” só aparece quando a clínica confirma.</p></div>
+          <div class="passo" id="pa6"><h2 class="titulo">Ajuda que <em>explica.</em></h2><p class="apoio">Assistente, letra grande e áudio. Emergência: SAMU 192 sempre à vista.</p></div>
+        </div>
+        <div class="contador" id="cont-app"><b><i></i></b><b><i></i></b><b><i></i></b><b><i></i></b><b><i></i></b><b><i></i></b></div>
+      </div>
+      <div class="cel-wrap" id="cel-wrap">
+        <div class="cel" id="cel">
+          <div class="tela">
+            <div class="notch"></div>
+            <img class="shot" id="sh-busca" src="assets/p-busca.webp" alt="">
+            <img class="shot" id="sh-clinica" src="assets/p-clinica.webp" alt="">
+            <img class="shot" id="sh-recusa" src="assets/p-recusa.webp" alt="">
+            <img class="shot" id="sh-alt" src="assets/p-alternativas.webp" alt="">
+            <img class="shot" id="sh-enc" src="assets/p-encaminhamento.webp" alt="">
+            <img class="shot" id="sh-pront" src="assets/p-prontuario.webp" alt="">
+            <img class="shot" id="sh-assist" src="assets/p-assistente.webp" alt="">
+            <img class="shot" id="sh-urg" src="assets/p-urgencia.webp" alt="">
+            <div id="confirma">
+              <div class="etapa feita" id="et1"><span class="bola"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0B2423" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Pedido enviado</div>
+              <div class="etapa" id="et2"><span class="bola"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0B2423" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Clínica analisando</div>
+              <div class="etapa final" id="et3"><span class="bola"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0B2423" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Confirmado pela clínica</div>
+              <div class="hora" id="hora">Qui, 13/11 · 09:30</div>
+              <div class="onde" id="onde">Clínica Odontológica Vila Mariana</div>
+            </div>
+            <div class="toque" id="toque"></div>
+          </div>
+        </div>
+        <div class="chip" id="ch-km" style="left:-170px; top:330px"><span class="dot"></span>1,7 km de você</div>
+        <div class="chip sol" id="ch-gratis" style="left:-100px; top:480px">Gratuito</div>
+        <div class="chip" id="ch-escolha" style="left:-300px; top:240px"><span class="dot"></span>Nada é enviado sem você confirmar</div>
+        <div class="chip sol" id="ch-exames" style="left:-150px; top:560px">Sem repetir exames</div>
+        <div class="chip escuro" id="ch-enc" style="left:-200px; top:690px">Você confirma antes de ir</div>
+        <div class="chip escuro" id="ch-pront" style="left:-250px; top:160px">Registro de quem viu e quando</div>
+        <div class="chip escuro" id="ch-192" style="left:-130px; top:640px">SAMU 192 a um toque</div>
+      </div>
+      <div class="selo-demo">Telas do protótipo · dados fictícios</div>
+    </section>
+
+    <section class="cena nevoa" id="s-clinica" style="z-index:60">
+      <div class="topo">
+        <div class="eyebrow">Para a clínica-escola</div>
+        <div class="passos">
+          <div class="passo" id="pc1"><h2 class="titulo">Todos os pedidos <em>num lugar só.</em></h2></div>
+          <div class="passo" id="pc2"><h2 class="titulo">Fila organizada <em>por prioridade.</em></h2></div>
+          <div class="passo" id="pc3"><h2 class="titulo">Horário vago vira <em>atendimento.</em></h2></div>
+        </div>
+      </div>
+      <div class="note" id="note">
+        <div class="tela">
+          <div class="cam" id="cam">
+            <img class="shot" id="sh-solic" src="assets/c-solicitacoes.webp" alt="">
+            <img class="shot" id="sh-fila" src="assets/c-fila.webp" alt="">
+            <div class="realce" id="re-stats" style="left:190px; top:156px; width:1074px; height:84px"></div>
+            <div class="realce" id="re-urg" style="left:203px; top:226px; width:909px; height:68px"></div>
+            <div class="realce" id="re-vaga" style="left:1136px; top:98px; width:130px; height:48px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="chip escuro" id="ch-humana" style="left:1240px; top:690px">Urgência avaliada vem primeiro</div>
+      <div class="chip sol" id="ch-publicar" style="left:1000px; top:590px">Publicar vaga em 1 clique</div>
+      <div class="selo-demo">Telas do protótipo · dados fictícios</div>
+    </section>
+
+    <section class="cena verde" id="s-impacto" style="z-index:70">
+      <div class="linhas">
+        <div class="linha" id="im1">Mais s<span class="u">o</span>rrisos de volta.</div>
+        <div class="linha" id="im2">Mais gente atendida.</div>
+        <div class="linha" id="im3">Mais alunos aprendendo.</div>
+      </div>
+      <svg id="sorriso" viewBox="0 0 520 120" aria-hidden="true"><path id="sorriso-p" d="M20 20 Q260 200 500 20" fill="none" stroke="#FFB81C" stroke-width="18" stroke-linecap="round"/></svg>
+      <div id="cartao66">
+        <div class="n">66%</div>
+        <p>dos estudantes que pensam em desistir de odontologia nunca tiveram prática clínica.</p>
+        <p class="src">Fonte: Revista da ABENO.</p>
+      </div>
+    </section>
+
+    <section class="cena" id="s-fim" style="z-index:80">
+      <div class="centro">
+        <span class="mini" id="fim-marca">Sorri<span class="u">u</span>+</span>
+        <div class="lema2" id="fim-lema">A porta que não se fecha <em>no primeiro “não”.</em></div>
+        <div class="rodape" id="fim-rodape"><span class="tag">Protótipo · dados fictícios</span><span>Foolstack · HackaUSP 2026</span></div>
+      </div>
+    </section>
+
+    <section class="cena" id="s-fecha" style="z-index:90"><div class="lockup"><img src="assets/logo.webp" alt=""><div class="palavra" id="pal-fecha"><span>S</span><span>o</span><span>r</span><span>r</span><span>i</span><span class="u" id="u-brilho">u</span><span>+</span></div><div class="lema">clínicas-escola de odontologia perto de você</div></div></section>
+  </div>
+</div>
+
+<div id="ctrl">
+  <button type="button" id="play" aria-label="Pausar">❚❚</button>
+  <input type="range" id="barra" min="0" max="45" step="0.01" value="0" aria-label="Posição no vídeo">
+  <span id="tempo">0,0 / 45 s</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="comum.js"></script>
+<script>
+(() => {
+  const { $, $$, ajustarPalco, quebrar, sorriso } = window.Sorriu;
+  const RENDER = /render/.test(location.search);
+  if (RENDER) document.body.classList.add("render");
+  const DUR = 45;
+  ajustarPalco($("#palco"), RENDER);
+
+  // conteúdo gerado
+  for (let i = 0; i < 118; i++) $("#dias").appendChild(document.createElement("i"));
+  const CADEIRA = '<svg viewBox="0 0 120 120"><path class="cheia" d="M30 18h34a10 10 0 0 1 10 10v44h24a8 8 0 0 1 8 8v8a8 8 0 0 1-8 8H30a10 10 0 0 1-10-10V28a10 10 0 0 1 10-10z"/><path class="vazia" d="M30 18h34a10 10 0 0 1 10 10v44h24a8 8 0 0 1 8 8v8a8 8 0 0 1-8 8H30a10 10 0 0 1-10-10V28a10 10 0 0 1 10-10z"/><path d="M40 106v10M90 106v10" stroke="#0B2423" stroke-width="5" stroke-linecap="round"/></svg>';
+  for (let i = 0; i < 20; i++) { const d = document.createElement("div"); d.className = "cad"; d.innerHTML = CADEIRA; $("#cadeiras").appendChild(d); }
+
+  const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
+  const faixa = $("#faixa");
+  const troca = (de, para, t) => sorriso(tl, faixa, $(de), $(para), t);
+  const entra = (el, t, o = {}) => tl.from(quebrar(typeof el === "string" ? $(el) : el), { yPercent: 110, duration: .7, stagger: .045, ...o }, t);
+  const sai = (sel, t) => tl.to(`${sel} .w > span`, { yPercent: -110, duration: .35, ease: "power2.in", stagger: .01 }, t).set(sel, { visibility: "hidden" }, t + .4);
+  const pop = (el, a, b) => { tl.fromTo(el, { scale: .4, opacity: 0, y: 30 }, { scale: 1, opacity: 1, y: 0, duration: .5, ease: "back.out(2.2)" }, a); if (b) tl.to(el, { opacity: 0, x: -40, duration: .3, ease: "power2.in" }, b); };
+
+  /* 0–1,1 · marca parada (igual ao último quadro) */
+  troca("#s-abre", "#s-espera", 1.1);
+
+  /* 1,1–7,6 · espera (conta até 4,2; fica parado ≥3 s) */
+  entra("#s-espera .eyebrow", 1.5);
+  tl.from("#s-espera .numero", { yPercent: 40, opacity: 0, duration: .8 }, 1.6);
+  const contador = { v: 0 };
+  tl.to(contador, { v: 117.5, duration: 2.4, ease: "power2.out", onUpdate: () => {
+      $("#cont").textContent = contador.v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      const n = Math.round(contador.v); $("#dias-n").textContent = `dia ${n}`;
+      $$("#dias i").forEach((d, i) => d.classList.toggle("on", i < n));
+    } }, 1.8);
+  tl.from("#dias i", { scale: 0, duration: .4, stagger: .005, ease: "back.out(2)" }, 1.6);
+  tl.from("#dias-legenda", { opacity: 0, y: 20, duration: .5 }, 2.0);
+  entra("#espera-apoio", 2.3);
+  tl.from("#s-espera .fonte", { opacity: 0, duration: .5 }, 2.8);
+
+  /* 7,6–13,2 · faltas (cadeiras esvaziam até ~10,8; paradas até 13,2) */
+  troca("#s-espera", "#s-faltas", 7.6);
+  entra("#s-faltas .eyebrow", 8.0);
+  tl.from("#s-faltas .numero", { x: 160, opacity: 0, duration: .7 }, 8.05);
+  entra("#s-faltas .apoio", 8.4, { stagger: .03 });
+  tl.from(".cad", { y: 60, opacity: 0, duration: .5, stagger: .03 }, 8.1);
+  tl.from("#s-faltas .fonte", { opacity: 0, duration: .5 }, 8.8);
+  [2, 7, 13, 18, 5, 11, 16].forEach((i, k) => { // 4 de 20 = 20%; 7 de 20 = 35%
+    const t = 9.3 + k * (k < 4 ? .2 : .3), c = `.cad:nth-child(${i + 1})`;
+    tl.to(`${c} .cheia`, { opacity: 0, duration: .35, ease: "power1.out" }, t)
+      .to(`${c} .vazia`, { opacity: 1, duration: .35 }, t)
+      .fromTo(c, { scale: 1 }, { scale: .9, duration: .35, yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, t);
+  });
+
+  /* 13,2–16,6 · virada */
+  troca("#s-faltas", "#s-virada", 13.2);
+  tl.from("#portas", { y: 60, opacity: 0, duration: .7 }, 13.6);
+  tl.to("#xis", { opacity: 1, duration: .25 }, 14.0)
+    .from("#xis", { scale: .2, svgOrigin: "70 152", duration: .4, ease: "back.out(3)" }, 14.0)
+    .to("#porta1", { opacity: .45, duration: .4 }, 14.3)
+    .from("#seta", { x: -30, opacity: 0, duration: .5 }, 14.3)
+    .to("#folha", { scaleX: .12, svgOrigin: "164 150", duration: 1.0, ease: "power2.inOut" }, 14.5)
+    .to("#feixe", { opacity: 1, duration: .8 }, 14.8)
+    .to("#porta2", { scale: 1.06, svgOrigin: "190 200", duration: .9, ease: "sine.inOut" }, 14.8);
+  entra("#virada-1", 14.4);
+  entra("#virada-2", 14.9, { stagger: .02 });
+
+  /* 16,6–31 · app do paciente (6 passos) */
+  troca("#s-virada", "#s-app", 16.6);
+  tl.from("#cel-wrap", { y: 700, rotation: 8, duration: 1.1, ease: "power4.out" }, 16.8)
+    .fromTo("#cel", { rotationY: -24, rotationX: 8 }, { rotationY: -8, rotationX: 3, duration: 14, ease: "sine.inOut" }, 16.8);
+  entra("#s-app .eyebrow", 17.0);
+  tl.from("#cont-app", { opacity: 0, duration: .4 }, 17.2);
+  const PASSOS = [17.1, 19.6, 22.0, 24.4, 26.6, 28.8, 31.0];
+  PASSOS.slice(0, -1).forEach((a, k) => {
+    const id = `#pa${k + 1}`, b = PASSOS[k + 1];
+    tl.set(id, { visibility: "visible" }, a);
+    entra(`${id} .titulo`, a + .05, { stagger: .05 });
+    entra(`${id} .apoio`, a + .3, { stagger: .02 });
+    tl.to(`#cont-app b:nth-child(${k + 1}) i`, { scaleX: 1, duration: b - a, ease: "none" }, a);
+    if (k < 5) sai(id, b - .4);
+  });
+  gsap.set(".shot", { visibility: "hidden" });
+  gsap.set(["#sh-busca", "#sh-solic"], { visibility: "visible" });
+  const toque = (x, y, t) => tl.fromTo("#toque", { left: x, top: y, scale: .4, opacity: 0 }, { scale: 1.3, opacity: 1, duration: .25, ease: "power2.out", immediateRender: false }, t).to("#toque", { opacity: 0, scale: 1.8, duration: .3 }, t + .25);
+  const tela = (de, para, t) => tl.set(para, { visibility: "visible" }, t).fromTo(para, { xPercent: 100 }, { xPercent: 0, duration: .5, ease: "power3.inOut", immediateRender: false }, t).to(de, { xPercent: -30, duration: .5, ease: "power3.inOut" }, t).set(de, { visibility: "hidden" }, t + .5);
+  // 1 · busca → detalhe
+  pop("#ch-km", 17.8, 19.4); pop("#ch-gratis", 18.0, 19.4);
+  toque(195, 330, 18.5);
+  tela("#sh-busca", "#sh-clinica", 18.7);
+  tl.to("#sh-clinica", { y: -420, duration: 1.2, ease: "power2.inOut" }, 19.0);
+  // 2 · recusa → alternativas
+  tela("#sh-clinica", "#sh-recusa", 19.6);
+  toque(195, 412, 20.5);
+  tela("#sh-recusa", "#sh-alt", 20.7);
+  pop("#ch-escolha", 20.9, 21.8);
+  // 3 · encaminhamento
+  tela("#sh-alt", "#sh-enc", 22.0);
+  tl.to("#sh-enc", { y: -165, duration: 1.2, ease: "power2.inOut" }, 22.6);
+  pop("#ch-exames", 22.6, 24.2); pop("#ch-enc", 22.9, 24.2);
+  // 4 · prontuário
+  tela("#sh-enc", "#sh-pront", 24.4);
+  tl.to("#sh-pront", { y: -78, duration: 1.4, ease: "power2.inOut" }, 25.0);
+  pop("#ch-pront", 24.9, 26.4);
+  // 5 · confirmação
+  tl.to("#sh-pront", { filter: "blur(6px) brightness(.85)", duration: .4 }, 26.6);
+  tl.set("#confirma", { visibility: "visible" }, 26.7).from("#confirma", { y: 120, opacity: 0, scale: .9, duration: .55, ease: "back.out(1.6)" }, 26.7);
+  ["#et1", "#et2", "#et3"].forEach((e, k) => {
+    const t = 27.0 + k * .45;
+    tl.to(`${e} .bola svg`, { opacity: 1, duration: .2 }, t).from(`${e} .bola`, { scale: .5, duration: .4, ease: "back.out(3)" }, t);
+    if (k) tl.set(e, { attr: { class: `etapa feita${k === 2 ? " final" : ""}` } }, t);
+  });
+  tl.from("#hora, #onde", { y: 20, opacity: 0, duration: .45, stagger: .1 }, 27.9);
+  // 6 · assistente + urgência
+  tl.to("#confirma", { y: -60, opacity: 0, duration: .35, ease: "power2.in" }, 28.6).set("#confirma", { visibility: "hidden" }, 29.0);
+  tela("#sh-pront", "#sh-assist", 28.8);
+  tela("#sh-assist", "#sh-urg", 29.9);
+  pop("#ch-192", 30.0, null);
+
+  /* 31–36,6 · painel da clínica (câmera aproxima) */
+  troca("#s-app", "#s-clinica", 31.0);
+  entra("#s-clinica .eyebrow", 31.4);
+  tl.from("#note", { y: 400, duration: 1.0, ease: "power4.out" }, 31.3);
+  tl.set("#pc1", { visibility: "visible" }, 31.5); entra("#pc1 .titulo", 31.5);
+  tl.to("#cam", { scale: 1.2, transformOrigin: "727px 198px", duration: .8, ease: "power2.inOut" }, 32.1)
+    .to("#re-stats", { opacity: 1, duration: .3 }, 32.5);
+  sai("#pc1", 33.3);
+  tl.to("#re-stats", { opacity: 0, duration: .3 }, 33.3);
+  tl.set("#pc2", { visibility: "visible" }, 33.7); entra("#pc2 .titulo", 33.7);
+  tl.set("#sh-fila", { visibility: "visible" }, 33.5).fromTo("#sh-fila", { opacity: 0 }, { opacity: 1, duration: .4, immediateRender: false }, 33.5);
+  tl.to("#cam", { scale: 1.4, transformOrigin: "657px 260px", duration: .8, ease: "power2.inOut" }, 33.5)
+    .to("#re-urg", { opacity: 1, duration: .3 }, 34.1);
+  pop("#ch-humana", 34.2, 35.2);
+  tl.to("#re-urg", { opacity: 0, duration: .3 }, 35.1);
+  sai("#pc2", 35.1);
+  tl.set("#pc3", { visibility: "visible" }, 35.5); entra("#pc3 .titulo", 35.5);
+  tl.to("#sh-fila", { opacity: 0, duration: .4 }, 35.2);
+  tl.to("#cam", { scale: 1.8, transformOrigin: "1260px 60px", duration: .9, ease: "power2.inOut" }, 35.3)
+    .to("#re-vaga", { opacity: 1, duration: .3 }, 35.9);
+  pop("#ch-publicar", 35.9, null);
+
+  /* 36,6–41 · impacto */
+  troca("#s-clinica", "#s-impacto", 36.6);
+  entra("#im1", 37.1, { stagger: .06 });
+  entra("#im2", 37.6, { stagger: .06 });
+  entra("#im3", 38.1, { stagger: .06 });
+  tl.fromTo("#sorriso-p", { strokeDasharray: 640, strokeDashoffset: 640 }, { strokeDashoffset: 0, duration: .9, ease: "power2.out" }, 37.4);
+  tl.from("#cartao66", { y: 200, rotation: 4, opacity: 0, duration: .8, ease: "back.out(1.4)" }, 38.3);
+  const c66 = { v: 0 };
+  tl.to(c66, { v: 66, duration: .8, ease: "power2.out", onUpdate: () => { $("#cartao66 .n").textContent = Math.round(c66.v) + "%"; } }, 38.4);
+
+  /* 41–43,3 · fim */
+  troca("#s-impacto", "#s-fim", 41.0);
+  tl.from("#fim-marca", { scale: .6, opacity: 0, duration: .5, ease: "back.out(2)" }, 41.4);
+  entra("#fim-lema", 41.45, { stagger: .04, duration: .55 });
+  tl.from("#fim-rodape", { opacity: 0, y: 20, duration: .4 }, 41.8);
+
+  /* 43,3–45 · marca volta (o último quadro é igual ao primeiro) */
+  troca("#s-fim", "#s-fecha", 43.3);
+  tl.from("#s-fecha img", { scale: .5, rotation: -12, opacity: 0, duration: .6, ease: "back.out(2)" }, 43.6);
+  tl.from("#pal-fecha span", { yPercent: 80, opacity: 0, duration: .5, stagger: .04, ease: "back.out(2)" }, 43.65);
+  tl.from("#s-fecha .lema", { opacity: 0, y: 20, duration: .4 }, 44.0);
+  tl.to("#u-brilho", { textShadow: "0 0 40px rgba(255,184,28,.9)", duration: .3, yoyo: true, repeat: 1, ease: "sine.inOut" }, 44.2);
+  tl.set({}, {}, DUR);
+
+  // API para o render quadro a quadro
+  window.__duration = DUR;
+  window.__seek = (t) => { tl.seek(Math.min(t, DUR - 1e-4), false); };
+  window.__pronto = Promise.all([document.fonts.ready, ...$$("img").map((i) => i.decode().catch(() => {}))]);
+  if (RENDER) { tl.seek(0); return; }
+
+  // player da página
+  const play = $("#play"), barra = $("#barra"), tempo = $("#tempo");
+  const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let tocando = !reduz, t0 = performance.now(), base = 0;
+  const fmt = (t) => `${t.toFixed(1).replace(".", ",")} / 45 s`;
+  function quadro(now) {
+    if (tocando) { const t = (base + (now - t0) / 1000) % DUR; tl.seek(t, false); barra.value = t; tempo.textContent = fmt(t); }
+    requestAnimationFrame(quadro);
+  }
+  function alternar() { base = tl.time(); t0 = performance.now(); tocando = !tocando; play.textContent = tocando ? "❚❚" : "▶"; play.setAttribute("aria-label", tocando ? "Pausar" : "Tocar"); }
+  play.addEventListener("click", alternar);
+  barra.addEventListener("input", () => { const t = +barra.value; tl.seek(t, false); tempo.textContent = fmt(t); base = t; t0 = performance.now(); });
+  addEventListener("keydown", (e) => { if (e.code === "Space" && e.target === document.body) { e.preventDefault(); alternar(); } });
+  if (reduz) { tl.seek(42.6); barra.value = 42.6; tempo.textContent = fmt(42.6); play.textContent = "▶"; play.setAttribute("aria-label", "Tocar"); }
+  window.__pronto.then(() => { t0 = performance.now(); requestAnimationFrame(quadro); });
+})();
+</script>
