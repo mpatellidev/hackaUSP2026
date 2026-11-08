@@ -13,7 +13,7 @@
 
 ## 1. Escopo e limites
 
-**O que é.** UHealth conecta pessoas de baixa renda a **clínicas-escola de saúde** (cursos de medicina e áreas da saúde: clínica geral, pediatria, ginecologia/obstetrícia, cardiologia, dermatologia, ortopedia, oftalmologia, saúde mental etc.). O produto é **geral para saúde**, não específico de uma especialidade. Odontologia é só mais um valor possível de `especialidade`.
+**O que é.** UHealth conecta pessoas de baixa renda a **clínicas-escola de saúde** (cursos de medicina e áreas da saúde: clínica geral, odontopediatria, ginecologia/obstetrícia, periodontia, dentistica, cirurgia, protese, saúde mental etc.). O produto é **geral para saúde**, não específico de uma especialidade. Odontologia é só mais um valor possível de `especialidade`.
 
 > **Nota sobre as issues.** O texto original das issues falava em "solicitação odontológica", em "Sorriso Aberto" e usava um exemplo de terceiro molar; elas foram atualizadas para saúde geral e UHealth. Se algum resíduo restar, **vale este contrato**. Nenhuma frente deve fixar UI, modelo de dados ou textos em odontologia.
 
@@ -111,7 +111,7 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
   "nome": "Clínica-Escola A",
   "cidade": "São Paulo", "uf": "SP",
   "publico": ["adultos"],
-  "especialidades": ["clinica_geral", "cardiologia", "dermatologia"],
+  "especialidades": ["clinica_integrada", "periodontia", "dentistica"],
   "custo_informado": "gratuito",
   "recebendo_pedidos": true,
   "telefone": "(11) 0000-0001"
@@ -119,7 +119,7 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
 ```
 - `custo_informado` ∈ `gratuito | a_confirmar | pago_informado`. É **informado pela clínica**; a UI diz que custo e serviços dependem de confirmação da instituição.
 - `publico` ⊂ `adultos | criancas | gestantes | idosos`.
-- `especialidades` é vocabulário aberto e versionado (v0): `clinica_geral, pediatria, ginecologia_obstetricia, cardiologia, dermatologia, ortopedia, oftalmologia, saude_mental, odontologia, fisioterapia, nutricao`. Novos valores entram por PR neste documento.
+- `especialidades` é vocabulário aberto e versionado (v0): `clinica_integrada, odontopediatria, estomatologia, periodontia, dentistica, cirurgia, protese, endodontia, odontologia, fisioterapia, nutricao`. Novos valores entram por PR neste documento.
 - Telefone sempre fictício `(DD) 0000-XXXX`.
 - `GET /clinicas?cidade=&especialidade=` — lista (paciente autenticado). `GET /clinicas/{id}`.
 
@@ -130,7 +130,7 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
   "paciente_id": "a1000000-0000-4000-8000-000000000001",
   "clinica_id": "c1000000-0000-4000-8000-000000000002",
   "estado": "agendada",
-  "especialidade": "clinica_geral",
+  "especialidade": "clinica_integrada",
   "publico_alvo": "adultos",
   "descricao_administrativa": "Consulta de rotina de clínica geral",
   "solicitacao_origem_id": "b1000000-0000-4000-8000-000000000001",
@@ -165,7 +165,7 @@ Funcionário: `"papel": "funcionario", "funcao": "atendimento"`. Vínculo funcio
 {
   "id": "f1000000-0000-4000-8000-000000000001",
   "clinica_id": "c1000000-0000-4000-8000-000000000002",
-  "especialidade": "clinica_geral",
+  "especialidade": "clinica_integrada",
   "inicio": "2026-11-12T14:00:00-03:00", "fim": "2026-11-12T14:30:00-03:00",
   "estado": "preenchida"
 }
@@ -201,7 +201,7 @@ A UI só escreve "agendada" quando o backend devolve `estado: "agendada"`.
 
 ### 4.8 Profissional e agenda (0.2.0)
 ```json
-{"id": "e1000000-0000-4000-8000-000000000001", "clinica_id": "c1000000-0000-4000-8000-000000000001", "nome_exibicao": "Dra. Helena (fictícia)", "especialidade": "clinica_geral", "vinculo": "docente", "ativo": true}
+{"id": "e1000000-0000-4000-8000-000000000001", "clinica_id": "c1000000-0000-4000-8000-000000000001", "nome_exibicao": "Dra. Helena (fictícia)", "especialidade": "clinica_integrada", "vinculo": "docente", "ativo": true}
 {"id": "e2000000-0000-4000-8000-000000000001", "profissional_id": "e1000000-…-0001", "inicio": "2026-11-12T09:00:00-03:00", "fim": "2026-11-12T10:00:00-03:00", "estado": "reservado"}
 ```
 `vinculo` ∈ `docente | residente | estudante_supervisionado`; `BlocoAgenda.estado` ∈ `disponivel | reservado | indisponivel`. Pessoas **fictícias**. Disponibilidade **não** é vaga publicada nem agendamento.
@@ -303,7 +303,7 @@ Só forma de entrada/saída. **Regras funcionais pertencem à issue dona.** Cada
   "titulo": "Consulta supervisionada de rotina com estudantes",
   "descricao_leiga": "Estudantes de medicina, acompanhados por professores, fazem uma consulta de rotina. A avaliação é sempre feita por profissionais.",
   "requisitos": ["Ter 18 anos ou mais"], "publico": "adultos",
-  "cidade": "São Paulo", "uf": "SP", "especialidade": "clinica_geral",
+  "cidade": "São Paulo", "uf": "SP", "especialidade": "clinica_integrada",
   "estado": "ativo", "publicado_em": "2026-11-01T09:00:00-03:00"
 }
 ```

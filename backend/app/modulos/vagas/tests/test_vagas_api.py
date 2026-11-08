@@ -5,12 +5,12 @@ from app.models.vagas import Agendamento
 from tests.conftest import ANA, ATEND_A, ATEND_B, CLINICA_A, CLINICA_B, EVA
 
 V = "/api/v1/vagas"
-VAGA_ABERTA = "f1000000-0000-4000-8000-000000000002"      # clínica B, clinica_geral, aberta
+VAGA_ABERTA = "f1000000-0000-4000-8000-000000000002"      # clínica B, clinica_integrada, aberta
 VAGA_PREENCHIDA = "f1000000-0000-4000-8000-000000000001"  # clínica B, preenchida (Ana)
 PEDIDO_EVA = "b1000000-0000-4000-8000-000000000005"       # Eva em B, aguardando_confirmacao
 INTERESSE_EVA = "d1000000-0000-4000-8000-000000000003"    # Eva na vaga 2, registrado
 PEDIDO_ANA_B = "b1000000-0000-4000-8000-000000000002"     # Ana em B, agendada
-NOVA = {"especialidade": "clinica_geral", "inicio": "2026-11-20T10:00:00-03:00", "fim": "2026-11-20T10:30:00-03:00"}
+NOVA = {"especialidade": "clinica_integrada", "inicio": "2026-11-20T10:00:00-03:00", "fim": "2026-11-20T10:30:00-03:00"}
 
 
 def test_funcionario_publica_vaga_com_clinica_do_token(client, login):
@@ -28,7 +28,7 @@ def test_publicar_valida_horario_fuso_e_especialidade(client, login):
     assert sem_fuso.status_code == 422 and sem_fuso.json()["erro"]["codigo"] == "validacao"
     invertido = client.post(V, json={**NOVA, "fim": "2026-11-20T09:00:00-03:00"}, headers=h)
     assert invertido.status_code == 422
-    outra = client.post(V, json={**NOVA, "especialidade": "cardiologia"}, headers=h)
+    outra = client.post(V, json={**NOVA, "especialidade": "periodontia"}, headers=h)
     assert outra.status_code == 422 and "especialidade" in outra.json()["erro"]["detalhes"]["campos"]
 
 
@@ -66,7 +66,7 @@ def test_interesse_exige_pedido_do_paciente_e_vaga_da_mesma_clinica(client, logi
 def test_pedido_enviada_ja_pode_demonstrar_interesse(client, login, db):
     ana = login(ANA)
     pedido = client.post("/api/v1/solicitacoes", headers=ana, json={
-        "clinica_id": CLINICA_B, "especialidade": "clinica_geral", "publico_alvo": "adultos",
+        "clinica_id": CLINICA_B, "especialidade": "clinica_integrada", "publico_alvo": "adultos",
         "descricao_administrativa": "Nova consulta de rotina"})
     assert pedido.status_code == 201 and pedido.json()["estado"] == "enviada"
     r = client.post(f"{V}/{VAGA_ABERTA}/interesses", json={"solicitacao_id": pedido.json()["id"]}, headers=ana)

@@ -4,9 +4,10 @@ from sqlalchemy.orm import Session
 
 from app.core.auth import Actor, get_actor, require_funcionario, require_paciente
 from app.core.db import get_db
-from app.core.errors import nao_encontrado
+from app.core.errors import ApiError, nao_encontrado
 from app.models.clinicas import Clinica
 from app.modulos.solicitacoes import service
+from app.modulos.solicitacoes.localizacao import CepNaoAtendido, distancia_km, origem_do_cep
 from app.modulos.solicitacoes.schemas import (AlternativasOut, AtualizarEstadoIn, ClinicaOut, CriarSolicitacaoIn,
                                               EncaminhadoOut, EncaminharIn, ListaClinicas, ListaEventos,
                                               ListaSolicitacoes, SolicitacaoOut)
@@ -15,8 +16,12 @@ from app.modulos.solicitacoes import repositorio as repo
 router = APIRouter(tags=["solicitações"])
 
 
-@router.get("/clinicas", response_model=ListaClinicas, summary="Listar clínicas para o paciente")
+@router.get("/clinicas", response_model=ListaClinicas,
+            summary="Listar clínicas para o paciente (com lat/lng ou CEP: mais próximas primeiro)")
 def listar_clinicas(cidade: str | None = Query(default=None), especialidade: str | None = Query(default=None),
+                    lat: float | None = Query(default=None, ge=-90, le=90),
+                    lng: float | None = Query(default=None, ge=-180, le=180),
+                    cep: str | None = Query(default=None, max_length=12),
                     _: Actor = Depends(require_paciente), db: Session = Depends(get_db)):
     q = select(Clinica).order_by(Clinica.nome, Clinica.id)
     if cidade:
@@ -24,7 +29,24 @@ def listar_clinicas(cidade: str | None = Query(default=None), especialidade: str
     clinicas = list(db.scalars(q))
     if especialidade:
         clinicas = [c for c in clinicas if especialidade in c.especialidades]
-    return {"itens": [service.clinica_json(c) for c in clinicas], "total": len(clinicas)}
+    itens = [service.clinica_json(c) for c in clinicas]
+    localizacao = None
+    if (lat is None) != (lng is None):
+        raise ApiError(422, "validacao", "Envie latitude e longitude juntas.", {"campos": ["lat", "lng"]})
+    if lat is not None and lng is not None:
+        localizacao = {"fonte": "aparelho", "aproximada": False, "descricao": "sua localização"}
+    elif cep:
+        try:
+            lat, lng, regiao = origem_do_cep(cep)
+        except CepNaoAtendido as e:
+            raise ApiError(422, "validacao", str(e), {"campos": ["cep"]}) from e
+        localizacao = {"fonte": "cep", "aproximada": True, "descricao": regiao}
+    if localizacao is not None:
+        for it in itens:
+            if it["latitude"] is not None and it["longitude"] is not None:
+                it["distancia_km"] = round(distancia_km(lat, lng, it["latitude"], it["longitude"]), 1)
+        itens.sort(key=lambda it: (it.get("distancia_km") is None, it.get("distancia_km") or 0, it["nome"]))
+    return {"itens": itens, "total": len(itens), "localizacao": localizacao}
 
 
 @router.get("/clinicas/{clinica_id}", response_model=ClinicaOut, summary="Ver detalhes de uma clínica (paciente: qualquer; funcionário: a própria)")
@@ -46,7 +68,13 @@ def listar_solicitacoes(estado: str | None = Query(default=None), actor: Actor =
 def criar_solicitacao(body: CriarSolicitacaoIn, actor: Actor = Depends(require_paciente),
                       db: Session = Depends(get_db)):
     pedido = service.criar(db, actor, body.clinica_id, body.especialidade, body.publico_alvo,
-                           body.descricao_administrativa.strip())
+                           body.descricao_administrativa.strip(), body.para_quem, body.nome_paciente,
+                           body.telefone_contato, body.trilha)
+    from app.modulos.notificacoes.service import notificar
+    clinica = db.get(Clinica, pedido.clinica_id)
+    notificar(db, actor.usuario_id, "Pedido enviado",
+              f"Seu pedido para a {clinica.nome} foi enviado. Protocolo {pedido.id[:8].upper()}. A clínica vai analisar.",
+              f"solicitacao:{pedido.id}")
     db.commit()
     db.refresh(pedido)
     return service.solicitacao_json(pedido)

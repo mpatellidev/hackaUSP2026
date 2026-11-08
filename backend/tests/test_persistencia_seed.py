@@ -7,12 +7,12 @@ from app.seed import run as seed
 def test_seed_idempotente(db):
     antes = seed(db)
     depois = seed(db)
-    assert antes == depois and antes["clinicas"] == 4 and antes["usuarios"] == 11
+    assert antes == depois and antes["clinicas"] == 4 and antes["usuarios"] == 12
 
 
 def test_dados_persistem_em_nova_sessao(engine, db):
     with sessionmaker(bind=engine)() as outra:
-        assert outra.query(Usuario).filter_by(conta_demo="paciente.ana").one().nome_exibicao == "Ana M."
+        assert outra.query(Usuario).filter_by(conta_demo="paciente.ana").one().nome_exibicao == "Ana Martins"
 
 
 def test_migracao_alembic_cria_o_mesmo_esquema(tmp_path, monkeypatch):

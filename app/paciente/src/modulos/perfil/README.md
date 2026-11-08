@@ -1,7 +1,7 @@
-# paciente · perfil (P1, pendente)
+# paciente · perfil (P1, pronto)
 
-Cidade, contato preferido, renda opcional ('prefiro não informar' vale) e preferências de acessibilidade.
+Tela `/perfil` (atalho do ícone de pessoa no topo da busca): cidade, estado, contato preferido, renda opcional ("Prefiro não informar" vale) e preferências de acessibilidade (tamanho das letras, linguagem, aparência). Ao salvar, o tamanho das letras e a aparência também passam a valer neste aparelho (mesmas chaves dos botões "Aa" e "Aparência").
 
-**Backend pronto:** `GET/PUT /perfil`. **Falta:** a tela (sem rota nem item de menu ainda). Ao implementar, exporte `rotas` e acrescente uma linha em `src/rotas.tsx`.
+**Endpoints:** `GET/PUT /perfil` (o PUT substitui o perfil inteiro; o formulário reenvia todos os campos).
 
 Ver [`frentes.md`](../../../../frentes.md).

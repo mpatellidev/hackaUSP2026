@@ -12,6 +12,10 @@ interface ValorSessao {
   /** true enquanto restaura a sessão guardada no navegador */
   restaurando: boolean;
   entrar: (conta: string, senha: string | null) => Promise<void>;
+  /** app do paciente: CPF ou e-mail, e senha */
+  entrarComEmail: (login: string, senha: string) => Promise<void>;
+  /** app do paciente: cria a conta (com CPF) e já entra */
+  cadastrar: (nome: string, cpf: string, email: string, senha: string) => Promise<void>;
   sair: () => Promise<void>;
 }
 
@@ -83,12 +87,29 @@ export function ProvedorUHealth({ app, papelEsperado, children }: { app: "pacien
     await carregarUsuario();
   }, [api, carregarUsuario, chave]);
 
+  const guardarToken = useCallback(async (novo: string) => {
+    token.current = novo;
+    gravar(chave, novo);
+    await carregarUsuario();
+  }, [carregarUsuario, chave]);
+
+  const entrarComEmail = useCallback(async (login: string, senha: string) => {
+    const r = await api.dados(api.cliente.POST("/auth/entrar", { body: { login, senha } }));
+    await guardarToken(r.token);
+  }, [api, guardarToken]);
+
+  const cadastrar = useCallback(async (nome: string, cpf: string, email: string, senha: string) => {
+    const r = await api.dados(api.cliente.POST("/auth/cadastro", { body: { nome, cpf, email, senha } }));
+    await guardarToken(r.token);
+  }, [api, guardarToken]);
+
   const sair = useCallback(async () => {
     await api.semCorpo(api.cliente.POST("/auth/logout", {})).catch(() => undefined);
     limpar();
   }, [api, limpar]);
 
-  const valor = useMemo(() => ({ api, usuario, restaurando, entrar, sair }), [api, usuario, restaurando, entrar, sair]);
+  const valor = useMemo(() => ({ api, usuario, restaurando, entrar, entrarComEmail, cadastrar, sair }),
+    [api, usuario, restaurando, entrar, entrarComEmail, cadastrar, sair]);
   return (
     <QueryClientProvider client={qc}>
       <Contexto.Provider value={valor}>{children}</Contexto.Provider>

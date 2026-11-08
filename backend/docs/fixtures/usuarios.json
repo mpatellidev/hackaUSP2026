@@ -1,87 +1,115 @@
 {
-  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real.",
+  "_aviso": "Pessoas fictícias. E-mails no domínio reservado example.com (RFC 2606). CPFs fictícios: começam com 000000 e têm dígitos verificadores válidos só para testar a validação.",
   "itens": [
     {
       "id": "a1000000-0000-4000-8000-000000000001",
       "papel": "paciente",
-      "nome_exibicao": "Ana M.",
+      "nome_exibicao": "Ana Martins",
       "conta_demo": "paciente.ana",
-      "ativo": true
+      "ativo": true,
+      "email": "ana.martins@example.com",
+      "cpf": "00000000191"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000002",
       "papel": "paciente",
-      "nome_exibicao": "Bruno S.",
+      "nome_exibicao": "Bruno Souza",
       "conta_demo": "paciente.bruno",
-      "ativo": true
+      "ativo": true,
+      "email": "bruno.souza@example.com",
+      "cpf": "00000000272"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000003",
       "papel": "paciente",
-      "nome_exibicao": "Carla P.",
+      "nome_exibicao": "Carla Pereira",
       "conta_demo": "paciente.carla",
-      "ativo": true
+      "ativo": true,
+      "email": "carla.pereira@example.com",
+      "cpf": "00000000353"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000004",
       "papel": "paciente",
-      "nome_exibicao": "Diego L.",
+      "nome_exibicao": "Diego Lima",
       "conta_demo": "paciente.diego",
-      "ativo": true
+      "ativo": true,
+      "email": "diego.lima@example.com",
+      "cpf": "00000000434"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000005",
       "papel": "paciente",
-      "nome_exibicao": "Eva R.",
+      "nome_exibicao": "Eva Ribeiro",
       "conta_demo": "paciente.eva",
-      "ativo": true
+      "ativo": true,
+      "email": "eva.ribeiro@example.com",
+      "cpf": "00000000515"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000006",
       "papel": "paciente",
-      "nome_exibicao": "Fábio T.",
+      "nome_exibicao": "Fábio Teixeira",
       "conta_demo": "paciente.fabio",
-      "ativo": true
+      "ativo": true,
+      "email": "fabio.teixeira@example.com",
+      "cpf": "00000000604"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000011",
       "papel": "funcionario",
-      "nome_exibicao": "Gabi (atendimento A)",
+      "nome_exibicao": "Gabriela Nunes",
       "conta_demo": "funcionario.atendimento.a",
       "funcao": "atendimento",
-      "ativo": true
+      "ativo": true,
+      "email": "gabriela.nunes@example.com"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000012",
       "papel": "funcionario",
-      "nome_exibicao": "Dr. Hugo (profissional A)",
+      "nome_exibicao": "Dr. Hugo Almeida",
       "conta_demo": "funcionario.profissional.a",
       "funcao": "profissional",
-      "ativo": true
+      "ativo": true,
+      "email": "hugo.almeida@example.com",
+      "cro": "CRO-SP 000101"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000013",
       "papel": "funcionario",
-      "nome_exibicao": "Iara (atendimento B)",
+      "nome_exibicao": "Iara Castro",
       "conta_demo": "funcionario.atendimento.b",
       "funcao": "atendimento",
-      "ativo": true
+      "ativo": true,
+      "email": "iara.castro@example.com"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000014",
       "papel": "funcionario",
-      "nome_exibicao": "Dra. Joana (profissional B)",
+      "nome_exibicao": "Dra. Joana Prado",
       "conta_demo": "funcionario.profissional.b",
       "funcao": "profissional",
-      "ativo": true
+      "ativo": true,
+      "email": "joana.prado@example.com",
+      "cro": "CRO-SP 000102"
     },
     {
       "id": "a1000000-0000-4000-8000-000000000015",
       "papel": "funcionario",
-      "nome_exibicao": "Kleber (coordenação C)",
+      "nome_exibicao": "Kleber Moraes",
       "conta_demo": "funcionario.coordenacao.c",
       "funcao": "coordenacao",
-      "ativo": true
+      "ativo": true,
+      "email": "kleber.moraes@example.com"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000016",
+      "papel": "funcionario",
+      "nome_exibicao": "Lucas Andrade",
+      "conta_demo": "funcionario.estudante.b",
+      "funcao": "estudante",
+      "ativo": true,
+      "email": "lucas.andrade@example.com"
     }
   ]
 }

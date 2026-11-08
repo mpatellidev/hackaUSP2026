@@ -9,7 +9,7 @@ describe("rótulos", () => {
     }
   });
   it("especialidade desconhecida ainda vira texto legível", () => {
-    expect(rotuloEspecialidade("clinica_geral")).toBe("Clínica geral");
+    expect(rotuloEspecialidade("endodontia")).toBe("Endodontia (canal)");
     expect(rotuloEspecialidade("medicina_do_esporte")).toBe("medicina do esporte");
   });
   it("datas saem no fuso de São Paulo", () => {

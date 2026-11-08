@@ -1,0 +1,20 @@
+{
+  "versao": "ranqueamento-1.0",
+  "descricao": "Pesos do ranqueamento de universidades parceiras. Pontos de 0 a 100 por critério, multiplicados pelo peso.",
+  "pesos": {
+    "distancia": 0.40,
+    "preferencia_instituicao": 0.15,
+    "transporte": 0.15,
+    "turno": 0.10,
+    "acessibilidade": 0.10,
+    "disponibilidade": 0.10
+  },
+  "distancia_km_zero_pontos": 30,
+  "transporte_equivalente": {
+    "a_pe": [],
+    "onibus": ["onibus"],
+    "metro": ["metro"],
+    "trem": ["trem"],
+    "carro": ["estacionamento"]
+  }
+}

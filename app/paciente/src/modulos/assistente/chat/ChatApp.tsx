@@ -8,6 +8,7 @@ import { OptionsMenu } from "./components/OptionsMenu";
 import { QuickReplies } from "./components/QuickReplies";
 import { VLibras } from "./components/VLibras";
 import { configureChat, type ChatConfig } from "./config";
+import { Guia, ehAcaoGuiada, type PassoGuia } from "./guiado/guia";
 import { usePrefs } from "./hooks/usePrefs";
 import { browserTTS } from "./hooks/useSpeech";
 import { buildProfile, CONTINUE, PROFILE_STEPS, UPDATE, type Option } from "./onboarding/profileFlow";
@@ -21,17 +22,23 @@ interface Replies {
   title?: string;
 }
 
-const START_OPTIONS: Option[] = [
-  { label: "Encontrar uma clínica", value: "Quais clínicas existem?" },
-  { label: "Ver meus pedidos", value: "Como estão meus pedidos?" },
-  { label: "Atendimentos confirmados", value: "Quais são meus agendamentos?" },
-];
+/** Expressões de emergência odontológica (abre o fluxo de emergência na hora, sem depender da IA). */
+const EMERGENCIA = /(muita dor|dor (muito )?forte|dor insuport|dente (quebr|rach)|quebr(ei|ou) (o|um|meu) dente|inchad|inchaço|incha[cç]|sangr|febre|emerg[eê]ncia|urg[eê]ncia)/i;
+
+/** Atalho que volta ao menu da conversa guiada (aparece junto das respostas da IA). */
+const VER_OPCOES: Option = { label: "Ver o que posso fazer", value: "@inicio" };
 
 export interface ChatAppProps extends Pick<ChatConfig, "api">, Partial<Pick<ChatConfig, "logoUrl">> {
   /** pessoa logada (nome e foto) */
   user: ChatUser;
   /** se informado, o menu mostra "Sair" */
   onLogout?: () => void;
+  /** "conversa": o chat é a única tela do app (muda só os textos de boas-vindas) */
+  modo?: "conversa" | "telas";
+  /** se informado, o menu mostra a opção de trocar a forma de atendimento */
+  trocarModo?: { rotulo: string; acao: () => void };
+  /** chamado depois que a conversa guiada muda dados no backend (ex.: para atualizar as telas) */
+  aoMudarDados?: () => void;
 }
 
 /**
@@ -39,8 +46,13 @@ export interface ChatAppProps extends Pick<ChatConfig, "api">, Partial<Pick<Chat
  * (perfil, chat, áudio) usando o token e o endereço recebidos aqui.
  * Ajuda a encontrar clínicas, enviar pedidos e acompanhá-los. Não marca horário: pedido ≠ agendamento.
  */
-export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppProps) {
+export function ChatApp({ user, onLogout, api: clienteApi, logoUrl, modo = "telas", trocarModo, aoMudarDados }: ChatAppProps) {
   configureChat({ api: clienteApi, logoUrl });
+  const aoMudarDadosRef = useRef(aoMudarDados);
+  aoMudarDadosRef.current = aoMudarDados;
+  const guia = useRef<Guia | null>(null);
+  if (!guia.current) guia.current = new Guia(clienteApi, () => aoMudarDadosRef.current?.(), { nomeUsuario: user.nome });
+  const [placeholderGuia, setPlaceholderGuia] = useState<string | null>(null);
   const { prefs, update, applySuggested } = usePrefs();
   const [phase, setPhase] = useState<Phase>("loading");
   const [messages, setMessages] = useState<UiMessage[]>([]);
@@ -89,14 +101,36 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppPro
     askStep(0);
   }, [askStep, bot]);
 
+  // ---------- Conversa guiada (mesmas requisições das telas) ----------
+  const mostrarPasso = useCallback(
+    (p: PassoGuia) => {
+      p.mensagens.forEach((m) => bot(m.texto, m.erro ? { error: true } : {}));
+      setReplies(p.opcoes.length ? { options: p.opcoes, title: p.titulo ?? "Escolha uma opção" } : null);
+      setPlaceholderGuia(p.texto?.placeholder ?? null);
+    },
+    [bot],
+  );
+
+  const runGuia = async (fn: () => Promise<PassoGuia>) => {
+    setReplies(null);
+    setBusy(true);
+    try {
+      mostrarPasso(await fn());
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const startChat = useCallback(() => {
     setPhase("chat");
     bot(
-      "Como posso ajudar? Posso mostrar clínicas-escola de saúde, enviar um pedido de atendimento " +
-        "e contar como estão seus pedidos.",
+      modo === "conversa"
+        ? "Aqui você faz tudo pela conversa: pedir atendimento, acompanhar pedidos, ver horários e alertas. " +
+            "Toque em uma opção ou escreva sua dúvida."
+        : "Como posso ajudar? Toque em uma opção ou escreva sua dúvida.",
     );
-    setReplies({ options: START_OPTIONS, title: "Atalhos" });
-  }, [bot]);
+    mostrarPasso(guia.current!.inicio());
+  }, [bot, modo, mostrarPasso]);
 
   // Saiu do chat (ex.: logout no site): não deixa a voz falando sozinha.
   useEffect(() => () => browserTTS.stop(), []);
@@ -137,6 +171,8 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppPro
   const sendToAI = async (text: string) => {
     push({ from: "user", text });
     setReplies(null);
+    setPlaceholderGuia(null);
+    guia.current!.pararDeEsperar();
     setBusy(true);
     try {
       const res = await api.chat(text, conversationId.current);
@@ -145,7 +181,7 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppPro
       applySuggested(res.ui_prefs);
       const autoPlay = prefsRef.current.audio_mode && prefsRef.current.auto_play_audio;
       res.messages.forEach((m) => push({ from: "bot", text: m.text, audio: m.audio, autoPlay }));
-      setReplies(res.quick_replies.length ? { options: res.quick_replies, title: "Escolha uma opção ou escreva" } : null);
+      setReplies({ options: [...res.quick_replies, VER_OPCOES], title: "Escolha uma opção ou escreva" });
     } catch (err) {
       bot(err instanceof ErroApi ? err.message : "Sem conexão. Verifique sua internet e tente de novo.", {
         error: true,
@@ -187,11 +223,27 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppPro
       }
       return;
     }
+    if (ehAcaoGuiada(values[0])) {
+      push({ from: "user", text: labels[0] });
+      await runGuia(() => guia.current!.executar(values[0]));
+      return;
+    }
     await sendToAI(values[0]);
   };
 
   const onSend = (text: string) => {
-    if (phase === "chat") void sendToAI(text);
+    if (phase !== "chat") return;
+    if (!guia.current!.esperaTexto() && EMERGENCIA.test(text)) {
+      push({ from: "user", text });
+      void runGuia(() => guia.current!.executar("@emergencia"));
+      return;
+    }
+    if (guia.current!.esperaTexto()) {
+      push({ from: "user", text });
+      void runGuia(() => guia.current!.responderTexto(text));
+      return;
+    }
+    void sendToAI(text);
   };
 
   const inChat = phase === "chat";
@@ -200,7 +252,7 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppPro
   const today = new Intl.DateTimeFormat("pt-BR", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
 
   return (
-    <div className="chat-app">
+    <div className={`chat-app${modo === "conversa" ? " chat-app--unica" : ""}`}>
       <a href="#composer-input" className="skip-link">
         Pular para a caixa de mensagem
       </a>
@@ -214,11 +266,24 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppPro
             onLogout={onLogout}
             userName={user.nome}
             onEditProfile={inChat && !busy ? () => startOnboarding() : undefined}
+            trocarModo={trocarModo}
           />
         </header>
+        {/* Sempre visíveis: trocar de modo e falar com uma pessoa (pede confirmação antes de avisar a equipe). */}
+        <div className="chat-atalhos">
+          <button type="button" className="chat-atalho chat-atalho--emergencia" disabled={!inChat || busy}
+            onClick={() => { push({ from: "user", text: "Emergência" }); void runGuia(() => guia.current!.executar("@emergencia")); }}>
+            Emergência
+          </button>
+          <button type="button" className="chat-atalho" disabled={!inChat || busy}
+            onClick={() => { push({ from: "user", text: "Quero falar com uma pessoa" }); void runGuia(() => guia.current!.executar("@atendente")); }}>
+            Falar com uma pessoa
+          </button>
+          {trocarModo && <button type="button" className="chat-atalho" onClick={trocarModo.acao}>{trocarModo.rotulo}</button>}
+        </div>
         {/* Texto fixo: não depende de rede, IA, vaga ou fila (contrato §9.4). */}
         <p className="chat-notice" role="note">
-          <strong>Demonstração</strong> · dados fictícios. Não diagnostica e não substitui atendimento médico.
+          Não diagnostica e não substitui atendimento médico.
           Emergência: ligue <a href="tel:192">192 (SAMU)</a>.
           {fonte === "mock" && " Respostas automáticas, sem IA."}
         </p>
@@ -269,7 +334,7 @@ export function ChatApp({ user, onLogout, api: clienteApi, logoUrl }: ChatAppPro
           <Composer
             onSend={onSend}
             disabled={!inChat || busy}
-            placeholder={inChat ? "Escreva sua mensagem" : "Escolha uma opção acima"}
+            placeholder={inChat ? (placeholderGuia ?? "Escreva sua mensagem") : "Escolha uma opção acima"}
           />
         </footer>
       </div>

@@ -33,14 +33,41 @@ class AcessibilidadeIn(BaseModel):
     tema: Literal["sistema", "claro", "escuro", "alto_contraste"] = "sistema"
 
 
+Transporte = Literal["a_pe", "onibus", "metro", "trem", "carro"]
+Turno = Literal["manha", "tarde", "noite"]
+Preferencia = Literal["publica", "privada", "tanto_faz"]
+Modo = Literal["conversa", "telas"]
+
+
 class PerfilIn(BaseModel):
-    """Só o que a pessoa escolhe. `usuario_id` vem do token. Sem documento, endereço ou dado clínico."""
+    """Só o que a pessoa escolhe. `usuario_id` vem do token. Sem dado clínico."""
     model_config = ConfigDict(extra="ignore")
     cidade: str | None = Field(default=None, max_length=80)
     uf: str | None = Field(default=None, min_length=2, max_length=2)
     contato_preferido: Literal["app", "telefone"] | None = None
     socioeconomico: SocioeconomicoIn = Field(default_factory=SocioeconomicoIn)
     acessibilidade: AcessibilidadeIn = Field(default_factory=AcessibilidadeIn)
+    # Endereço/território (sugere a universidade mais próxima). Sem lat/lng, o CEP vira o centro da região.
+    cep: str | None = Field(default=None, max_length=9)
+    logradouro: str | None = Field(default=None, max_length=120)
+    numero: str | None = Field(default=None, max_length=12)
+    bairro: str | None = Field(default=None, max_length=80)
+    latitude: float | None = Field(default=None, ge=-90, le=90)
+    longitude: float | None = Field(default=None, ge=-180, le=180)
+    # Preferências de atendimento
+    preferencia_instituicao: Preferencia | None = None
+    distancia_max_km: float | None = Field(default=None, gt=0, le=200)
+    transportes: list[Transporte] = Field(default_factory=list)
+    turnos: list[Turno] = Field(default_factory=list)
+    precisa_acessibilidade: bool = False
+    # Dados sensíveis (LGPD): renda e deficiência só valem com consentimento explícito
+    possui_deficiencia: bool | None = None
+    tipo_deficiencia: Literal["visual", "auditiva", "motora", "intelectual", "tea", "outra"] | None = None
+    consentimento_dados_sensiveis: bool = False
+
+
+class ModoIn(BaseModel):
+    modo: Modo
 
 
 class SocioeconomicoOut(BaseModel):
@@ -68,3 +95,19 @@ class PerfilOut(BaseModel):
     salvo: bool
     modo: Literal["demo"]
     aviso: str
+    cep: str | None = None
+    logradouro: str | None = None
+    numero: str | None = None
+    bairro: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    preferencia_instituicao: Preferencia | None = None
+    distancia_max_km: float | None = None
+    transportes: list[Transporte] = []
+    turnos: list[Turno] = []
+    precisa_acessibilidade: bool = False
+    modo_atendimento: Modo | None = None
+    cadastro_completo: bool = False  # endereço (CEP) e preferências preenchidos
+    possui_deficiencia: bool | None = None
+    tipo_deficiencia: str | None = None
+    consentimento_dados_sensiveis: bool = False

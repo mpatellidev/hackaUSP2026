@@ -16,7 +16,7 @@ ESTADOS_SOLICITACAO = {"enviada", "em_analise", "precisa_contato", "indisponivel
                        "aguardando_confirmacao", "agendada", "concluida"}
 ESTADOS_VAGA = {"aberta", "preenchida", "cancelada"}
 ESTADOS_INTERESSE = {"registrado", "confirmado", "nao_selecionado", "retirado"}
-FUNCOES = {"atendimento", "profissional", "coordenacao"}
+FUNCOES = {"atendimento", "profissional", "coordenacao", "estudante"}
 erros = []
 
 
@@ -130,8 +130,14 @@ for e in itens("eventos-acesso"):
            f"evento de acesso {e['id']}: inválido")
 
 texto = "".join(p.read_text(encoding="utf-8") for p in AQUI.glob("*.json"))
-checar(not re.search(r"\d{3}\.\d{3}\.\d{3}-\d{2}", texto), "possível CPF encontrado")
-checar(not re.search(r"[\w.]+@[\w.]+\.\w+", texto), "possível e-mail encontrado")
+checar(not re.search(r"\d{3}\.\d{3}\.\d{3}-\d{2}", texto), "possível CPF formatado encontrado (use só dígitos)")
+# CPF só fictício: 11 dígitos começando com 000000 (nenhum CPF real começa assim nas fixtures).
+for u in itens("usuarios"):
+    if "cpf" in u:
+        checar(re.fullmatch(r"000000\d{5}", u["cpf"] or "") is not None, f"usuário {u['id']}: CPF não fictício")
+# Só o domínio reservado example.com (RFC 2606) é aceito: ele nunca entrega mensagens a ninguém.
+emails = re.findall(r"[\w.+-]+@([\w-]+(?:\.[\w-]+)+)", texto)
+checar(all(d == "example.com" for d in emails), "possível e-mail real encontrado (use só @example.com)")
 checar(not re.search(r"(?i)senha|password|secret|token", texto.replace("SEM senha", "")), "possível segredo encontrado")
 
 if erros:

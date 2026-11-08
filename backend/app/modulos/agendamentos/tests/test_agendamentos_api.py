@@ -65,7 +65,7 @@ def test_clinica_cancela_pela_clinica_e_nao_gera_falta(client, login, db):
     faltas_antes = db.scalar(select(func.count()).select_from(RegistroFalta))
     r = _cancelar(client, login(ATEND_B), motivo="Sala indisponível.")
     assert r.status_code == 200, r.text
-    assert r.json()["desfecho"] == "cancelado_pela_clinica" and r.json()["paciente_nome_exibicao"] == "Ana M."
+    assert r.json()["desfecho"] == "cancelado_pela_clinica" and r.json()["paciente_nome_exibicao"] == "Ana Martins"
     db.expire_all()
     assert db.get(Solicitacao, PEDIDO_ANA_B).estado == "em_analise"
     assert db.get(Vaga, VAGA_1).estado == "aberta"

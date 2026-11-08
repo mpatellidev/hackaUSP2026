@@ -1,0 +1,24 @@
+{
+  "_aviso": "Prontuário fictício. O conteúdo é cifrado ao entrar no banco (seed).",
+  "itens": [
+    {
+      "id": "e6000000-0000-4000-8000-000000000001",
+      "paciente_id": "a1000000-0000-4000-8000-000000000001",
+      "clinica_id": "c1000000-0000-4000-8000-000000000002",
+      "solicitacao_id": "b1000000-0000-4000-8000-000000000002",
+      "tipo": "triagem",
+      "risco_clinico": "moderado",
+      "especialidades": [
+        "endodontia"
+      ],
+      "procedimentos": [
+        "canal_multirradicular"
+      ],
+      "conteudo": "Queixa: dor ao mastigar do lado direito há duas semanas. Exame clínico: cárie profunda no dente 46, sensível ao frio. Radiografia periapical: lesão próxima à polpa. Hipótese: necessidade de tratamento de canal (endodontia) no dente 46. Sem sinais de urgência no momento.",
+      "autor_id": "a1000000-0000-4000-8000-000000000016",
+      "validado_por": "a1000000-0000-4000-8000-000000000014",
+      "criado_em": "2026-11-05T10:00:00-03:00",
+      "validado_em": "2026-11-05T11:30:00-03:00"
+    }
+  ]
+}

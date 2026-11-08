@@ -37,13 +37,13 @@ Publicar (coordenação, `funcionario.coordenacao.c`):
 POST /api/v1/cenarios
 {"titulo": "Orientação de rotina com estudantes", "descricao_leiga": "Atividade supervisionada por professores.",
  "requisitos": ["Ter 18 anos ou mais"], "publico": "adultos", "cidade": "São Paulo", "uf": "SP",
- "especialidade": "oftalmologia"}
+ "especialidade": "protese"}
 ```
 Resposta `201`:
 ```json
 {"id": "…", "clinica_id": "c1000000-0000-4000-8000-000000000003", "titulo": "Orientação de rotina com estudantes",
  "descricao_leiga": "Atividade supervisionada por professores.", "requisitos": ["Ter 18 anos ou mais"],
- "publico": "adultos", "cidade": "São Paulo", "uf": "SP", "especialidade": "oftalmologia",
+ "publico": "adultos", "cidade": "São Paulo", "uf": "SP", "especialidade": "protese",
  "estado": "ativo", "publicado_em": "2026-11-07T10:12:00-03:00", "meu_interesse": null}
 ```
 Lista vazia (paciente):

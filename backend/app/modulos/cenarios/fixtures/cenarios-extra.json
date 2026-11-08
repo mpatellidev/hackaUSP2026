@@ -5,12 +5,12 @@
       "id": "c2000000-0000-4000-8000-000000000003",
       "clinica_id": "c1000000-0000-4000-8000-000000000003",
       "titulo": "Avaliação supervisionada de rotina da visão com estudantes",
-      "descricao_leiga": "Estudantes de oftalmologia, acompanhados por professores, fazem uma avaliação de rotina. A conduta é sempre decidida por profissionais.",
+      "descricao_leiga": "Estudantes de protese, acompanhados por professores, fazem uma avaliação de rotina. A conduta é sempre decidida por profissionais.",
       "requisitos": ["Ter 18 anos ou mais", "Morar em São Paulo"],
       "publico": "adultos",
       "cidade": "São Paulo",
       "uf": "SP",
-      "especialidade": "oftalmologia",
+      "especialidade": "protese",
       "estado": "ativo",
       "publicado_em": "2026-11-03T09:00:00-03:00"
     },
@@ -23,7 +23,7 @@
       "publico": "criancas",
       "cidade": "São Paulo",
       "uf": "SP",
-      "especialidade": "pediatria",
+      "especialidade": "odontopediatria",
       "estado": "ativo",
       "publicado_em": "2026-11-04T09:00:00-03:00"
     }

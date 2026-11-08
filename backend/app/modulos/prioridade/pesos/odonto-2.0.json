@@ -1,0 +1,13 @@
+{
+  "versao": "odonto-2.0",
+  "aviso": "Score = renda (quanto menor, mais pontos) + deficiência informada − faltas sem aviso. Renda e deficiência só contam com autorização do paciente. Urgência avaliada sempre vem antes de qualquer score. Pesos fixos do sistema.",
+  "socioeconomico": {
+    "peso": 1.0,
+    "faixas": {"ate_1_salario_minimo": 30, "1_a_2_salarios_minimos": 20, "2_a_3_salarios_minimos": 10, "acima_de_3_salarios_minimos": 0},
+    "desconhecido": 0
+  },
+  "necessidade_academica": {"peso": 0.0, "valor_se_correspondente": 0},
+  "tempo_espera": {"peso": 0.0, "pontos_por_dia": 0, "teto_dias": 0},
+  "falta_verificada": {"peso": 1.0, "valor_por_falta_confirmada": -15, "teto_faltas": 5},
+  "deficiencia": {"peso": 1.0, "valor": 20}
+}

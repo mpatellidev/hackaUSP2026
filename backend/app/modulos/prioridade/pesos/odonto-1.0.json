@@ -1,0 +1,11 @@
+{
+  "versao": "odonto-1.0",
+  "aviso": "Score = risco clínico (avaliado por professor na triagem) + assiduidade. Urgência avaliada sempre vem antes de qualquer score. Pesos configuráveis; a decisão final é sempre humana.",
+  "socioeconomico": {"peso": 0.0, "faixas": {}, "desconhecido": 0},
+  "necessidade_academica": {"peso": 0.0, "valor_se_correspondente": 0},
+  "tempo_espera": {"peso": 0.2, "pontos_por_dia": 1, "teto_dias": 30},
+  "falta_verificada": {"peso": 1.0, "valor_por_falta_confirmada": -15, "teto_faltas": 3},
+  "risco_clinico": {"peso": 1.0, "valores": {"baixo": 5, "moderado": 15, "alto": 30, "urgente": 50}},
+  "assiduidade": {"peso": 1.0, "por_comparecimento": 5, "teto_comparecimentos": 4,
+                  "por_cancelamento_antecipado": 1, "teto_cancelamentos": 3}
+}

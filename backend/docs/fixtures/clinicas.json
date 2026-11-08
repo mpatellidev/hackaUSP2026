@@ -1,27 +1,104 @@
 {
-  "_aviso": "Dados fictícios para demonstração. Nenhuma pessoa real.",
+  "_aviso": "Dados fictícios: universidades, clínicas, endereços, telefones e coordenadas são inventados (telefones (DD) 1XXX-XXXX não são números válidos no Brasil). Nenhuma instituição real.",
   "itens": [
     {
       "id": "c1000000-0000-4000-8000-000000000001",
-      "nome": "Clínica-Escola A",
+      "nome": "Clínica-Escola de Odontologia Bela Vista",
       "cidade": "São Paulo",
       "uf": "SP",
       "publico": [
         "adultos"
       ],
       "especialidades": [
-        "clinica_geral",
-        "cardiologia",
-        "dermatologia"
+        "triagem",
+        "clinica_integrada",
+        "periodontia",
+        "dentistica"
       ],
       "custo_informado": "gratuito",
       "recebendo_pedidos": true,
-      "telefone": "(11) 0000-0001",
-      "distancia_km_demo": 2.4
+      "telefone": "(11) 1011-2201",
+      "endereco": "Rua Professora Helena Duarte, 410",
+      "bairro": "Bela Vista",
+      "cep": "01323-020",
+      "latitude": -23.5614,
+      "longitude": -46.6487,
+      "universidade": "Universidade Estadual Paulistana",
+      "tipo_instituicao": "publica",
+      "turnos": [
+        "manha",
+        "tarde"
+      ],
+      "transportes": [
+        "metro",
+        "onibus"
+      ],
+      "acessivel": true,
+      "valor_consulta": null,
+      "horarios_funcionamento": {
+        "seg": [
+          "07:00",
+          "19:00"
+        ],
+        "ter": [
+          "07:00",
+          "19:00"
+        ],
+        "qua": [
+          "07:00",
+          "19:00"
+        ],
+        "qui": [
+          "07:00",
+          "19:00"
+        ],
+        "sex": [
+          "07:00",
+          "19:00"
+        ],
+        "sab": [
+          "08:00",
+          "12:00"
+        ],
+        "dom": null
+      },
+      "atende_urgencia": true,
+      "horario_urgencia": {
+        "seg": [
+          "00:00",
+          "24:00"
+        ],
+        "ter": [
+          "00:00",
+          "24:00"
+        ],
+        "qua": [
+          "00:00",
+          "24:00"
+        ],
+        "qui": [
+          "00:00",
+          "24:00"
+        ],
+        "sex": [
+          "00:00",
+          "24:00"
+        ],
+        "sab": [
+          "00:00",
+          "24:00"
+        ],
+        "dom": [
+          "00:00",
+          "24:00"
+        ]
+      },
+      "acessibilidade_info": "Entrada sem degraus, elevador e banheiro adaptado.",
+      "como_chegar": "A 400 m da estação de metrô Trianon-Masp (linha verde). Ônibus na Av. Paulista."
     },
     {
       "id": "c1000000-0000-4000-8000-000000000002",
-      "nome": "Clínica-Escola B",
+      "nome": "Clínica Odontológica Vila Mariana",
       "cidade": "São Paulo",
       "uf": "SP",
       "publico": [
@@ -29,35 +106,147 @@
         "criancas"
       ],
       "especialidades": [
-        "clinica_geral",
-        "pediatria",
-        "ginecologia_obstetricia"
+        "triagem",
+        "clinica_integrada",
+        "odontopediatria",
+        "estomatologia"
       ],
       "custo_informado": "a_confirmar",
       "recebendo_pedidos": true,
-      "telefone": "(11) 0000-0002",
-      "distancia_km_demo": 4.1
+      "telefone": "(11) 1011-2202",
+      "endereco": "Rua Doutor Joaquim Vasconcelos, 255",
+      "bairro": "Vila Mariana",
+      "cep": "04019-030",
+      "latitude": -23.5891,
+      "longitude": -46.6345,
+      "universidade": "Centro Universitário Vila Mariana",
+      "tipo_instituicao": "privada",
+      "turnos": [
+        "manha",
+        "tarde",
+        "noite"
+      ],
+      "transportes": [
+        "metro",
+        "onibus",
+        "estacionamento"
+      ],
+      "acessivel": true,
+      "valor_consulta": 60.0,
+      "horarios_funcionamento": {
+        "seg": [
+          "08:00",
+          "21:00"
+        ],
+        "ter": [
+          "08:00",
+          "21:00"
+        ],
+        "qua": [
+          "08:00",
+          "21:00"
+        ],
+        "qui": [
+          "08:00",
+          "21:00"
+        ],
+        "sex": [
+          "08:00",
+          "21:00"
+        ],
+        "sab": [
+          "08:00",
+          "13:00"
+        ],
+        "dom": null
+      },
+      "atende_urgencia": true,
+      "horario_urgencia": {
+        "seg": [
+          "08:00",
+          "20:00"
+        ],
+        "ter": [
+          "08:00",
+          "20:00"
+        ],
+        "qua": [
+          "08:00",
+          "20:00"
+        ],
+        "qui": [
+          "08:00",
+          "20:00"
+        ],
+        "sex": [
+          "08:00",
+          "20:00"
+        ],
+        "sab": null,
+        "dom": null
+      },
+      "acessibilidade_info": "Entrada com rampa e consultórios no térreo.",
+      "como_chegar": "A 300 m da estação de metrô Vila Mariana (linha azul). Estacionamento conveniado."
     },
     {
       "id": "c1000000-0000-4000-8000-000000000003",
-      "nome": "Clínica-Escola C",
+      "nome": "Clínica de Especialidades Odontológicas Pinheiros",
       "cidade": "São Paulo",
       "uf": "SP",
       "publico": [
         "adultos"
       ],
       "especialidades": [
-        "ortopedia",
-        "oftalmologia"
+        "triagem",
+        "cirurgia",
+        "protese"
       ],
       "custo_informado": "a_confirmar",
       "recebendo_pedidos": false,
-      "telefone": "(11) 0000-0003",
-      "distancia_km_demo": 7.8
+      "telefone": "(11) 1011-2203",
+      "endereco": "Rua Engenheiro Paulo Lessa, 88",
+      "bairro": "Pinheiros",
+      "cep": "05422-010",
+      "latitude": -23.566,
+      "longitude": -46.687,
+      "universidade": "Universidade Federal do Planalto Paulista",
+      "tipo_instituicao": "publica",
+      "turnos": [
+        "tarde"
+      ],
+      "transportes": [
+        "metro",
+        "trem",
+        "onibus"
+      ],
+      "acessivel": false,
+      "valor_consulta": null,
+      "horarios_funcionamento": {
+        "seg": null,
+        "ter": [
+          "13:00",
+          "18:00"
+        ],
+        "qua": [
+          "13:00",
+          "18:00"
+        ],
+        "qui": [
+          "13:00",
+          "18:00"
+        ],
+        "sex": null,
+        "sab": null,
+        "dom": null
+      },
+      "atende_urgencia": false,
+      "horario_urgencia": {},
+      "acessibilidade_info": "Prédio antigo, com escadas na entrada. Não tem elevador.",
+      "como_chegar": "A 600 m da estação Pinheiros (metrô linha amarela e trem)."
     },
     {
       "id": "c1000000-0000-4000-8000-000000000004",
-      "nome": "Clínica-Escola D",
+      "nome": "Clínica-Escola de Odontologia Barão Geraldo",
       "cidade": "Campinas",
       "uf": "SP",
       "publico": [
@@ -65,13 +254,58 @@
         "criancas"
       ],
       "especialidades": [
-        "clinica_geral",
-        "saude_mental"
+        "triagem",
+        "clinica_integrada",
+        "endodontia"
       ],
       "custo_informado": "gratuito",
       "recebendo_pedidos": true,
-      "telefone": "(19) 0000-0004",
-      "distancia_km_demo": null
+      "telefone": "(19) 1011-2204",
+      "endereco": "Avenida Professor Rui Andrade, 1500",
+      "bairro": "Barão Geraldo",
+      "cep": "13083-200",
+      "latitude": -22.8195,
+      "longitude": -47.069,
+      "universidade": "Universidade Regional de Campinas",
+      "tipo_instituicao": "privada",
+      "turnos": [
+        "manha",
+        "noite"
+      ],
+      "transportes": [
+        "onibus",
+        "estacionamento"
+      ],
+      "acessivel": true,
+      "valor_consulta": null,
+      "horarios_funcionamento": {
+        "seg": [
+          "08:00",
+          "22:00"
+        ],
+        "ter": [
+          "08:00",
+          "22:00"
+        ],
+        "qua": [
+          "08:00",
+          "22:00"
+        ],
+        "qui": [
+          "08:00",
+          "22:00"
+        ],
+        "sex": [
+          "08:00",
+          "22:00"
+        ],
+        "sab": null,
+        "dom": null
+      },
+      "atende_urgencia": false,
+      "horario_urgencia": {},
+      "acessibilidade_info": "Entrada sem degraus e vagas de estacionamento para pessoas com deficiência.",
+      "como_chegar": "Ônibus que passam pela Av. Albino J. B. de Oliveira. Estacionamento no local."
     }
   ]
 }

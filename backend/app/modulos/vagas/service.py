@@ -97,6 +97,17 @@ def _meu_interesse(db: Session, paciente_id: str, vaga_id: str) -> InteresseVaga
                      .order_by(InteresseVaga.criado_em.desc()))
 
 
+def horarios_livres(db: Session, clinica_id: str, especialidade: str | None) -> list[dict]:
+    """Vagas abertas e futuras de uma clínica, sem dado de outros pacientes (só data, hora e especialidade)."""
+    if db.get(Clinica, clinica_id) is None:
+        raise nao_encontrado()
+    q = select(Vaga).where(Vaga.clinica_id == clinica_id, Vaga.estado == "aberta", Vaga.inicio > utc_now())
+    if especialidade:
+        q = q.where(Vaga.especialidade == especialidade)
+    return [{"vaga_id": v.id, "especialidade": v.especialidade, "inicio": to_sp_iso(v.inicio), "fim": to_sp_iso(v.fim)}
+            for v in db.scalars(q.order_by(Vaga.inicio, Vaga.id))]
+
+
 def listar(db: Session, actor: Actor, clinica_id: str | None, estado: str | None) -> list[dict]:
     q = select(Vaga).order_by(Vaga.inicio, Vaga.id)
     if estado:
@@ -218,6 +229,10 @@ def confirmar(db: Session, actor: Actor, vaga_id: str, interesse_id: str) -> dic
     interesse.estado = "confirmado"
     pedido.estado = "agendada"
     pedido.atualizado_em = agora
+    from app.modulos.notificacoes.service import notificar
+    notificar(db, interesse.paciente_id, "Horário confirmado",
+              f"A clínica confirmou seu horário: {to_sp_iso(vaga.inicio)[8:10]}/{to_sp_iso(vaga.inicio)[5:7]} às "
+              f"{to_sp_iso(vaga.inicio)[11:16]}. Chegue 15 minutos antes e leve um documento com foto.", f"vaga:{vaga.id}")
     _evento(db, pedido, "confirmacao", actor, "aguardando_confirmacao", "agendada",
             "Vaga confirmada pela clínica.")
     # Quem pediu a mesma vaga e não foi escolhido: não selecionado (sem punição, sem outro efeito).

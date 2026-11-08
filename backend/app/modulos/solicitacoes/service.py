@@ -31,6 +31,12 @@ def clinica_json(c: Clinica) -> dict:
         "id": c.id, "nome": c.nome, "cidade": c.cidade, "uf": c.uf, "publico": c.publico,
         "especialidades": c.especialidades, "custo_informado": c.custo_informado,
         "recebendo_pedidos": c.recebendo_pedidos, "telefone": c.telefone,
+        "endereco": c.endereco, "bairro": c.bairro, "cep": c.cep, "latitude": c.latitude, "longitude": c.longitude,
+        "universidade": c.universidade, "tipo_instituicao": c.tipo_instituicao, "turnos": list(c.turnos or []),
+        "transportes": list(c.transportes or []), "acessivel": c.acessivel,
+        "acessibilidade_info": c.acessibilidade_info, "como_chegar": c.como_chegar, "valor_consulta": c.valor_consulta,
+        "horarios_funcionamento": dict(c.horarios_funcionamento or {}), "atende_urgencia": bool(c.atende_urgencia),
+        "horario_urgencia": dict(c.horario_urgencia or {}),
     }
 
 
@@ -40,6 +46,8 @@ def solicitacao_json(s: Solicitacao) -> dict:
         "especialidade": s.especialidade, "publico_alvo": s.publico_alvo,
         "descricao_administrativa": s.descricao_administrativa, "solicitacao_origem_id": s.solicitacao_origem_id,
         "criado_em": to_sp_iso(s.criado_em), "atualizado_em": to_sp_iso(s.atualizado_em),
+        "para_quem": s.para_quem, "nome_paciente": s.nome_paciente, "telefone_contato": s.telefone_contato,
+        "trilha": s.trilha,
     }
 
 
@@ -91,15 +99,25 @@ def _evento(db: Session, solicitacao: Solicitacao, tipo: str, actor: Actor,
 
 
 def criar(db: Session, actor: Actor, clinica_id: str, especialidade: str, publico_alvo: str,
-          descricao_administrativa: str) -> Solicitacao:
+          descricao_administrativa: str, para_quem: str | None = None, nome_paciente: str | None = None,
+          telefone_contato: str | None = None, trilha: str | None = None) -> Solicitacao:
     clinica = obter_clinica(db, clinica_id)
     validar_clinica_para_pedido(clinica, especialidade, publico_alvo)
+    nome_paciente = nome_paciente.strip() if nome_paciente else None
+    if especialidade == "triagem":
+        trilha = "estruturada"  # triagem é sempre o começo da trilha de cuidado
+    if trilha == "estruturada" and especialidade != "triagem" and not descricao_administrativa.startswith("Encaminhado"):
+        raise _erro_validacao(["especialidade"], "A trilha de cuidado começa pela triagem.")
+    if para_quem == "outra" and not nome_paciente:
+        raise _erro_validacao(["nome_paciente"], "Informe o nome de quem será atendido.")
     if _duplicada(db, actor.usuario_id, clinica_id, especialidade):
         raise ApiError(409, "solicitacao_duplicada", "Você já tem um pedido ativo para esta especialidade nesta clínica.")
     agora = utc_now()
     pedido = Solicitacao(paciente_id=actor.usuario_id, clinica_id=clinica_id, estado="enviada",
                          especialidade=especialidade, publico_alvo=publico_alvo,
-                         descricao_administrativa=descricao_administrativa, atualizado_em=agora)
+                         descricao_administrativa=descricao_administrativa, atualizado_em=agora,
+                         para_quem=para_quem, nome_paciente=nome_paciente, trilha=trilha,
+                         telefone_contato=telefone_contato.strip() if telefone_contato else None)
     db.add(pedido)
     db.flush()
     _evento(db, pedido, "criada", actor, None, "enviada")
@@ -162,7 +180,9 @@ def encaminhar(db: Session, actor: Actor, solicitacao_id: str, clinica_destino_i
     novo = Solicitacao(paciente_id=actor.usuario_id, clinica_id=destino.id, estado="enviada",
                        especialidade=origem.especialidade, publico_alvo=origem.publico_alvo,
                        descricao_administrativa=origem.descricao_administrativa,
-                       solicitacao_origem_id=origem.id, atualizado_em=agora)
+                       solicitacao_origem_id=origem.id, atualizado_em=agora,
+                       para_quem=origem.para_quem, nome_paciente=origem.nome_paciente,
+                       telefone_contato=origem.telefone_contato)
     db.add(novo)
     db.flush()
     _evento(db, novo, "encaminhamento_escolhido", actor, None, "enviada",

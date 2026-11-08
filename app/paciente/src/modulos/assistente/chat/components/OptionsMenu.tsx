@@ -9,6 +9,8 @@ interface Props {
   onEditProfile?: () => void;
   /** sem isso, o menu não mostra "Sair" (o login é responsabilidade do site) */
   onLogout?: () => void;
+  /** troca a forma de atendimento (conversa guiada ↔ telas do app) */
+  trocarModo?: { rotulo: string; acao: () => void };
   userName: string;
 }
 
@@ -27,7 +29,7 @@ function Switch({ label, checked, onToggle }: { label: string; checked: boolean;
 }
 
 /** Menu (hambúrguer) com as opções de acessibilidade e da conta, escondidas até a pessoa pedir. */
-export function OptionsMenu({ prefs, onChange, onEditProfile, onLogout, userName }: Props) {
+export function OptionsMenu({ prefs, onChange, onEditProfile, onLogout, trocarModo, userName }: Props) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -118,6 +120,11 @@ export function OptionsMenu({ prefs, onChange, onEditProfile, onLogout, userName
         </div>
 
         <div className="menu-section">
+          {trocarModo && (
+            <button type="button" className="menu-row menu-action" onClick={run(trocarModo.acao)}>
+              {trocarModo.rotulo}
+            </button>
+          )}
           {onEditProfile && (
             <button type="button" className="menu-row menu-action" onClick={run(onEditProfile)}>
               <UserIcon /> Atualizar meus dados

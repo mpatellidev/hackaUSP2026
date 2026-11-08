@@ -9,9 +9,10 @@ from app.core.time import utc_now
 from app.models.base import CriadoEm, UuidPk
 
 PUBLICOS = ("adultos", "criancas", "gestantes", "idosos")
+# Especialidades odontológicas (a plataforma é só de odontologia)
 ESPECIALIDADES = (
-    "clinica_geral", "pediatria", "ginecologia_obstetricia", "cardiologia", "dermatologia",
-    "ortopedia", "oftalmologia", "saude_mental", "odontologia", "fisioterapia", "nutricao",
+    "triagem", "clinica_integrada", "dentistica", "endodontia", "periodontia", "cirurgia", "protese",
+    "odontopediatria", "estomatologia", "ortodontia",
 )
 
 

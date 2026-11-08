@@ -4,6 +4,280 @@
  */
 
 export interface paths {
+    "/emergencia": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Emergência: clínica de urgência aberta mais próxima (não cria agendamento) */
+        get: operations["emergencia_api_v1_emergencia_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/receitas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Minhas receitas (só as assinadas, histórico completo) */
+        get: operations["minhas_api_v1_receitas_get"];
+        put?: never;
+        /** Redigir receita (estudante ou professor) */
+        post: operations["criar_api_v1_receitas_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/receitas/{receita_id}/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Baixar a receita em PDF */
+        get: operations["baixar_api_v1_receitas__receita_id__pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/receitas/{receita_id}/assinar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Aprovar e assinar a receita (professor com CRO). O paciente é avisado */
+        post: operations["assinar_api_v1_receitas__receita_id__assinar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referenciamentos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Meus encaminhamentos para outra clínica */
+        get: operations["meus_api_v1_referenciamentos_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referenciamentos/{ref_id}/aceitar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirmar o encaminhamento (consente levar o diagnóstico) */
+        post: operations["aceitar_api_v1_referenciamentos__ref_id__aceitar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referenciamentos/{ref_id}/recusar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Recusar o encaminhamento */
+        post: operations["recusar_api_v1_referenciamentos__ref_id__recusar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notificacoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Meus avisos (no app e no chat) */
+        get: operations["minhas_api_v1_notificacoes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notificacoes/{notificacao_id}/lida": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Marcar aviso como lido */
+        post: operations["lida_api_v1_notificacoes__notificacao_id__lida_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/atendimento-humano": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Pedir para falar com uma pessoa da equipe */
+        post: operations["atendente_api_v1_atendimento_humano_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/prontuario": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Meu prontuário (só leitura; o acesso fica registrado) */
+        get: operations["meu_api_v1_prontuario_get"];
+        put?: never;
+        /** Escrever no prontuário (estudante ou professor) */
+        post: operations["criar_api_v1_prontuario_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/prontuario/acessos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Quem viu ou escreveu no meu prontuário */
+        get: operations["acessos_api_v1_prontuario_acessos_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pacientes/{paciente_id}/prontuario": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Prontuário de um paciente com pedido na minha clínica (equipe; acesso registrado) */
+        get: operations["do_paciente_api_v1_pacientes__paciente_id__prontuario_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/prontuario/{registro_id}/validar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validar registro (professor). Triagem validada aciona o indexador */
+        post: operations["validar_api_v1_prontuario__registro_id__validar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/universidades/sugestoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Clínicas-escola sugeridas para mim (distância, preferência, transporte, turno e vagas) */
+        get: operations["sugestoes_api_v1_universidades_sugestoes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/clinicas-comparacao": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Comparar clínicas: distância até o paciente, valor, tipo, especialidades e próximos horários livres */
+        get: operations["comparacao_api_v1_clinicas_comparacao_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/saude": {
         parameters: {
             query?: never;
@@ -52,6 +326,40 @@ export interface paths {
         put?: never;
         /** Login DEMO com conta fictícia e senha de demonstração */
         post: operations["login_com_senha_api_v1_auth_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/entrar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Entrar com e-mail e senha (app do paciente) */
+        post: operations["entrar_api_v1_auth_entrar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/cadastro": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Criar conta de paciente (e-mail e senha) */
+        post: operations["cadastro_api_v1_auth_cadastro_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -116,7 +424,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Listar clínicas para o paciente */
+        /** Listar clínicas para o paciente (com lat/lng ou CEP: mais próximas primeiro) */
         get: operations["listar_clinicas_api_v1_clinicas_get"];
         put?: never;
         post?: never;
@@ -267,6 +575,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/clinicas/{clinica_id}/horarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Horários livres de uma clínica, para o paciente escolher antes de pedir */
+        get: operations["horarios_livres_api_v1_clinicas__clinica_id__horarios_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/vagas/{vaga_id}/interesses": {
         parameters: {
             query?: never;
@@ -353,6 +678,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/agendamentos/{agendamento_id}/remarcar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remarcar: troca por outro horário livre da mesma clínica (a clínica confirma o novo) */
+        post: operations["remarcar_api_v1_agendamentos__agendamento_id__remarcar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/clinicas/{clinica_id}/fila": {
         parameters: {
             query?: never;
@@ -416,6 +758,23 @@ export interface paths {
         put?: never;
         /** Revisar falta (profissional ou coordenação); fica auditado */
         post: operations["revisar_falta_api_v1_faltas__falta_id__revisao_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/meu-score": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Minha prioridade: como ela é calculada (paciente) */
+        get: operations["meu_score_api_v1_meu_score_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -563,6 +922,23 @@ export interface paths {
         get: operations["meu_perfil_api_v1_perfil_get"];
         /** Salvar meu perfil (substitui o anterior) */
         put: operations["salvar_perfil_api_v1_perfil_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/perfil/modo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Salvar o modo de uso: assistente (conversa) ou telas */
+        put: operations["salvar_modo_api_v1_perfil_modo_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -936,6 +1312,21 @@ export interface components {
              */
             tema: "sistema" | "claro" | "escuro" | "alto_contraste";
         };
+        /** AcessoOut */
+        AcessoOut: {
+            /** Id */
+            id: string;
+            /** Quem */
+            quem: string;
+            /** Acao */
+            acao: string;
+            /** Acao Rotulo */
+            acao_rotulo: string;
+            /** Clinica Nome */
+            clinica_nome: string | null;
+            /** Criado Em */
+            criado_em: string;
+        };
         /** AgendamentoBase */
         AgendamentoBase: {
             /** Id */
@@ -1027,6 +1418,18 @@ export interface components {
             itens: components["schemas"]["AlternativaOut"][];
             /** Aviso */
             aviso: string;
+        };
+        /** AtendenteIn */
+        AtendenteIn: {
+            /** Mensagem */
+            mensagem?: string | null;
+        };
+        /** AtendenteOut */
+        AtendenteOut: {
+            /** Mensagem */
+            mensagem: string;
+            /** Contatos */
+            contatos: components["schemas"]["ContatoOut"][];
         };
         /** AtualizarEstadoIn */
         AtualizarEstadoIn: {
@@ -1134,6 +1537,17 @@ export interface components {
             text: string;
             audio: components["schemas"]["AudioPayload"] | null;
         };
+        /** CadastroIn */
+        CadastroIn: {
+            /** Nome */
+            nome: string;
+            /** Cpf */
+            cpf: string;
+            /** Email */
+            email: string;
+            /** Senha */
+            senha: string;
+        };
         /** Campo */
         Campo: {
             /** Nome */
@@ -1193,6 +1607,17 @@ export interface components {
         CancelarIn: {
             /** Motivo */
             motivo?: string | null;
+        };
+        /** CandidatoOut */
+        CandidatoOut: {
+            /** Nome */
+            nome: string;
+            /** Apta */
+            apta: boolean;
+            /** Pontos */
+            pontos: number | null;
+            /** Motivo */
+            motivo: string | null;
         };
         /** CenarioAtualizar */
         CenarioAtualizar: {
@@ -1336,6 +1761,76 @@ export interface components {
             recebendo_pedidos: boolean;
             /** Telefone */
             telefone: string;
+            /** Endereco */
+            endereco?: string | null;
+            /** Bairro */
+            bairro?: string | null;
+            /** Cep */
+            cep?: string | null;
+            /** Latitude */
+            latitude?: number | null;
+            /** Longitude */
+            longitude?: number | null;
+            /** Distancia Km */
+            distancia_km?: number | null;
+            /** Universidade */
+            universidade?: string | null;
+            /** Tipo Instituicao */
+            tipo_instituicao?: ("publica" | "privada") | null;
+            /**
+             * Turnos
+             * @default []
+             */
+            turnos: string[];
+            /**
+             * Transportes
+             * @default []
+             */
+            transportes: string[];
+            /** Acessivel */
+            acessivel?: boolean | null;
+            /** Acessibilidade Info */
+            acessibilidade_info?: string | null;
+            /** Como Chegar */
+            como_chegar?: string | null;
+            /** Valor Consulta */
+            valor_consulta?: number | null;
+            /**
+             * Horarios Funcionamento
+             * @default {}
+             */
+            horarios_funcionamento: {
+                [key: string]: string[] | null;
+            };
+            /**
+             * Atende Urgencia
+             * @default false
+             */
+            atende_urgencia: boolean;
+            /**
+             * Horario Urgencia
+             * @default {}
+             */
+            horario_urgencia: {
+                [key: string]: string[] | null;
+            };
+        };
+        /** ComparacaoItemOut */
+        ComparacaoItemOut: {
+            clinica: components["schemas"]["ClinicaOut"];
+            /** Distancia Km */
+            distancia_km: number | null;
+            /** Proximos Horarios */
+            proximos_horarios: components["schemas"]["HorarioProximoOut"][];
+        };
+        /** ComparacaoOut */
+        ComparacaoOut: {
+            /** Itens */
+            itens: components["schemas"]["ComparacaoItemOut"][];
+            /** Total */
+            total: number;
+            /** Usou Localizacao */
+            usou_localizacao: boolean;
         };
         /** CompartilhamentoOut */
         CompartilhamentoOut: {
@@ -1386,6 +1881,17 @@ export interface components {
             correspondente: boolean;
             /** Cenario Id */
             cenario_id?: string | null;
+        };
+        /** ComponenteMeuOut */
+        ComponenteMeuOut: {
+            /** Nome */
+            nome: string;
+            /** Titulo */
+            titulo: string;
+            /** Pontos */
+            pontos: number;
+            /** Explicacao */
+            explicacao: string;
         };
         /** ComponenteOut */
         ComponenteOut: {
@@ -1456,7 +1962,7 @@ export interface components {
              */
             papel: "paciente" | "funcionario";
             /** Funcao */
-            funcao: ("atendimento" | "profissional" | "coordenacao") | null;
+            funcao: ("atendimento" | "profissional" | "coordenacao" | "estudante") | null;
             /** Clinica Nome */
             clinica_nome: string | null;
         };
@@ -1475,6 +1981,13 @@ export interface components {
             login_sem_senha: boolean;
             /** Itens */
             itens: components["schemas"]["ContaDemo"][];
+        };
+        /** ContatoOut */
+        ContatoOut: {
+            /** Clinica Nome */
+            clinica_nome: string;
+            /** Telefone */
+            telefone: string;
         };
         /** CriarResumoIn */
         CriarResumoIn: {
@@ -1496,6 +2009,14 @@ export interface components {
             publico_alvo: "adultos" | "criancas" | "gestantes" | "idosos";
             /** Descricao Administrativa */
             descricao_administrativa: string;
+            /** Para Quem */
+            para_quem?: ("mim" | "outra") | null;
+            /** Nome Paciente */
+            nome_paciente?: string | null;
+            /** Telefone Contato */
+            telefone_contato?: string | null;
+            /** Trilha */
+            trilha?: "estruturada" | null;
         };
         /** CriarVagaIn */
         CriarVagaIn: {
@@ -1547,6 +2068,22 @@ export interface components {
             /** Disponiveis */
             disponiveis: number;
         };
+        /** EmergenciaOut */
+        EmergenciaOut: {
+            principal: components["schemas"]["UrgenciaAbertaOut"] | null;
+            /** Alternativas */
+            alternativas: components["schemas"]["UrgenciaAbertaOut"][];
+            /** Usou Localizacao */
+            usou_localizacao: boolean;
+            /** Sinais Graves */
+            sinais_graves: string[];
+            /** Orientacao Grave */
+            orientacao_grave: string;
+            /** Samu */
+            samu: string;
+            /** Aviso */
+            aviso: string;
+        };
         /** EncaminhadoOut */
         EncaminhadoOut: {
             solicitacao: components["schemas"]["SolicitacaoOut"];
@@ -1559,6 +2096,16 @@ export interface components {
         EncaminharIn: {
             /** Clinica Destino Id */
             clinica_destino_id: string;
+        };
+        /** EntrarIn */
+        EntrarIn: {
+            /**
+             * Login
+             * @description E-mail ou CPF
+             */
+            login: string;
+            /** Senha */
+            senha: string;
         };
         /**
          * EstadoRelato
@@ -1657,6 +2204,37 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HorarioLivreOut */
+        HorarioLivreOut: {
+            /** Vaga Id */
+            vaga_id: string;
+            /** Especialidade */
+            especialidade: string;
+            /** Inicio */
+            inicio: string;
+            /** Fim */
+            fim: string;
+        };
+        /** HorarioProximoOut */
+        HorarioProximoOut: {
+            /** Vaga Id */
+            vaga_id: string;
+            /** Especialidade */
+            especialidade: string;
+            /** Inicio */
+            inicio: string;
+        };
+        /** HorariosLivresOut */
+        HorariosLivresOut: {
+            /** Clinica Id */
+            clinica_id: string;
+            /** Itens */
+            itens: components["schemas"]["HorarioLivreOut"][];
+            /** Total */
+            total: number;
+            /** Aviso */
+            aviso: string;
         };
         /** InteresseIn */
         InteresseIn: {
@@ -1782,6 +2360,29 @@ export interface components {
             /** Sinalizacoes */
             sinalizacoes: string[];
         };
+        /** ItemReceita */
+        ItemReceita: {
+            /** Medicamento */
+            medicamento: string;
+            /** Dosagem */
+            dosagem: string;
+            /**
+             * Via
+             * @description Via de administração (ex.: oral, bochecho)
+             */
+            via: string;
+            /** Frequencia */
+            frequencia: string;
+            /** Duracao */
+            duracao: string;
+        };
+        /** ListaAcessos */
+        ListaAcessos: {
+            /** Itens */
+            itens: components["schemas"]["AcessoOut"][];
+            /** Total */
+            total: number;
+        };
         /** ListaAgendamentos */
         ListaAgendamentos: {
             /** Itens */
@@ -1827,6 +2428,7 @@ export interface components {
             itens: components["schemas"]["ClinicaOut"][];
             /** Total */
             total: number;
+            localizacao?: components["schemas"]["LocalizacaoOut"] | null;
         };
         /** ListaCompartilhamentos */
         ListaCompartilhamentos: {
@@ -1856,10 +2458,37 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** ListaNotificacoes */
+        ListaNotificacoes: {
+            /** Itens */
+            itens: components["schemas"]["NotificacaoOut"][];
+            /** Total */
+            total: number;
+            /** Nao Lidas */
+            nao_lidas: number;
+        };
         /** ListaProfissionais */
         ListaProfissionais: {
             /** Itens */
             itens: components["schemas"]["ProfissionalOut"][];
+            /** Total */
+            total: number;
+            /** Aviso */
+            aviso: string;
+        };
+        /** ListaReceitas */
+        ListaReceitas: {
+            /** Itens */
+            itens: components["schemas"]["ReceitaOut"][];
+            /** Total */
+            total: number;
+            /** Aviso */
+            aviso: string;
+        };
+        /** ListaReferenciamentos */
+        ListaReferenciamentos: {
+            /** Itens */
+            itens: components["schemas"]["ReferenciamentoOut"][];
             /** Total */
             total: number;
             /** Aviso */
@@ -1897,6 +2526,18 @@ export interface components {
             /** Aviso */
             aviso: string;
         };
+        /** LocalizacaoOut */
+        LocalizacaoOut: {
+            /**
+             * Fonte
+             * @enum {string}
+             */
+            fonte: "aparelho" | "cep";
+            /** Aproximada */
+            aproximada: boolean;
+            /** Descricao */
+            descricao: string;
+        };
         /** LoginDemoIn */
         LoginDemoIn: {
             /** Conta */
@@ -1932,6 +2573,50 @@ export interface components {
              */
             modo: "demo";
             usuario: components["schemas"]["UsuarioMe"];
+        };
+        /** MeuScoreOut */
+        MeuScoreOut: {
+            /** Score */
+            score: number;
+            /** Urgencia Avaliada */
+            urgencia_avaliada: boolean;
+            /** Componentes */
+            componentes: components["schemas"]["ComponenteMeuOut"][];
+            /** Comparecimentos */
+            comparecimentos: number;
+            /** Cancelamentos Com Aviso */
+            cancelamentos_com_aviso: number;
+            /** Faltas Sem Aviso */
+            faltas_sem_aviso: number;
+            /** Dicas */
+            dicas: string[];
+            /** Aviso */
+            aviso: string;
+            /** Versao Pesos */
+            versao_pesos: string;
+        };
+        /** ModoIn */
+        ModoIn: {
+            /**
+             * Modo
+             * @enum {string}
+             */
+            modo: "conversa" | "telas";
+        };
+        /** NotificacaoOut */
+        NotificacaoOut: {
+            /** Id */
+            id: string;
+            /** Titulo */
+            titulo: string;
+            /** Texto */
+            texto: string;
+            /** Lida */
+            lida: boolean;
+            /** Referencia */
+            referencia: string | null;
+            /** Criado Em */
+            criado_em: string;
         };
         /** Orientacao */
         Orientacao: {
@@ -1993,7 +2678,7 @@ export interface components {
         };
         /**
          * PerfilIn
-         * @description Só o que a pessoa escolhe. `usuario_id` vem do token. Sem documento, endereço ou dado clínico.
+         * @description Só o que a pessoa escolhe. `usuario_id` vem do token. Sem dado clínico.
          */
         PerfilIn: {
             /** Cidade */
@@ -2004,6 +2689,40 @@ export interface components {
             contato_preferido?: ("app" | "telefone") | null;
             socioeconomico?: components["schemas"]["SocioeconomicoIn"];
             acessibilidade?: components["schemas"]["AcessibilidadeIn"];
+            /** Cep */
+            cep?: string | null;
+            /** Logradouro */
+            logradouro?: string | null;
+            /** Numero */
+            numero?: string | null;
+            /** Bairro */
+            bairro?: string | null;
+            /** Latitude */
+            latitude?: number | null;
+            /** Longitude */
+            longitude?: number | null;
+            /** Preferencia Instituicao */
+            preferencia_instituicao?: ("publica" | "privada" | "tanto_faz") | null;
+            /** Distancia Max Km */
+            distancia_max_km?: number | null;
+            /** Transportes */
+            transportes?: ("a_pe" | "onibus" | "metro" | "trem" | "carro")[];
+            /** Turnos */
+            turnos?: ("manha" | "tarde" | "noite")[];
+            /**
+             * Precisa Acessibilidade
+             * @default false
+             */
+            precisa_acessibilidade: boolean;
+            /** Possui Deficiencia */
+            possui_deficiencia?: boolean | null;
+            /** Tipo Deficiencia */
+            tipo_deficiencia?: ("visual" | "auditiva" | "motora" | "intelectual" | "tea" | "outra") | null;
+            /**
+             * Consentimento Dados Sensiveis
+             * @default false
+             */
+            consentimento_dados_sensiveis: boolean;
         };
         /** PerfilOut */
         PerfilOut: {
@@ -2028,6 +2747,53 @@ export interface components {
             modo: "demo";
             /** Aviso */
             aviso: string;
+            /** Cep */
+            cep?: string | null;
+            /** Logradouro */
+            logradouro?: string | null;
+            /** Numero */
+            numero?: string | null;
+            /** Bairro */
+            bairro?: string | null;
+            /** Latitude */
+            latitude?: number | null;
+            /** Longitude */
+            longitude?: number | null;
+            /** Preferencia Instituicao */
+            preferencia_instituicao?: ("publica" | "privada" | "tanto_faz") | null;
+            /** Distancia Max Km */
+            distancia_max_km?: number | null;
+            /**
+             * Transportes
+             * @default []
+             */
+            transportes: ("a_pe" | "onibus" | "metro" | "trem" | "carro")[];
+            /**
+             * Turnos
+             * @default []
+             */
+            turnos: ("manha" | "tarde" | "noite")[];
+            /**
+             * Precisa Acessibilidade
+             * @default false
+             */
+            precisa_acessibilidade: boolean;
+            /** Modo Atendimento */
+            modo_atendimento?: ("conversa" | "telas") | null;
+            /**
+             * Cadastro Completo
+             * @default false
+             */
+            cadastro_completo: boolean;
+            /** Possui Deficiencia */
+            possui_deficiencia?: boolean | null;
+            /** Tipo Deficiencia */
+            tipo_deficiencia?: string | null;
+            /**
+             * Consentimento Dados Sensiveis
+             * @default false
+             */
+            consentimento_dados_sensiveis: boolean;
         };
         /** PreferenciaIn */
         PreferenciaIn: {
@@ -2092,12 +2858,129 @@ export interface components {
             /** Ativo */
             ativo?: boolean | null;
         };
+        /** ProntuarioOut */
+        ProntuarioOut: {
+            /** Itens */
+            itens: components["schemas"]["RegistroOut"][];
+            /** Total */
+            total: number;
+            /** Aviso */
+            aviso: string;
+        };
         /** QuickReply */
         QuickReply: {
             /** Label */
             label: string;
             /** Value */
             value: string;
+        };
+        /** ReceitaIn */
+        ReceitaIn: {
+            /** Solicitacao Id */
+            solicitacao_id: string;
+            /** Itens */
+            itens: components["schemas"]["ItemReceita"][];
+            /**
+             * Orientacoes
+             * @default
+             */
+            orientacoes: string;
+        };
+        /** ReceitaOut */
+        ReceitaOut: {
+            /** Id */
+            id: string;
+            /** Estado */
+            estado: string;
+            /** Valida */
+            valida: boolean;
+            /** Instituicao */
+            instituicao: string;
+            /** Itens */
+            itens: components["schemas"]["ItemReceita"][];
+            /** Orientacoes */
+            orientacoes: string;
+            /** Redigida Por */
+            redigida_por: string | null;
+            /** Assinante Nome */
+            assinante_nome: string | null;
+            /** Assinante Cro */
+            assinante_cro: string | null;
+            /** Data Emissao */
+            data_emissao: string | null;
+            /** Solicitacao Id */
+            solicitacao_id: string | null;
+            /** Criado Em */
+            criado_em: string;
+        };
+        /** ReferenciamentoOut */
+        ReferenciamentoOut: {
+            /** Id */
+            id: string;
+            /** Estado */
+            estado: string;
+            clinica_destino: components["schemas"]["ClinicaOut"];
+            /** Clinica Origem Nome */
+            clinica_origem_nome: string | null;
+            /** Horario Inicio */
+            horario_inicio: string | null;
+            /** Motivo */
+            motivo: string;
+            /** Motivo Simples */
+            motivo_simples: string;
+            /** Candidatos */
+            candidatos: components["schemas"]["CandidatoOut"][];
+            /** Solicitacao Destino Id */
+            solicitacao_destino_id: string | null;
+            /** Criado Em */
+            criado_em: string;
+            /** Respondido Em */
+            respondido_em: string | null;
+        };
+        /** RegistroIn */
+        RegistroIn: {
+            /** Solicitacao Id */
+            solicitacao_id: string;
+            /**
+             * Tipo
+             * @enum {string}
+             */
+            tipo: "triagem" | "exame_clinico" | "radiografia" | "laudo" | "plano_tratamento" | "evolucao";
+            /** Conteudo */
+            conteudo: string;
+            /** Risco Clinico */
+            risco_clinico?: ("baixo" | "moderado" | "alto" | "urgente") | null;
+            /** Especialidades */
+            especialidades?: string[];
+            /** Procedimentos */
+            procedimentos?: string[];
+        };
+        /** RegistroOut */
+        RegistroOut: {
+            /** Id */
+            id: string;
+            /** Tipo */
+            tipo: string;
+            /** Tipo Rotulo */
+            tipo_rotulo: string;
+            /** Clinica Nome */
+            clinica_nome: string;
+            /** Risco Clinico */
+            risco_clinico: string | null;
+            /** Especialidades */
+            especialidades: string[];
+            /** Procedimentos */
+            procedimentos: string[];
+            /** Conteudo */
+            conteudo: string;
+            /** Autor Nome */
+            autor_nome: string | null;
+            /** Validado Por Nome */
+            validado_por_nome: string | null;
+            /** Validado Em */
+            validado_em: string | null;
+            /** Criado Em */
+            criado_em: string;
         };
         /**
          * RelatoCriar
@@ -2138,6 +3021,22 @@ export interface components {
             modo: "demo";
             /** Aviso */
             aviso: string;
+        };
+        /** RemarcadoOut */
+        RemarcadoOut: {
+            /** Agendamento Cancelado Id */
+            agendamento_cancelado_id: string;
+            /** Vaga Id */
+            vaga_id: string;
+            /** Inicio */
+            inicio: string;
+            /** Aviso */
+            aviso: string;
+        };
+        /** RemarcarIn */
+        RemarcarIn: {
+            /** Vaga Id */
+            vaga_id: string;
         };
         /** ResumoOut */
         ResumoOut: {
@@ -2246,6 +3145,41 @@ export interface components {
             criado_em: string;
             /** Atualizado Em */
             atualizado_em: string | null;
+            /** Para Quem */
+            para_quem?: ("mim" | "outra") | null;
+            /** Nome Paciente */
+            nome_paciente?: string | null;
+            /** Telefone Contato */
+            telefone_contato?: string | null;
+            /** Trilha */
+            trilha?: string | null;
+        };
+        /** SugestaoOut */
+        SugestaoOut: {
+            clinica: components["schemas"]["ClinicaOut"];
+            /** Pontos */
+            pontos: number;
+            /** Distancia Km */
+            distancia_km: number | null;
+            /** Motivos */
+            motivos: string[];
+            /** Criterios */
+            criterios: {
+                [key: string]: number;
+            };
+        };
+        /** SugestoesOut */
+        SugestoesOut: {
+            /** Itens */
+            itens: components["schemas"]["SugestaoOut"][];
+            /** Total */
+            total: number;
+            /** Usou Localizacao */
+            usou_localizacao: boolean;
+            /** Versao Config */
+            versao_config: string;
+            /** Aviso */
+            aviso: string;
         };
         /** TTSIn */
         TTSIn: {
@@ -2285,6 +3219,14 @@ export interface components {
              */
             vlibras: boolean;
         };
+        /** UrgenciaAbertaOut */
+        UrgenciaAbertaOut: {
+            clinica: components["schemas"]["ClinicaOut"];
+            /** Distancia Km */
+            distancia_km: number | null;
+            /** Aberta Ate */
+            aberta_ate: string | null;
+        };
         /** UsuarioMe */
         UsuarioMe: {
             /** Id */
@@ -2299,7 +3241,7 @@ export interface components {
             /** Clinica Id */
             clinica_id?: string | null;
             /** Funcao */
-            funcao?: ("atendimento" | "profissional" | "coordenacao") | null;
+            funcao?: ("atendimento" | "profissional" | "coordenacao" | "estudante") | null;
             /** Vinculos */
             vinculos?: components["schemas"]["VinculoOut"][] | null;
         };
@@ -2378,7 +3320,7 @@ export interface components {
              * Funcao
              * @enum {string}
              */
-            funcao: "atendimento" | "profissional" | "coordenacao";
+            funcao: "atendimento" | "profissional" | "coordenacao" | "estudante";
         };
         /** AvaliacaoOut */
         app__modulos__avaliacoes__schemas__AvaliacaoOut: {
@@ -2446,6 +3388,598 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    emergencia_api_v1_emergencia_get: {
+        parameters: {
+            query?: {
+                lat?: number | null;
+                lng?: number | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmergenciaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    minhas_api_v1_receitas_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaReceitas"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    criar_api_v1_receitas_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceitaIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReceitaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    baixar_api_v1_receitas__receita_id__pdf_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                receita_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    assinar_api_v1_receitas__receita_id__assinar_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                receita_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReceitaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    meus_api_v1_referenciamentos_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaReferenciamentos"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    aceitar_api_v1_referenciamentos__ref_id__aceitar_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                ref_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferenciamentoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recusar_api_v1_referenciamentos__ref_id__recusar_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                ref_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferenciamentoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    minhas_api_v1_notificacoes_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaNotificacoes"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lida_api_v1_notificacoes__notificacao_id__lida_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                notificacao_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificacaoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    atendente_api_v1_atendimento_humano_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AtendenteIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AtendenteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    meu_api_v1_prontuario_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProntuarioOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    criar_api_v1_prontuario_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegistroIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegistroOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    acessos_api_v1_prontuario_acessos_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaAcessos"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    do_paciente_api_v1_pacientes__paciente_id__prontuario_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                paciente_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProntuarioOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validar_api_v1_prontuario__registro_id__validar_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                registro_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegistroOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sugestoes_api_v1_universidades_sugestoes_get: {
+        parameters: {
+            query?: {
+                especialidade?: string | null;
+                lat?: number | null;
+                lng?: number | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SugestoesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    comparacao_api_v1_clinicas_comparacao_get: {
+        parameters: {
+            query?: {
+                lat?: number | null;
+                lng?: number | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComparacaoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     saude_api_v1_saude_get: {
         parameters: {
             query?: never;
@@ -2501,6 +4035,72 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    entrar_api_v1_auth_entrar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EntrarIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cadastro_api_v1_auth_cadastro_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CadastroIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2617,6 +4217,9 @@ export interface operations {
             query?: {
                 cidade?: string | null;
                 especialidade?: string | null;
+                lat?: number | null;
+                lng?: number | null;
+                cep?: string | null;
             };
             header?: {
                 authorization?: string | null;
@@ -2989,6 +4592,41 @@ export interface operations {
             };
         };
     };
+    horarios_livres_api_v1_clinicas__clinica_id__horarios_get: {
+        parameters: {
+            query?: {
+                especialidade?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                clinica_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HorariosLivresOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     listar_interesses_api_v1_vagas__vaga_id__interesses_get: {
         parameters: {
             query?: never;
@@ -3199,6 +4837,43 @@ export interface operations {
             };
         };
     };
+    remarcar_api_v1_agendamentos__agendamento_id__remarcar_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                agendamento_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RemarcarIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemarcadoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     fila_api_v1_clinicas__clinica_id__fila_get: {
         parameters: {
             query?: never;
@@ -3355,6 +5030,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FaltaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    meu_score_api_v1_meu_score_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeuScoreOut"];
                 };
             };
             /** @description Validation Error */
@@ -3808,6 +5514,41 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["PerfilIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PerfilOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    salvar_modo_api_v1_perfil_modo_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModoIn"];
             };
         };
         responses: {

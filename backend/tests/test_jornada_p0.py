@@ -12,8 +12,8 @@ def test_jornada_p0_completa(client, login):
 
     # 1-2. Paciente envia pedido à clínica A
     r = client.post(f"{API}/solicitacoes", headers=bruno, json={
-        "clinica_id": CLINICA_A, "especialidade": "clinica_geral", "publico_alvo": "adultos",
-        "descricao_administrativa": "Consulta de rotina de clínica geral"})
+        "clinica_id": CLINICA_A, "especialidade": "clinica_integrada", "publico_alvo": "adultos",
+        "descricao_administrativa": "Avaliação de rotina dos dentes"})
     assert r.status_code == 201, r.text
     pedido_a = r.json()["id"]
     assert r.json()["estado"] == "enviada"
@@ -41,7 +41,7 @@ def test_jornada_p0_completa(client, login):
 
     # Pedido apenas `enviada` já pode demonstrar interesse (contrato §5, 0.1.3); a clínica ainda confirma depois
     vaga = client.post(f"{API}/vagas", headers=b, json={
-        "especialidade": "clinica_geral", "inicio": "2026-11-25T14:00:00-03:00", "fim": "2026-11-25T14:30:00-03:00"})
+        "especialidade": "clinica_integrada", "inicio": "2026-11-25T14:00:00-03:00", "fim": "2026-11-25T14:30:00-03:00"})
     assert vaga.status_code == 201
     vaga_id = vaga.json()["id"]
 
@@ -60,7 +60,7 @@ def test_jornada_p0_completa(client, login):
     # 9. B confirma Bruno (uma única vez)
     interesses = client.get(f"{API}/vagas/{vaga_id}/interesses", headers=b).json()["itens"]
     assert len(interesses) == 2
-    interesse_bruno = next(i for i in interesses if i["paciente_nome_exibicao"] == "Bruno S.")["id"]
+    interesse_bruno = next(i for i in interesses if i["paciente_nome_exibicao"] == "Bruno Souza")["id"]
     r = client.post(f"{API}/vagas/{vaga_id}/confirmar", headers=b, json={"interesse_id": interesse_bruno})
     assert r.status_code == 200, r.text
     assert r.json()["solicitacao_estado"] == "agendada" and r.json()["estado"] == "preenchida"
@@ -113,6 +113,6 @@ def test_urgencia_e_cenarios_montados_com_auth_do_core(client, login):
     # coordenação cria cenário; atendimento não
     corpo = {"titulo": "Cenário de teste", "descricao_leiga": "Atendimento supervisionado por professores.",
              "requisitos": [], "publico": "adultos", "cidade": "São Paulo", "uf": "SP",
-             "especialidade": "ortopedia", "estado": "pausado"}
+             "especialidade": "cirurgia", "estado": "pausado"}
     assert client.post(f"{API}/cenarios", headers=login(ATEND_A), json=corpo).status_code == 403
     assert client.post(f"{API}/cenarios", headers=login(COORD_C), json=corpo).status_code == 201

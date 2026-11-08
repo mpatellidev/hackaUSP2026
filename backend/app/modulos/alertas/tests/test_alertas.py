@@ -1,17 +1,17 @@
 from tests.conftest import ANA, ATEND_A, EVA
 
-CARLA = "paciente.carla"  # pedido ativo de clínica geral na Clínica A
+CARLA = "paciente.carla"  # pedido ativo de clínica integrada na Clínica A
 
 VAGA_ALERTA = "f1000000-0000-4000-8000-000000000002"
 
 
 def _vaga(client, h, **extra):
-    corpo = {"especialidade": "clinica_geral", "inicio": "2026-12-02T09:00:00-03:00", "fim": "2026-12-02T09:30:00-03:00"}
+    corpo = {"especialidade": "clinica_integrada", "inicio": "2026-12-02T09:00:00-03:00", "fim": "2026-12-02T09:30:00-03:00"}
     return client.post("/api/v1/vagas", headers=h, json={**corpo, **extra})
 
 
 def test_alerta_so_para_quem_optou_e_tem_pedido_ativo(client, login):
-    # Carla tem pedido ativo (clínica A, clínica geral) mas ainda não optou: nenhum alerta
+    # Carla tem pedido ativo (clínica A, clínica integrada) mas ainda não optou: nenhum alerta
     h = login(CARLA)
     _vaga(client, login(ATEND_A))
     assert client.get("/api/v1/alertas", headers=h).json()["total"] == 0
