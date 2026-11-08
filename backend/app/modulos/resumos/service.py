@@ -74,11 +74,19 @@ def criar(db: Session, actor: Actor, solicitacao_id: str, campos: list[dict]) ->
     return _json(db, r, "autor", r.campos)
 
 
+def _auditar_consulta(db: Session, actor: Actor, r: ResumoProntuario, v: dict) -> None:
+    """Toda leitura por clínica destinatária (lista ou detalhe) fica na auditoria do paciente."""
+    if actor.papel == "funcionario" and v["origem"] == "compartilhado":
+        clinica = next(iter(actor.clinica_ids & {c.clinica_destino_id for c in _compartilhamentos_ativos(db, r.id, actor.clinica_ids)}))
+        _evento(db, r.id, actor, "consulta", clinica)
+
+
 def listar(db: Session, actor: Actor) -> list[dict]:
     saida = []
     for r in db.scalars(select(ResumoProntuario).order_by(ResumoProntuario.criado_em.desc(), ResumoProntuario.id)):
         v = _visao(db, actor, r)
         if v:
+            _auditar_consulta(db, actor, r, v)
             saida.append(v)
     return saida
 
@@ -88,9 +96,7 @@ def obter(db: Session, actor: Actor, resumo_id: str) -> dict:
     v = _visao(db, actor, r) if r else None
     if v is None:
         raise nao_encontrado()
-    if actor.papel == "funcionario" and v["origem"] == "compartilhado":
-        clinica = next(iter(actor.clinica_ids & {c.clinica_destino_id for c in _compartilhamentos_ativos(db, r.id, actor.clinica_ids)}))
-        _evento(db, r.id, actor, "consulta", clinica)
+    _auditar_consulta(db, actor, r, v)
     return v
 
 

@@ -1,6 +1,10 @@
+from datetime import datetime, timezone
+
+import pytest
 from sqlalchemy import select
 
 from app.models.vagas import Agendamento
+from app.modulos.prioridade import router as prioridade_router
 from app.modulos.prioridade.models import RegistroFalta, RevisaoFalta
 from tests.conftest import ANA, ATEND_A, ATEND_B, CLINICA_A, CLINICA_B
 
@@ -48,11 +52,17 @@ def test_prioridade_de_um_pedido_e_escopada(client, login):
     assert client.get(f"/api/v1/solicitacoes/{PEDIDO_CARLA}/prioridade", headers=login(ANA)).status_code == 403
 
 
+@pytest.fixture
+def depois_da_vaga(monkeypatch):
+    """Falta só pode ser registrada depois do início da vaga (a do fixture é 2026-11-12)."""
+    monkeypatch.setattr(prioridade_router, "utc_now", lambda: datetime(2026, 11, 12, 20, 0, tzinfo=timezone.utc))
+
+
 def _agendamento_b(db):
     return db.scalar(select(Agendamento).where(Agendamento.clinica_id == CLINICA_B, Agendamento.estado == "agendado"))
 
 
-def test_falta_so_profissional_da_clinica_com_justificativa(client, login, db):
+def test_falta_so_profissional_da_clinica_com_justificativa(client, login, db, depois_da_vaga):
     ag = _agendamento_b(db)
     corpo = {"agendamento_id": ag.id, "justificativa": "Não compareceu ao horário confirmado."}
     assert client.post("/api/v1/faltas", json=corpo, headers=login(ATEND_B)).status_code == 403   # atendimento
@@ -68,7 +78,7 @@ def test_falta_so_profissional_da_clinica_com_justificativa(client, login, db):
     assert ag.desfecho == "falta_registrada"
 
 
-def test_penalidade_reversao_e_auditoria(client, login, db):
+def test_penalidade_reversao_e_auditoria(client, login, db, depois_da_vaga):
     ag = _agendamento_b(db)
     h = login(PROF_B)
     falta = client.post("/api/v1/faltas", headers=h, json={

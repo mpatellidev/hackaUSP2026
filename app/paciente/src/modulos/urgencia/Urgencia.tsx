@@ -1,22 +1,30 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { TEXTO_EMERGENCIA } from "@uhealth/ui";
-import { dataHora, mensagemDe, useSessao } from "@uhealth/api-client";
+import { dataHora, mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
 import { Btn, Linhas, Voltar } from "../../design/Componentes";
 import { Icone } from "../../design/Icone";
 import { useClinicasPorId } from "../pedidos/nomesClinicas";
 
-/** Urgência (design C2). O texto de emergência (SAMU 192) é ESTÁTICO. Registrar o relato só avisa a clínica; não promete contato imediato. */
+/** Urgência (design C2). O texto de emergência (SAMU 192) é ESTÁTICO. Registrar o relato só avisa a clínica; não promete contato imediato.
+ *  O relato precisa de um pedido: é por ele que a clínica certa recebe o aviso. */
 export function Urgencia() {
   const { api } = useSessao();
   const qc = useQueryClient();
   const navegar = useNavigate();
   const clinicas = useClinicasPorId();
   const [params] = useSearchParams();
-  const pedidoId = params.get("pedido");
+  const pedidoDaUrl = params.get("pedido");
+  const [escolhido, setEscolhido] = useState("");
+  const pedidoId = pedidoDaUrl ?? escolhido;
   const [avisar, setAvisar] = useState(false);
   const relatos = useQuery({ queryKey: ["urgencias"], queryFn: () => api.dados(api.cliente.GET("/urgencias", {})) });
+  const pedidos = useQuery({
+    queryKey: ["solicitacoes"], enabled: !pedidoDaUrl,
+    queryFn: () => api.dados(api.cliente.GET("/solicitacoes", {})),
+  });
+  const abertos = (pedidos.data?.itens ?? []).filter((p) => p.estado !== "concluida");
   const pedido = useQuery({
     queryKey: ["solicitacao", pedidoId], enabled: !!pedidoId,
     queryFn: () => api.dados(api.cliente.GET("/solicitacoes/{solicitacao_id}", { params: { path: { solicitacao_id: pedidoId! } } })),
@@ -34,6 +42,18 @@ export function Urgencia() {
           <button type="button" className="d-voltar" onClick={() => setAvisar(false)}><Icone nome="voltar" tamanho={20} />Voltar</button>
           <h1 className="d-h1">Vamos avisar a clínica</h1>
           <div className="d-aviso d-aviso--ok">Um profissional da clínica avalia o seu pedido. Pedir como urgente <b>não reduz</b> a sua vez.</div>
+          {!pedidoDaUrl && pedidos.data && abertos.length === 0 && (
+            <div className="d-aviso">Para avisar uma clínica, você precisa ter um pedido em andamento. <Link to="/clinicas" style={{ color: "inherit" }}>Escolher uma clínica</Link></div>
+          )}
+          {!pedidoDaUrl && abertos.length > 0 && (
+            <div className="d-campo">
+              <label htmlFor="pedido-urgente">Sobre qual pedido?</label>
+              <select id="pedido-urgente" value={escolhido} onChange={(e) => setEscolhido(e.target.value)}>
+                <option value="">Escolha o pedido</option>
+                {abertos.map((p) => <option key={p.id} value={p.id}>{rotuloEspecialidade(p.especialidade)} · {clinicas.get(p.clinica_id)?.nome ?? "Clínica"}</option>)}
+              </select>
+            </div>
+          )}
           <Linhas itens={[...(clinica ? [["Clínica", clinica.nome] as [string, string]] : []), ["Marcado como", "Pedido urgente"]]} />
           <div className="d-aviso d-aviso--16" style={{ background: "var(--d-danger-bg)", color: "var(--d-danger-text)", fontSize: "calc(17px * var(--d-s))" }}>
             <b>Se piorar</b>, ligue 192 (SAMU). Não espere a resposta da clínica.
@@ -41,7 +61,7 @@ export function Urgencia() {
           {registrar.isError && <div className="d-aviso d-aviso--perigo" role="alert"><Icone nome="alerta" tamanho={24} /><b>{mensagemDe(registrar.error)}</b></div>}
           {registrar.isSuccess && <div className="d-aviso d-aviso--ok" role="status"><b>Relato registrado.</b> A clínica vai avaliar. Ainda não é consulta marcada.</div>}
           <div className="d-fim">
-            <Btn disabled={registrar.isPending || registrar.isSuccess} onClick={() => registrar.mutate()}>{registrar.isPending ? "Enviando…" : "Enviar pedido urgente"}</Btn>
+            <Btn disabled={!pedidoId || registrar.isPending || registrar.isSuccess} onClick={() => registrar.mutate()}>{registrar.isPending ? "Enviando…" : "Enviar pedido urgente"}</Btn>
             <p className="d-small" style={{ textAlign: "center" }}>Texto de exemplo. Precisa ser validado por profissional de saúde.</p>
           </div>
         </main>

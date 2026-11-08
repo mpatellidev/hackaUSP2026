@@ -21,6 +21,7 @@ def criar(body: CriarResumoIn, actor: Actor = Depends(require_funcionario), db: 
 @router.get("/resumos", response_model=ListaResumos, summary="Resumos no escopo do token")
 def listar(actor: Actor = Depends(get_actor), db: Session = Depends(get_db)):
     itens = service.listar(db, actor)
+    db.commit()  # grava os eventos de consulta da clínica destinatária
     return {"itens": itens, "total": len(itens), "aviso": service.AVISO}
 
 

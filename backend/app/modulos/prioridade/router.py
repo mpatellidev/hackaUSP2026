@@ -5,10 +5,10 @@ from sqlalchemy.orm import Session
 from app.core.auth import Actor, get_actor, require_funcionario
 from app.core.db import get_db
 from app.core.errors import ApiError, acesso_negado, nao_encontrado
-from app.core.time import to_sp_iso
+from app.core.time import as_utc, to_sp_iso, utc_now
 from app.models.solicitacoes import Solicitacao
 from app.models.usuarios import Usuario
-from app.models.vagas import Agendamento
+from app.models.vagas import Agendamento, Vaga
 from app.modulos.prioridade import service
 from app.modulos.prioridade.fila import carregar_pesos, ordenar_pedidos
 from app.modulos.prioridade.fontes import Fontes, get_fontes
@@ -97,6 +97,9 @@ def registrar_falta(body: FaltaIn, actor: Actor = Depends(require_funcionario), 
         raise acesso_negado()
     if ag.estado != "agendado":
         raise ApiError(409, "transicao_invalida", "Só é possível registrar falta de um agendamento ativo.")
+    if as_utc(db.get(Vaga, ag.vaga_id).inicio) > utc_now():  # falta só depois que o horário começou
+        raise ApiError(409, "transicao_invalida", "O horário ainda não começou. A falta só pode ser registrada "
+                                                  "depois do início do atendimento.")
     if db.scalar(select(RegistroFalta.id).where(RegistroFalta.agendamento_id == ag.id)):
         raise ApiError(409, "solicitacao_duplicada", "Já existe um registro de falta para este agendamento.")
     f = RegistroFalta(paciente_id=ag.paciente_id, agendamento_id=ag.id, clinica_id=ag.clinica_id,
@@ -125,6 +128,8 @@ def revisar_falta(falta_id: str, body: RevisaoIn, actor: Actor = Depends(require
     f = _falta_visivel(db, actor, falta_id)
     if not actor.tem_funcao(f.clinica_id, "profissional", "coordenacao"):
         raise acesso_negado()
+    if body.acao == "manter" and f.registrada_por == actor.usuario_id:  # reverter o próprio erro continua livre
+        raise acesso_negado("Quem registrou a falta não pode confirmá-la na revisão. Peça a outra pessoa da clínica.")
     novo = f.estado
     if body.acao == "reverter":
         if f.estado != "confirmada":

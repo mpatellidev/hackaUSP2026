@@ -7,7 +7,7 @@ Contrato de referência: [`docs/contratos-mvp.md`](docs/contratos-mvp.md) (vers�
 ```bash
 cd backend
 uv sync
-cp .env.example .env          # opcional; o padrão já é SQLite em ./dev.db
+cp .env.example .env          # liga o modo demo (sem ele, login sem senha e /docs ficam fechados)
 uv run alembic upgrade head   # cria as tabelas
 uv run python -m app.seed     # dados fictícios; pode rodar várias vezes
 uv run uvicorn app.main:app --reload
@@ -21,6 +21,8 @@ Defina `DATABASE_URL=postgresql+psycopg://USUARIO:SENHA@HOST:5432/postgres` (no 
 
 ## Login DEMO
 `POST /api/v1/auth/login {"conta": "paciente.ana", "senha": "demo1234"}` → `token` (senha única de demonstração em `DEMO_SENHA`; `GET /api/v1/auth/contas` lista as contas fictícias). Com `DEMO_MODE=true` também vale `POST /api/v1/auth/demo/login {"conta": ...}` (sem senha); em ambiente hospedado use `DEMO_MODE=false` e troque `DEMO_SENHA`.
+
+**Padrões de segurança:** sem `.env`, `DEMO_MODE` é `false` (fechado). Fora do modo demo, a senha padrão `demo1234` (pública no repositório) **não é aceita**: o login responde 503 até `DEMO_SENHA` ser definida (rode o seed de novo para gravar o novo hash), e `/docs`, `/redoc` e `/openapi.json` ficam desligados. Limites por processo: 10 senhas erradas por IP a cada 5 min, 30 chamadas/min por usuário em `/acessibilidade/chat` e `/acessibilidade/tts` (429 `muitas_tentativas`). Toda resposta leva cabeçalhos de segurança (CSP, anti-iframe, nosniff; HSTS em HTTPS), definidos em `app/core/seguranca.py`; página nova que carregar algo de outro domínio precisa ser liberada na CSP.
 Envie `Authorization: Bearer <token>`; envie `Authorization: Bearer <token>`. `GET /api/v1/auth/me` mostra papel/clínica **lidos do banco**; `papel`, `clinica_id` ou `paciente_id` enviados pelo cliente são ignorados. Contas: `docs/fixtures/contas-demo.json`
 (`paciente.ana`, `paciente.eva`, `funcionario.atendimento.a`, `funcionario.profissional.b`, …). Sessão expira em `SESSION_TTL_HOURS` (padrão 8h); só o hash do token fica no banco.
 

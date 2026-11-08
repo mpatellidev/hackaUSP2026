@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
 from fastapi import Depends, Header
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
@@ -82,6 +82,7 @@ def criar_sessao(db: Session, usuario: Usuario) -> tuple[str, datetime]:
     token = secrets.token_urlsafe(32)
     agora = utc_now()
     expira = agora + hours(get_settings().session_ttl_hours)
+    db.execute(delete(SessaoDemo).where(SessaoDemo.expira_em <= agora))  # limpa sessões vencidas
     db.add(SessaoDemo(token_hash=_hash(token), usuario_id=usuario.id, expira_em=expira, criado_em=agora))
     db.commit()
     return token, expira

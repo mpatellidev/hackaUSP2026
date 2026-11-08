@@ -19,7 +19,17 @@ def test_login_sem_senha_so_com_demo_mode(client, monkeypatch):
     monkeypatch.setattr(get_settings(), "demo_mode", False)
     r = client.post("/api/v1/auth/demo/login", json={"conta": ANA})
     assert r.status_code == 404
-    assert client.post("/api/v1/auth/login", json={"conta": ANA, "senha": get_settings().demo_senha}).status_code == 200
+    # fora do modo demo, a senha pública do repositório não vale (login fecha até definir DEMO_SENHA)
+    r = client.post("/api/v1/auth/login", json={"conta": ANA, "senha": get_settings().demo_senha})
+    assert r.status_code == 503 and r.json()["erro"]["codigo"] == "servico_indisponivel"
+
+
+def test_fora_do_modo_demo_com_senha_propria_o_login_funciona(client, db, monkeypatch):
+    from app.seed import run as seed
+    monkeypatch.setattr(get_settings(), "demo_mode", False)
+    monkeypatch.setattr(get_settings(), "demo_senha", "senha-do-ambiente-7")
+    seed(db)
+    assert client.post("/api/v1/auth/login", json={"conta": ANA, "senha": "senha-do-ambiente-7"}).status_code == 200
 
 
 def test_contas_publicas_mostram_senha_so_em_modo_demo(client, monkeypatch):

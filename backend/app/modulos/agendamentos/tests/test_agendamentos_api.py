@@ -6,6 +6,7 @@ from sqlalchemy import func, select
 from app.models.solicitacoes import Solicitacao
 from app.models.vagas import Agendamento, InteresseVaga, Vaga
 from app.modulos.agendamentos import service as agendamentos_service
+from app.modulos.prioridade import router as prioridade_router
 from app.modulos.prioridade.models import RegistroFalta, RevisaoFalta
 from tests.conftest import ANA, ATEND_A, ATEND_B, CLINICA_B, EVA
 
@@ -108,8 +109,9 @@ def test_409_ja_cancelado_concluido_ou_com_falta_registrada(client, login):
     assert concluido.status_code == 409 and concluido.json()["erro"]["codigo"] == "transicao_invalida"
 
 
-def test_409_quando_ja_ha_falta_registrada_pelo_profissional(client, login):
-    falta = client.post(f"{API}/faltas", headers=login(PROF_B),
+def test_409_quando_ja_ha_falta_registrada_pelo_profissional(client, login, monkeypatch):
+    monkeypatch.setattr(prioridade_router, "utc_now", lambda: DEPOIS_DA_VAGA)  # falta só depois do horário
+    falta =client.post(f"{API}/faltas", headers=login(PROF_B),
                         json={"agendamento_id": AG_ANA, "justificativa": "Não compareceu, sem aviso à clínica."})
     assert falta.status_code == 201, falta.text
     assert _cancelar(client, login(ANA)).status_code == 409   # desfecho já registrado por humano
