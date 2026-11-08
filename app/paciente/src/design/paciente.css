@@ -189,7 +189,8 @@ a.d-quad { position: relative; text-decoration: none; }
 .d-samu a { color: var(--d-danger); font-weight: 700; text-decoration: none; }
 
 /* ---------- troca de modo (sempre visível) e escolha do modo ---------- */
-.d-troca { position: sticky; top: 0; z-index: 5; display: flex; justify-content: space-between; gap: 8px; padding: 6px 12px; background: var(--uh-bg); border-bottom: 1.5px solid var(--uh-line); }
+/* Página inicial: Emergência e "Usar a assistente" ficam fixos no conteúdo, logo abaixo do topo azul (não acompanham a rolagem). */
+.d-troca { display: flex; justify-content: space-between; gap: 8px; padding: 14px 20px 0; background: var(--uh-bg); }
 .d-troca-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--uh-link); background: var(--uh-surface); color: var(--uh-link); font: 700 calc(16px * var(--d-s)) var(--uh-font-body); cursor: pointer; }
 .d-escolha { position: relative; flex-direction: column; align-items: flex-start; gap: 8px; padding: 18px 16px; min-height: calc(96px * var(--d-s)); }
 .d-escolha-linha { display: flex; align-items: center; gap: 12px; font-size: calc(20px * var(--d-s)); }
@@ -204,7 +205,7 @@ a.d-quad { position: relative; text-decoration: none; }
   .d-moldura { display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; background: #ffffff; }
   .d-moldura-tela {
     position: relative; display: flex; flex-direction: column; box-sizing: border-box;
-    width: 402px; height: min(868px, calc(100dvh - 48px)); min-height: 0;
+    width: 402px; height: min(868px, calc(100dvh - 48px)); min-height: 0; padding-top: 40px; /* faixa da câmera: o conteúdo começa abaixo dela */
     border: 12px solid #0b2423; border-radius: 52px; overflow: hidden; background: var(--uh-bg);
     box-shadow: 0 24px 60px rgba(11, 36, 35, 0.22), inset 0 0 0 2px #2d4645;
   }
@@ -212,22 +213,57 @@ a.d-quad { position: relative; text-decoration: none; }
     content: ""; position: absolute; z-index: 60; top: 8px; left: 50%; transform: translateX(-50%);
     width: 112px; height: 28px; border-radius: 16px; background: #0b2423; pointer-events: none;
   }
-  .d-moldura-rolagem { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-top: 40px; display: flex; flex-direction: column; }
+  .d-moldura-rolagem { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
   .d-moldura-rolagem > .d-casca, .d-moldura-rolagem > .d-tela { flex: 1; min-height: 0; max-width: none; }
   .d-moldura-rolagem .d-casca { min-height: 100%; }
   .d-moldura-rolagem .d-casca--conversa { height: 100%; }
   .d-moldura-rolagem .chat-card { height: 640px; min-height: 0; }
   .d-moldura-rolagem .chat-app--unica .chat-card { height: auto; }
+  /* Na página inicial, a faixa da câmera fica azul e emenda com o topo azul. */
+  .d-moldura-tela:has(.d-topo) { background: var(--uh-brand); }
+  .d-moldura-tela:has(.d-topo) .d-moldura-rolagem { background: var(--uh-bg); }
 }
 
 .d-emergencia-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 999px; background: var(--d-danger); color: var(--d-on-danger); font: 700 calc(16px * var(--d-s)) var(--uh-font-body); text-decoration: none; }
 
-/* ---------- mapa e calendário ---------- */
-.d-mapa { height: 320px; border-radius: 18px; border: 1.5px solid var(--uh-line); overflow: hidden; z-index: 0; }
-.d-calendario { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+/* ---------- calendário ---------- */
+.d-calendario { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
 .d-cal-cab { text-align: center; font-weight: 700; font-size: calc(14px * var(--d-s)); color: var(--uh-muted); }
-.d-cal-dia { position: relative; min-height: 44px; border-radius: 12px; border: 2px solid var(--uh-border-strong); background: var(--uh-surface); color: var(--uh-text); font: 700 calc(16px * var(--d-s)) var(--uh-font-body); cursor: pointer; }
-.d-cal-dia:disabled { border-color: var(--uh-line); color: var(--uh-muted); background: transparent; cursor: default; font-weight: 400; }
+.d-cal-dia { position: relative; min-width: 0; min-height: 44px; padding: 0; border-radius: 12px; border: 2px solid var(--uh-border-strong); background: var(--uh-surface); color: var(--uh-text); font: 700 calc(16px * var(--d-s)) var(--uh-font-body); cursor: pointer; }
+/* Dia sem horário livre: mais apagado, mas clicável (mostra o aviso e a opção "a clínica me liga"). */
+.d-cal-dia--vazio { border-color: var(--uh-line); color: var(--uh-muted); background: transparent; font-weight: 400; }
 .d-cal-dia--on { background: var(--uh-brand); color: var(--uh-on-brand); border-color: var(--uh-text); }
 .d-cal-ponto { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--uh-sun); }
 @media print { .d-troca, .d-abas, .d-fim { display: none !important; } .d-moldura-tela { border: 0 !important; box-shadow: none !important; } }
+
+/* ---------- topo: ícones de acessibilidade menores ---------- */
+.d-topo-linha { flex-wrap: wrap; row-gap: 8px; }
+.d-topo .d-quad { min-width: 36px; min-height: 36px; border-radius: 10px; font-size: calc(15px * var(--d-s)); background: transparent; color: var(--uh-on-brand); }
+.d-topo .d-quad .d-badge { border-color: var(--uh-brand); }
+
+/* ---------- Meu cuidado: item do hub (ícone + texto; o destaque fica abaixo do título) ---------- */
+.d-item { flex-direction: row; align-items: center; gap: 14px; text-decoration: none; color: inherit; }
+.d-item > svg { flex: none; }
+.d-item-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+
+/* ---------- grades de formulário ---------- */
+.d-linha2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 10px; }
+.d-grade2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 340px) { .d-linha2, .d-grade2 { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- responsividade: nada passa da largura da tela ---------- */
+.d-tela { min-width: 0; overflow-wrap: break-word; }
+.d-corpo, .d-card, .d-campo, .d-campos, .d-painel, .d-aviso { min-width: 0; }
+.d-campo input, .d-campo select, .d-campo textarea { width: 100%; min-width: 0; box-sizing: border-box; }
+.d-linhaBtn > *, .d-card-topo > * { min-width: 0; }
+.d-segs { flex-wrap: wrap; }
+.d-segs .d-op { flex: 1 1 auto; min-width: 0; }
+.d-op { min-width: 0; line-height: 1.25; box-sizing: border-box; }
+.d-op:not(.d-escolha) { padding-top: 8px; padding-bottom: 8px; }
+.d-dl > div { flex-wrap: wrap; }
+.d-dl dd { min-width: 0; overflow-wrap: anywhere; }
+.d-troca { flex-wrap: wrap; }
+.d-troca > * { min-width: 0; }
+
+/* ---------- símbolo da marca (logo.png) ---------- */
+.d-simbolo { flex: none; display: block; border-radius: 22%; object-fit: contain; }

@@ -22,11 +22,11 @@ function Marcar<T extends string>({ legenda, opcoes, valores, aoMudar }: { legen
   return (
     <fieldset className="d-campos">
       <legend>{legenda}</legend>
-      <div className="d-chips" style={{ gap: 10 }}>
+      <div className="d-grade2">
         {opcoes.map(([v, rotulo]) => {
           const on = valores.includes(v);
           return (
-            <label key={v} className={`d-op d-op--m${on ? " d-op--on" : ""}`} style={{ flex: "1 1 40%" }}>
+            <label key={v} className={`d-op d-op--m${on ? " d-op--on" : ""}`}>
               <input type="checkbox" checked={on} onChange={() => aoMudar(on ? valores.filter((x) => x !== v) : [...valores, v])} />
               {rotulo}
             </label>
@@ -108,12 +108,12 @@ function Formulario({ perfil, aoTerminar, voltar }: { perfil: Perfil; aoTerminar
         <label htmlFor="cad-cep">CEP</label>
         <input id="cad-cep" inputMode="numeric" autoComplete="postal-code" placeholder="00000-000" value={cep} onChange={(e) => setCep(formatarCep(e.target.value))} />
       </div>
-      <div className="d-linhaBtn">
-        <div className="d-campo" style={{ flex: 1 }}>
+      <div className="d-linha2">
+        <div className="d-campo">
           <label htmlFor="cad-num">Número</label>
           <input id="cad-num" value={numero} maxLength={12} autoComplete="address-line2" onChange={(e) => setNumero(e.target.value)} />
         </div>
-        <div className="d-campo" style={{ flex: 2 }}>
+        <div className="d-campo">
           <label htmlFor="cad-bairro">Bairro</label>
           <input id="cad-bairro" value={bairro} maxLength={80} onChange={(e) => setBairro(e.target.value)} />
         </div>

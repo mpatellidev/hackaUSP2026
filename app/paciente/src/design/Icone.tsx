@@ -1,3 +1,4 @@
+import logo from "./logo.png";
 import type { SVGProps } from "react";
 
 /** Ícones do design (grade 24 px, traço 2,2 px, `currentColor`). Sempre use com texto ao lado ou com `rotulo`. */
@@ -44,12 +45,7 @@ export function Icone({ nome, tamanho = 24, rotulo, ...resto }: Props) {
   );
 }
 
-/** Símbolo da marca: U aberto como sorriso, com o sol (a vaga que surge). */
-export function Simbolo({ tamanho = 32, escuro = false }: { tamanho?: number; escuro?: boolean }) {
-  return (
-    <svg width={tamanho} height={tamanho} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <path d="M13 9v16a11 11 0 0 0 22 0V9" fill="none" stroke="currentColor" strokeWidth="6.5" strokeLinecap="round" />
-      <circle cx="24" cy="15" r="4.2" fill={escuro ? "currentColor" : "#FFB81C"} />
-    </svg>
-  );
+/** Símbolo da marca: dente com páginas (logo.png). `escuro` fica por compatibilidade: a imagem é a mesma em qualquer fundo. */
+export function Simbolo({ tamanho = 32 }: { tamanho?: number; escuro?: boolean }) {
+  return <img className="d-simbolo" src={logo} width={tamanho} height={tamanho} alt="" aria-hidden="true" />;
 }

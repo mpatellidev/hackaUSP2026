@@ -166,7 +166,7 @@ export function AgendarClinica() {
             </label>
           ))}
         </fieldset>
-        <p className="d-small">Dor forte ou dente quebrado agora? Use o botão Emergência no alto da tela.</p>
+        <p className="d-small">Dor forte ou dente quebrado agora? Use o botão Emergência na página inicial ou <a href="tel:192">ligue 192 (SAMU)</a>.</p>
         <div className="d-fim"><Btn disabled={!esp} onClick={() => setPasso("horario")}>Continuar</Btn></div>
       </main></div>
     );
@@ -191,14 +191,14 @@ export function AgendarClinica() {
         <p className="d-small">{rotuloEspecialidade(esp!)} · {c.nome}</p>
         {horarios.isPending && <p role="status" className="d-small">Buscando horários livres…</p>}
         {horarios.isError && <div className="d-aviso d-aviso--perigo" role="alert"><b>{mensagemDe(horarios.error)}</b></div>}
-        <div className="d-calendario" role="grid" aria-label="Próximas 3 semanas. Dias com horário livre podem ser escolhidos.">
+        <div className="d-calendario" role="grid" aria-label="Próximas 3 semanas. Dias com ponto têm horário livre.">
           {["S", "T", "Q", "Q", "S", "S", "D"].map((d, i) => <span key={i} className="d-cal-cab" aria-hidden="true">{d}</span>)}
           {Array.from({ length: vazios }, (_, i) => <span key={`v${i}`} />)}
           {dias.map((d) => {
             const k = DIA_CHAVE.format(d);
             const livres = porDia.get(k)?.length ?? 0;
             return (
-              <button key={k} type="button" role="gridcell" className={`d-cal-dia${dia === k ? " d-cal-dia--on" : ""}`} disabled={!livres}
+              <button key={k} type="button" role="gridcell" className={`d-cal-dia${livres ? "" : " d-cal-dia--vazio"}${dia === k ? " d-cal-dia--on" : ""}`}
                 aria-pressed={dia === k} aria-label={`${DIA_LONGO.format(d)}: ${livres ? `${livres} horário${livres > 1 ? "s" : ""} livre${livres > 1 ? "s" : ""}` : "sem horário"}`}
                 onClick={() => { setDia(k); setHorario(null); }}>
                 {d.getDate()}{livres > 0 && <span className="d-cal-ponto" aria-hidden="true" />}
@@ -206,9 +206,14 @@ export function AgendarClinica() {
             );
           })}
         </div>
-        {dia && (
+        {dia && !porDia.get(dia)?.length && (
+          <div className="d-aviso d-aviso--pequeno" role="status">
+            <b>Nenhum horário livre em {DIA_LONGO.format(new Date(`${dia}T12:00:00-03:00`))}.</b> Escolha um dia com ponto amarelo ou peça para a clínica ligar.
+          </div>
+        )}
+        {dia && !!porDia.get(dia)?.length && (
           <fieldset className="d-campos">
-            <legend>Horários de {DIA_LONGO.format(new Date(porDia.get(dia)![0].inicio))}</legend>
+            <legend>Horários de {DIA_LONGO.format(new Date(`${dia}T12:00:00-03:00`))}</legend>
             <div className="d-chips" style={{ gap: 10 }}>
               {porDia.get(dia)!.map((h) => {
                 const on = horario !== null && horario !== "sem" && horario.vaga_id === h.vaga_id;

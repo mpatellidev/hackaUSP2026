@@ -69,3 +69,23 @@ it("clínica → especialidade → dia e horário → dados → revisão → com
   expect(screen.getByText("Aguardando confirmação da clínica")).toBeVisible();
   expect(escritas.map((e) => e[0])).toEqual(["/solicitacoes", "/vagas/{vaga_id}/interesses"]);
 });
+
+it("dia sem horário livre também é clicável: avisa e deixa pedir para a clínica ligar", async () => {
+  render(
+    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      <MemoryRouter initialEntries={["/clinicas/c1"]}><Routes><Route path="/clinicas/:id" element={<AgendarClinica />} /></Routes></MemoryRouter>
+    </QueryClientProvider>,
+  );
+  await userEvent.click(await screen.findByRole("button", { name: "Agendar nesta clínica" }));
+  await userEvent.click(screen.getByRole("radio", { name: /Clínica integrada/ }));
+  await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+  await screen.findByRole("gridcell", { name: /1 horário livre/ });
+  const semHorario = screen.getAllByRole("gridcell", { name: /sem horário/ })[0];
+  expect(semHorario).toBeEnabled();
+  await userEvent.click(semHorario);
+  expect(screen.getByText(/Nenhum horário livre em/)).toBeVisible();
+  expect(screen.getByRole("button", { name: "Continuar" })).toBeDisabled();
+  await userEvent.click(screen.getByRole("radio", { name: /a clínica me liga/ }));
+  expect(screen.getByRole("button", { name: "Continuar" })).toBeEnabled();
+});

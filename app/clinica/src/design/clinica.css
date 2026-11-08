@@ -40,7 +40,7 @@
 .d-shell { display: grid; grid-template-columns: 216px minmax(0,1fr); min-height: 100vh; }
 .d-sidebar { background: #153c36; color: #e7eeea; padding: 22px 12px 16px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
 .d-brand { display: flex; align-items: center; gap: 8px; font-size: 23px; padding: 0 12px; margin-bottom: 18px; }
-.d-brand svg { width: 30px; height: 34px; }
+.d-brand svg, .d-brand .d-simbolo { width: 34px; height: 34px; border-radius: 9px; flex: none; }
 .d-nav-label { font-size: 11px; font-weight: 600; color: #aebfb7; padding: 10px 12px 7px; }
 .d-nav-label.d-management { margin-top: 20px; }
 .d-navigation { display: grid; gap: 3px; }

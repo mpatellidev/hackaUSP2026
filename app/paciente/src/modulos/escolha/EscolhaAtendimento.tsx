@@ -36,7 +36,7 @@ export function EscolhaAtendimento() {
               </label>
             ))}
           </fieldset>
-          <p className="d-p">Você pode trocar quando quiser pelo botão no alto da tela.</p>
+          <p className="d-p">Você pode trocar quando quiser pelo botão na página inicial ou no seu perfil.</p>
           <div className="d-fim">
             <Btn onClick={() => salvarModo(api, modo)}>Continuar</Btn>
           </div>

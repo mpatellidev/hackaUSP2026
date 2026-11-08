@@ -18,7 +18,7 @@ export function AtalhoAlertas() {
   const rotulo = novos > 0 ? `Avisos: ${novos === 1 ? "1 novo" : `${novos} novos`}` : "Avisos";
   return (
     <Link className="d-quad" to="/avisos" aria-label={rotulo}>
-      <Icone nome="aviso" tamanho={22} />
+      <Icone nome="aviso" tamanho={18} />
       {novos > 0 && <span className="d-badge" aria-hidden="true">{novos > 9 ? "9+" : novos}</span>}
     </Link>
   );

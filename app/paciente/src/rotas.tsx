@@ -19,5 +19,5 @@ export const ROTAS: RotaModulo[] = [
   ...agendamentos, ...alertas, ...alternativas, ...assistente, ...avaliar, ...cadastro, ...clinicas, ...cuidado, ...inicio, ...pedidos, ...perfil, ...urgencia, ...vagas,
 ];
 
-const ORDEM_ABAS = ["/clinicas", "/pedidos", "/cuidado", "/assistente"];
+const ORDEM_ABAS = ["/clinicas", "/pedidos", "/cuidado", "/perfil"];
 export const ABAS = ORDEM_ABAS.map((c) => ROTAS.find((r) => r.aba?.caminho === c)?.aba).filter((a) => a !== undefined);

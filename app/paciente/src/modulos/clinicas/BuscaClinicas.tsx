@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { mensagemDe, rotuloEspecialidade, useSessao } from "@uhealth/api-client";
 import { BotaoAudio, BotaoLetras } from "../../design/Preferencias";
 import { Btn, BtnLink, Chip, LinhaSamu } from "../../design/Componentes";
@@ -9,7 +9,7 @@ import { Ilustracao } from "../../design/Ilustracoes";
 import { quando } from "../../design/datas";
 import { AtalhoAlertas } from "../alertas/Alertas";
 import { AtalhoPerfil } from "../perfil/Perfil";
-import { MapaClinicas } from "./MapaClinicas";
+import { TROCAR_PARA, salvarModo } from "../../modoAtendimento";
 
 type Ordem = "distancia" | "valor" | "data";
 type ItemComparacao = { clinica: { id: string; nome: string; universidade?: string | null; tipo_instituicao?: string | null; valor_consulta?: number | null;
@@ -35,12 +35,23 @@ function Seletor({ id, rotulo, valor, aoMudar, opcoes }: { id: string; rotulo: s
   );
 }
 
-/** Escolher clínica (comparar e agendar): distância, valor, tipo, especialidades e próximos horários. Lista ou mapa. */
+/** Emergência e troca para a assistente: só na página inicial, logo abaixo de "Escolha a clínica". */
+function AcoesInicio() {
+  const { api } = useSessao();
+  return (
+    <div className="d-troca">
+      <Link className="d-emergencia-btn" to="/emergencia"><Icone nome="alerta" tamanho={20} />Emergência</Link>
+      <button type="button" className="d-troca-btn" onClick={() => salvarModo(api, "conversa")}>
+        <Icone nome="conversa" tamanho={20} />{TROCAR_PARA.conversa}
+      </button>
+    </div>
+  );
+}
+
+/** Escolher clínica (comparar e agendar): distância, valor, tipo, especialidades e próximos horários. */
 export function BuscaClinicas() {
   const { api } = useSessao();
-  const navegar = useNavigate();
   const [gps, setGps] = useState<{ lat: number; lng: number } | null>(null);
-  const [vista, setVista] = useState<"lista" | "mapa">("lista");
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
   const [dist, setDist] = useState("");
   const [valor, setValor] = useState("");
@@ -67,15 +78,11 @@ export function BuscaClinicas() {
     .sort((a, b) => ordem === "valor" ? (a.clinica.valor_consulta ?? 0) - (b.clinica.valor_consulta ?? 0)
       : ordem === "data" ? (a.proximos_horarios[0]?.inicio ?? "9").localeCompare(b.proximos_horarios[0]?.inicio ?? "9")
         : (a.distancia_km ?? 1e9) - (b.distancia_km ?? 1e9)), [todos, dist, valor, esp, tipo, turno, ordem]);
-  const abrir = useCallback((id: string) => navegar(`/clinicas/${id}`), [navegar]);
-  const pontos = useMemo(() => itens.filter((i) => i.clinica.latitude != null).map((i) => ({
-    id: i.clinica.id, nome: i.clinica.nome, lat: i.clinica.latitude!, lng: i.clinica.longitude!,
-    detalhe: [km(i.distancia_km), textoValor(i.clinica)].filter(Boolean).join(" · ") })), [itens]);
   const ativos = [dist, valor, esp, tipo, turno].filter(Boolean).length;
 
   if (dados.isError) {
     return (
-      <div className="d-tela"><main className="d-corpo d-corpo--24 d-corpo--centro" role="alert">
+      <div className="d-tela"><AcoesInicio /><main className="d-corpo d-corpo--24 d-corpo--centro" role="alert">
         <Ilustracao nome="semInternet" texto="Celular sem sinal de internet" />
         <h1 className="d-h1">Não deu para buscar</h1>
         <p className="d-p d-p--grande">{mensagemDe(dados.error)}</p>
@@ -102,16 +109,10 @@ export function BuscaClinicas() {
           {!gps && <button type="button" onClick={usarGps}>Usar GPS</button>}
         </div>
       </header>
+      <AcoesInicio />
 
       <main className="d-corpo" style={{ gap: 14 }}>
         {!voce && perfil.data && <div className="d-aviso d-aviso--pequeno">Para ver a distância, <Link to="/perfil/endereco" style={{ color: "inherit" }}>cadastre seu endereço</Link> ou use o GPS.</div>}
-        <div className="d-segs" role="group" aria-label="Como ver">
-          {(["lista", "mapa"] as const).map((v) => (
-            <label key={v} className={`d-op d-op--m${vista === v ? " d-op--on" : ""}`}>
-              <input type="radio" name="vista" checked={vista === v} onChange={() => setVista(v)} />{v === "lista" ? "Lista" : "Mapa"}
-            </label>
-          ))}
-        </div>
         <div className="d-linhaBtn">
           <Seletor id="ordem" rotulo="Ordenar por" valor={ordem} aoMudar={(v) => setOrdem(v as Ordem)}
             opcoes={[["distancia", "Mais perto"], ["valor", "Menor valor"], ["data", "Horário mais cedo"]]} />
@@ -131,7 +132,6 @@ export function BuscaClinicas() {
         )}
         {dados.isPending && <p role="status" className="d-small">Buscando clínicas…</p>}
         {dados.data && <p role="status" className="d-small">{itens.length === 1 ? "1 clínica" : `${itens.length} clínicas`}{ativos ? " com esses filtros" : ""}</p>}
-        {vista === "mapa" && dados.data && <MapaClinicas pontos={pontos} voce={voce} aoEscolher={abrir} />}
         <ul className="d-lista">
           {itens.map((i, n) => (
             <li key={i.clinica.id}>

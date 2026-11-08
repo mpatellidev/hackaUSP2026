@@ -109,12 +109,12 @@ function Formulario({ perfil }: { perfil: PerfilApi }) {
         {ufInvalida && <p id="perfil-uf-erro" className="d-small" role="alert">Use as 2 letras do estado, por exemplo SP.</p>}
       </div>
 
-      <Radios legenda="Como prefere ser contatado" nome="contato" valor={contato} aoMudar={setContato} lado
+      <Radios legenda="Como prefere ser contatado" nome="contato" valor={contato} aoMudar={setContato}
         opcoes={[["app", "Pelo app"], ["telefone", "Por telefone"], ["", "Tanto faz"]]} />
 
       <Radios legenda="Renda da família (opcional)" nome="renda" valor={renda} aoMudar={setRenda}
         opcoes={[...RENDAS, ["", "Deixar em branco"]]} />
-      <Radios legenda="Você tem alguma deficiência? (opcional)" nome="defic" valor={defic} aoMudar={setDefic} lado
+      <Radios legenda="Você tem alguma deficiência? (opcional)" nome="defic" valor={defic} aoMudar={setDefic}
         opcoes={[["sim", "Sim"], ["nao", "Não"], ["", "Não informar"]]} />
       {defic === "sim" && (
         <div className="d-campo">
@@ -176,5 +176,5 @@ export function Perfil() {
 
 /** Atalho do topo (ícone de pessoa) para o perfil. */
 export function AtalhoPerfil() {
-  return <Link className="d-quad" to="/perfil" aria-label="Meu perfil"><Icone nome="pessoa" tamanho={22} /></Link>;
+  return <Link className="d-quad" to="/perfil" aria-label="Meu perfil"><Icone nome="pessoa" tamanho={18} /></Link>;
 }

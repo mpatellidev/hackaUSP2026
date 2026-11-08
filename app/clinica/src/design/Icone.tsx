@@ -1,3 +1,4 @@
+import logo from "./logo.png";
 /** Ícones do painel (grade 24 px, traço 1,65 px, `currentColor`). Decorativos: sempre com texto ao lado. */
 const CAMINHOS = {
   caixa: "M4 4h16v16H4z M4 13h5l2 3h2l2-3h5",
@@ -33,12 +34,7 @@ export function Icone({ nome }: { nome: NomeIcone }) {
   return <svg className="d-ico" viewBox="0 0 24 24" aria-hidden="true"><path d={CAMINHOS[nome] ?? CAMINHOS.arquivo} /></svg>;
 }
 
-/** Símbolo da marca: U aberto como sorriso, com o sol (a vaga que surge). */
+/** Símbolo da marca: dente com páginas (logo.png). */
 export function Simbolo() {
-  return (
-    <svg viewBox="0 0 48 48" aria-hidden="true">
-      <path d="M13 9v16a11 11 0 0 0 22 0V9" fill="none" stroke="#14BEB9" strokeWidth="6.5" strokeLinecap="round" />
-      <circle cx="24" cy="15" r="4.2" fill="#FFB81C" />
-    </svg>
-  );
+  return <img className="d-simbolo" src={logo} alt="" aria-hidden="true" />;
 }

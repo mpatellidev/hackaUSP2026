@@ -32,7 +32,7 @@ export function BotaoAudio({ aoOuvir }: { aoOuvir?: () => string }) {
     fala.lang = "pt-BR";
     window.speechSynthesis.speak(fala);
   };
-  return <button type="button" className="d-quad" onClick={ouvir} aria-label="Ouvir a tela em áudio"><Icone nome="audio" tamanho={22} /></button>;
+  return <button type="button" className="d-quad" onClick={ouvir} aria-label="Ouvir a tela em áudio"><Icone nome="audio" tamanho={18} /></button>;
 }
 
 /** Botão "Aa": troca o tamanho das letras (normal, grande, extra grande). */

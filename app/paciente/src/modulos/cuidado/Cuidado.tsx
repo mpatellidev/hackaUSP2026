@@ -21,10 +21,13 @@ function Erro({ erro, tentar }: { erro: unknown; tentar: () => void }) {
 function Item({ para, icone, titulo, texto, destaque }: { para: string; icone: NomeIcone; titulo: string; texto: string; destaque?: string }) {
   return (
     <li>
-      <Link to={para} className="d-card" style={{ textDecoration: "none", color: "inherit", flexDirection: "row", alignItems: "center", gap: 14 }}>
+      <Link to={para} className="d-card d-item">
         <Icone nome={icone} tamanho={32} />
-        <span style={{ flex: 1 }}><b className="d-h2" style={{ display: "block" }}>{titulo}</b><span className="d-small">{texto}</span></span>
-        {destaque && <Chip tom="sun">{destaque}</Chip>}
+        <span className="d-item-texto">
+          <b className="d-h2">{titulo}</b>
+          {destaque && <span><Chip tom="sun">{destaque}</Chip></span>}
+          <span className="d-small">{texto}</span>
+        </span>
       </Link>
     </li>
   );
