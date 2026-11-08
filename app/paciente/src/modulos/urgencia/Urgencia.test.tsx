@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { ProvedorUHealth } from "@uhealth/api-client";
 import { afterEach, expect, it, vi } from "vitest";
@@ -14,7 +15,7 @@ it("mostra a orientação de emergência (SAMU 192) mesmo sem rede", async () =>
     </ProvedorUHealth>,
   );
   expect(screen.getByText(/Ligue 192 \(SAMU\)/)).toBeVisible();
-  expect(screen.getByRole("link", { name: /Ligar para o SAMU 192/ })).toHaveAttribute("href", "tel:192");
+  expect(screen.getByRole("link", { name: /Ligar 192 \(SAMU\)/ })).toHaveAttribute("href", "tel:192");
   expect(await screen.findByText(/Não foi possível conectar/)).toBeVisible();
 });
 
@@ -25,6 +26,7 @@ it("sem pedido escolhido não envia relato que nenhuma clínica veria", async ()
       <MemoryRouter initialEntries={["/urgencia"]}><Urgencia /></MemoryRouter>
     </ProvedorUHealth>,
   );
-  expect(screen.getByRole("button", { name: /Registrar relato de urgência/ })).toBeDisabled();
-  expect(screen.getByRole("link", { name: /Ligar para o SAMU 192/ })).toBeVisible();
+  expect(screen.getByRole("link", { name: /Ligar 192 \(SAMU\)/ })).toBeVisible();
+  await userEvent.click(screen.getByRole("button", { name: /Dor forte/ }));
+  expect(screen.getByRole("button", { name: /Enviar pedido urgente/ })).toBeDisabled();
 });
