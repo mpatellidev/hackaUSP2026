@@ -1,8 +1,11 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sorriu+ em movimento</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<!-- tudo local: funciona sem internet no evento -->
+<link rel="stylesheet" href="vendor/fontes.css">
 <link rel="stylesheet" href="comum.css">
 <style>
 /* Trailer de 45 s para o stand: sem som, em loop. Cada cena é uma camada; uma timeline GSAP controla tudo. */
@@ -227,7 +230,7 @@ body.render #ctrl { display: none; }
   <span id="tempo">0,0 / 45 s</span>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="vendor/gsap-3.12.5.min.js"></script>
 <script src="comum.js"></script>
 <script>
 (() => {
