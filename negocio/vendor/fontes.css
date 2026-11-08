@@ -1,0 +1,7 @@
+/* Fontes locais (funcionam sem internet no evento). Lexend e Atkinson Hyperlegible: SIL OFL 1.1, via @fontsource. */
+@font-face { font-family: "Lexend"; font-style: normal; font-weight: 400; font-display: block; src: url(fontes/lexend-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Lexend"; font-style: normal; font-weight: 600; font-display: block; src: url(fontes/lexend-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Lexend"; font-style: normal; font-weight: 700; font-display: block; src: url(fontes/lexend-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Lexend"; font-style: normal; font-weight: 800; font-display: block; src: url(fontes/lexend-latin-800-normal.woff2) format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 400; font-display: block; src: url(fontes/atkinson-hyperlegible-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 700; font-display: block; src: url(fontes/atkinson-hyperlegible-latin-700-normal.woff2) format("woff2"); }
