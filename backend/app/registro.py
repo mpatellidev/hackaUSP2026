@@ -20,6 +20,7 @@ from app.modulos.cenarios import router as cenarios
 from app.modulos.emergencia import router as emergencia
 from app.modulos.indexador import router as indexador
 from app.modulos.notificacoes import router as notificacoes
+from app.modulos.painel_clinica import router as painel_clinica
 from app.modulos.perfil import router as perfil
 from app.modulos.prioridade import router as prioridade
 from app.modulos.profissionais import router as profissionais
@@ -53,4 +54,5 @@ ROUTERS: list[APIRouter] = [
     alertas.router,
     resumos.router,
     acessibilidade.router,
+    painel_clinica.router,
 ]

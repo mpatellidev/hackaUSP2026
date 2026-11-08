@@ -1,0 +1,309 @@
+/* Painel da clínica (protótipo) — medidas e cores do design operacional. Prefixo `d-`.
+   Sem fontes ou recursos externos. Tudo vale só dentro de `.d-admin`; tema escuro: `.d-admin.d-theme-dark`. */
+.d-admin {
+  color-scheme: light; --d-font-family: "Segoe UI", Arial, sans-serif;
+  --d-brand: #116b65; --d-on-brand: #fff; --d-link: #105e59; --d-sun: #ffb81c;
+  --d-bg: #f3f5f6; --d-surface: #fff; --d-soft: #edf5f3; --d-text: #263532;
+  --d-muted: #62716d; --d-border: #dce2df; --d-border-strong: #9ba9a3;
+  --d-radius-card: 6px; --d-radius-control: 4px; --d-text-size: 14px; --d-row-space: 12px;
+  --d-space-6: 24px; --d-target: 44px; --d-warning: #faf7ed; --d-warning-text: #795b17;
+  --d-danger-bg: #f9efed; --d-danger-text: #9a3930;
+}
+.d-admin.d-theme-dark {
+  color-scheme: dark; --d-brand: #73c7bd; --d-on-brand: #142d29; --d-link: #93d1c8;
+  --d-bg: #182320; --d-surface: #202e29; --d-soft: #2c3e36; --d-text: #e6ece8;
+  --d-muted: #afbbb4; --d-border: #3b4a41; --d-border-strong: #75877b;
+  --d-warning: #393527; --d-warning-text: #e5ca83; --d-danger-bg: #40302c; --d-danger-text: #efaaa0;
+}
+
+/* ---------- base ---------- */
+:where(.d-admin) * { box-sizing: border-box; }
+.d-admin { min-height: 100vh; background: var(--d-bg); color: var(--d-text); font: var(--d-text-size)/1.5 var(--d-font-family); }
+:where(.d-admin) button, :where(.d-admin) input, :where(.d-admin) select, :where(.d-admin) textarea { font: inherit; color: inherit; }
+:where(.d-admin) button { cursor: pointer; border: 0; background: transparent; }
+:where(.d-admin) button:disabled { cursor: default; opacity: .65; }
+:where(.d-admin) button, :where(.d-admin) a { touch-action: manipulation; }
+:where(.d-admin) a { color: var(--d-link); }
+:where(.d-admin) button:focus-visible, :where(.d-admin) a:focus-visible, :where(.d-admin) input:focus-visible, :where(.d-admin) select:focus-visible, :where(.d-admin) textarea:focus-visible, :where(.d-admin) summary:focus-visible { outline: 2px solid var(--d-link); outline-offset: 3px; }
+:where(.d-admin) h1, :where(.d-admin) h2, :where(.d-admin) h3, :where(.d-admin) p { margin: 0; }
+:where(.d-admin) h1, :where(.d-admin) h2, :where(.d-admin) h3, .d-brand { font-family: var(--d-font-family); letter-spacing: normal; font-weight: 600; }
+:where(.d-admin) h1 { font-size: 26px; line-height: 1.3; }
+:where(.d-admin) h2 { font-size: 16px; line-height: 1.4; }
+:where(.d-admin) h3 { font-size: 14px; line-height: inherit; }
+:where(.d-admin) b, :where(.d-admin) strong { font-weight: 600; }
+:where(.d-admin) small, .d-muted { color: var(--d-muted); }
+
+/* ---------- ícones ---------- */
+:where(.d-admin) svg.d-ico { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+/* ---------- moldura e menu lateral ---------- */
+.d-shell { display: grid; grid-template-columns: 216px minmax(0,1fr); min-height: 100vh; }
+.d-sidebar { background: #153c36; color: #e7eeea; padding: 22px 12px 16px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+.d-brand { display: flex; align-items: center; gap: 8px; font-size: 23px; padding: 0 12px; margin-bottom: 18px; }
+.d-brand svg { width: 30px; height: 34px; }
+.d-nav-label { font-size: 11px; font-weight: 600; color: #aebfb7; padding: 10px 12px 7px; }
+.d-nav-label.d-management { margin-top: 20px; }
+.d-navigation { display: grid; gap: 3px; }
+.d-nav-item { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 10px 12px; color: #e0e9e3; font-size: 13px; border-radius: 4px; text-decoration: none; }
+.d-nav-item:hover { background: #234b40; }
+.d-nav-item.d-active { background: #edf4ef; color: #1c4f40; font-weight: 600; }
+.d-nav-item .d-ico { width: 17px; height: 17px; }
+.d-count { margin-left: auto; color: inherit; border: 1px solid currentColor; border-radius: 3px; min-width: 21px; padding: 0 5px; font-size: 11px; text-align: center; line-height: 18px; }
+.d-sidebar-bottom { margin-top: auto; }
+.d-clinic-status { margin: 24px 10px 18px; font-size: 12px; color: #dae5dc; }
+.d-clinic-status b { display: flex; align-items: center; gap: 7px; font-weight: 400; }
+.d-status-dot { display: inline-block; width: 6px; height: 6px; background: #8fc7a3; border-radius: 50%; flex-shrink: 0; }
+.d-clinic-status.d-is-paused .d-status-dot { background: #e5c77c; }
+.d-account { display: flex; align-items: center; gap: 9px; padding: 16px 8px 0; border-top: 1px solid #3b5b4c; font-size: 12px; }
+.d-account small { display: block; color: #afc0b4; font-size: 11px; margin-top: 2px; }
+.d-avatar { display: inline-flex; justify-content: center; align-items: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 4px; background: var(--d-soft); color: var(--d-link); font-size: 11px; font-weight: 600; }
+.d-account .d-avatar { background: #375c49; color: #e4ece4; }
+
+/* ---------- barra superior e cabeçalho da página ---------- */
+.d-workspace { min-width: 0; }
+.d-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 10px 24px; border-bottom: 1px solid var(--d-border); background: var(--d-surface); }
+.d-clinic-switch { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.d-clinic-switch label { color: var(--d-muted); font-size: 12px; }
+.d-clinic-switch select { width: 290px; max-width: 100%; padding: 8px 28px 8px 10px; min-height: 38px; font-size: 13px; font-weight: 600; background: var(--d-surface); border: 1px solid var(--d-border); border-radius: var(--d-radius-control); }
+.d-top-actions { display: flex; align-items: center; gap: 14px; }
+.d-demo-label { color: var(--d-muted); font-size: 11px; }
+.d-icon-btn { display: inline-flex; justify-content: center; align-items: center; min-width: 36px; min-height: 36px; border: 1px solid var(--d-border); border-radius: var(--d-radius-control); color: var(--d-muted); background: var(--d-surface); }
+.d-content { margin: auto; padding: 26px 24px 20px; max-width: 1700px; }
+.d-breadcrumb { display: flex; align-items: center; gap: 7px; color: var(--d-muted); font-size: 11px; margin-bottom: 12px; }
+.d-breadcrumb .d-ico { width: 12px; height: 12px; }
+.d-page-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
+.d-page-heading p { color: var(--d-muted); font-size: 13px; margin-top: 5px; }
+.d-eyebrow { color: var(--d-muted); font-size: 12px; font-weight: 400; }
+
+/* ---------- botões ---------- */
+.d-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 8px 13px; font-size: 13px; font-weight: 600; background: var(--d-surface); border: 1px solid var(--d-border-strong); border-radius: var(--d-radius-control); text-decoration: none; }
+.d-button.d-primary { background: var(--d-brand); border-color: var(--d-brand); color: var(--d-on-brand); }
+.d-button.d-danger { color: var(--d-danger-text); }
+.d-button:not(:disabled):hover { filter: brightness(.97); }
+.d-button .d-ico { width: 16px; height: 16px; }
+
+/* ---------- indicadores ---------- */
+.d-metrics { display: grid; grid-template-columns: repeat(3,1fr); margin-bottom: 22px; border: 1px solid var(--d-border); border-radius: var(--d-radius-card); background: var(--d-surface); }
+.d-metric { padding: 15px 20px; }
+.d-metric+.d-metric { border-left: 1px solid var(--d-border); }
+.d-metric-title { font-size: 12px; color: var(--d-muted); }
+.d-metric-value { font-size: 25px; line-height: 1.2; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 5px; }
+
+/* ---------- painéis, abas e filtros ---------- */
+.d-split { display: grid; grid-template-columns: minmax(0,1fr) 292px; align-items: start; gap: 18px; }
+.d-panel { background: var(--d-surface); border: 1px solid var(--d-border); border-radius: var(--d-radius-card); min-width: 0; overflow: hidden; }
+.d-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; }
+.d-panel-head h2 { display: flex; align-items: center; gap: 7px; }
+.d-subcount { color: var(--d-muted); font-weight: 400; font-size: 12px; }
+.d-text-button { display: inline-flex; align-items: center; gap: 6px; color: var(--d-link); font-size: 12px; font-weight: 600; min-height: 36px; padding: 4px; }
+.d-text-button:hover { text-decoration: underline; }
+.d-text-button .d-ico { width: 15px; height: 15px; }
+.d-tabs { display: flex; gap: 20px; padding: 0 18px; overflow: auto; border-bottom: 1px solid var(--d-border); }
+.d-tab { padding: 10px 0; min-height: 40px; color: var(--d-muted); font-size: 12px; border-bottom: 2px solid transparent; white-space: nowrap; }
+.d-tab.d-active { color: var(--d-link); border-bottom-color: var(--d-link); font-weight: 600; }
+.d-filterbar { display: flex; gap: 12px; padding: 14px 18px; }
+.d-search { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; min-height: 38px; padding: 0 10px; color: var(--d-muted); border: 1px solid var(--d-border-strong); border-radius: var(--d-radius-control); }
+.d-search input { width: 100%; min-width: 0; border: 0; background: transparent; outline: none; font-size: 12px; }
+.d-search:focus-within { outline: 2px solid var(--d-link); outline-offset: 2px; }
+.d-filter-select { font-size: 12px; min-height: 38px; max-width: 170px; border: 1px solid var(--d-border-strong); border-radius: var(--d-radius-control); background: var(--d-surface); padding: 5px 8px; }
+
+/* ---------- tabela de solicitações ---------- */
+.d-table-scroll { overflow: auto; }
+:where(.d-admin) table { width: 100%; border-collapse: collapse; text-align: left; font-size: var(--d-text-size); }
+:where(.d-admin) caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+:where(.d-admin) th { padding: 11px 16px; border-block: 1px solid var(--d-border); background: var(--d-bg); color: var(--d-muted); font-size: 12px; font-weight: 600; white-space: nowrap; }
+:where(.d-admin) td { padding: var(--d-row-space) 16px; border-bottom: 1px solid var(--d-border); vertical-align: middle; }
+:where(.d-admin) th:first-child { width: 30%; }
+:where(.d-admin) th:nth-child(2) { width: 32%; }
+:where(.d-admin) td:nth-child(3), :where(.d-admin) td:nth-child(4) { white-space: nowrap; }
+:where(.d-admin) tbody tr:last-child td { border-bottom: 0; }
+:where(.d-admin) tr.d-selected td { background: var(--d-soft); }
+:where(.d-admin) tr.d-selected td:first-child { box-shadow: inset 2px 0 var(--d-link); }
+:where(.d-admin) tbody tr:hover td { background: var(--d-soft); }
+.d-patient-cell { display: flex; align-items: center; gap: 8px; min-width: 135px; }
+.d-patient-cell small { display: block; font-size: 11px; margin-top: 2px; }
+.d-patient-name { min-height: 24px; padding: 0; display: block; font-weight: 600; text-align: left; }
+:where(.d-admin) button.d-patient-name:hover { color: var(--d-link); text-decoration: underline; }
+
+/* ---------- situação (ícone e texto) ---------- */
+.d-badge { display: inline-flex; align-items: center; gap: 6px; padding: 0; font-size: 12px; color: var(--d-link); font-weight: 400; white-space: nowrap; }
+.d-badge.d-warning { color: var(--d-warning-text); }
+.d-badge.d-danger { color: var(--d-danger-text); }
+.d-badge.d-neutral { color: var(--d-muted); }
+.d-badge .d-ico { width: 14px; height: 14px; }
+.d-table-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--d-border); color: var(--d-muted); font-size: 11px; }
+
+/* ---------- vazio ---------- */
+.d-empty { padding: 30px 20px; text-align: center; color: var(--d-muted); }
+.d-empty h2 { margin: 8px 0; }
+.d-empty .d-button { margin-top: 18px; }
+
+/* ---------- perfil do paciente ---------- */
+.d-profile { padding: 18px; }
+.d-profile-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid var(--d-border); padding-bottom: 12px; margin-bottom: 17px; }
+.d-profile-heading .d-eyebrow { font-size: 12px; font-weight: 600; color: var(--d-text); }
+.d-profile-id { font-size: 11px; color: var(--d-muted); }
+.d-profile-identity { margin-bottom: 8px; }
+.d-profile-identity h2 { font-size: 19px; }
+.d-profile-identity p { color: var(--d-muted); font-size: 12px; margin-top: 3px; }
+.d-profile-service { border-top: 1px solid var(--d-border); padding-top: 16px; margin: 16px 0; }
+.d-profile-service h3 { font-size: 14px; font-weight: 600; margin-top: 4px; }
+.d-profile-service p { color: var(--d-muted); font-size: 12px; margin-top: 6px; line-height: 1.5; }
+.d-details { display: grid; gap: 13px; margin: 14px 0; }
+.d-detail { font-size: 12px; }
+.d-detail small { display: block; font-size: 11px; margin-bottom: 3px; }
+.d-detail strong { font-weight: 600; }
+.d-disclosure { border-top: 1px solid var(--d-border); padding-top: 12px; margin-top: 15px; font-size: 12px; }
+:where(.d-admin) summary { cursor: pointer; color: var(--d-link); font-weight: 600; min-height: 30px; padding: 4px 0; }
+.d-profile-actions { display: grid; gap: 9px; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--d-border); }
+.d-profile-actions .d-text-button { justify-content: center; }
+.d-profile-footer { font-size: 11px; color: var(--d-muted); margin-top: 14px; }
+
+/* ---------- avisos e rodapé ---------- */
+.d-notice { border-left: 3px solid var(--d-border-strong); background: var(--d-bg); color: var(--d-muted); padding: 10px 12px; font-size: 12px; }
+.d-notice strong { display: block; color: var(--d-text); margin-bottom: 3px; }
+.d-bottom-note { display: flex; justify-content: space-between; gap: 12px; color: var(--d-muted); font-size: 11px; padding-top: 20px; }
+.d-bottom-note span { display: inline-flex; align-items: center; gap: 6px; }
+.d-bottom-note .d-ico { width: 13px; height: 13px; }
+
+/* ---------- serviços e vagas ---------- */
+.d-service-toolbar { margin-bottom: 18px; border: 1px solid var(--d-border); border-radius: var(--d-radius-card); background: var(--d-surface); }
+
+/* ---------- serviços e vagas ---------- */
+.d-service-toolbar .d-tabs { border-bottom: 0; }
+.d-service-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.d-service-card { display: flex; flex-direction: column; padding: 18px; gap: 14px; }
+.d-service-card-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+.d-service-card-head h2 { margin-bottom: 3px; }
+.d-service-type { color: var(--d-muted); font-size: 12px; }
+.d-service-capacity { white-space: nowrap; color: var(--d-muted); font-size: 12px; }
+.d-service-capacity b { font-size: 17px; color: var(--d-text); margin-right: 4px; }
+.d-service-card p { font-size: 13px; color: var(--d-muted); }
+.d-service-card dl { margin: 8px 0 0; font-size: 13px; }
+.d-service-card dt { color: var(--d-muted); font-size: 12px; margin-bottom: 4px; }
+.d-service-card dd { margin: 0 0 14px; }
+.d-service-card .d-disclosure { margin-top: 0; }
+.d-service-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--d-border); padding-top: 10px; margin-top: auto; }
+
+/* ---------- formulários ---------- */
+.d-form-panel { padding: 22px; max-width: 850px; }
+.d-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 22px 0; }
+.d-field { display: flex; flex-direction: column; gap: 7px; font-size: 13px; font-weight: 600; min-width: 0; }
+.d-field input, .d-field select, .d-field textarea { width: 100%; min-height: 40px; padding: 9px 11px; font-size: 13px; font-weight: 400; background: var(--d-surface); border: 1px solid var(--d-border-strong); border-radius: var(--d-radius-control); }
+.d-field.d-full { grid-column: 1/-1; }
+.d-field textarea { min-height: 80px; resize: vertical; }
+.d-checkbox { display: flex; align-items: center; gap: 9px; font-size: 13px; min-height: 44px; }
+.d-checkbox input { width: 17px; height: 17px; accent-color: var(--d-link); }
+.d-divider { border: 0; border-top: 1px solid var(--d-border); margin: 22px 0; }
+
+/* ---------- triagem ---------- */
+.d-queue { display: flex; flex-direction: column; gap: 0; align-self: start; border: 1px solid var(--d-border); border-radius: var(--d-radius-card); overflow: hidden; background: var(--d-surface); }
+.d-queue-card { display: block; width: 100%; padding: 15px 16px; text-align: left; border-bottom: 1px solid var(--d-border); border-left: 2px solid transparent; }
+.d-queue-card:last-child { border-bottom: 0; }
+.d-queue-card.d-active { border-left-color: var(--d-link); background: var(--d-soft); }
+.d-queue-card p { color: var(--d-muted); font-size: 12px; margin-top: 4px; }
+.d-queue-card small { display: block; font-size: 11px; margin-top: 7px; }
+.d-triage-layout { display: grid; grid-template-columns: 265px minmax(0,1fr); align-items: start; gap: 20px; }
+
+/* ---------- histórico da solicitação ---------- */
+.d-timeline { list-style: none; padding: 0 0 0 18px; border-left: 2px solid var(--d-border); margin: 20px 0; display: grid; gap: 20px; font-size: 13px; }
+.d-timeline li { position: relative; }
+.d-timeline li:before { content: ''; position: absolute; width: 8px; height: 8px; background: var(--d-link); border-radius: 50%; left: -23px; top: 6px; }
+.d-timeline time { color: var(--d-muted); font-size: 11px; display: block; margin-bottom: 4px; }
+
+/* ---------- janela (dialog) e aviso rápido ---------- */
+:where(.d-admin) dialog { width: min(560px,calc(100% - 32px)); max-height: 90vh; padding: 24px; border: 1px solid var(--d-border-strong); border-radius: 6px; background: var(--d-surface); color: var(--d-text); box-shadow: 0 12px 40px #182b2926; }
+:where(.d-admin) dialog::backdrop { background: #17292270; }
+.d-modal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 14px; margin-bottom: 5px; border-bottom: 1px solid var(--d-border); }
+.d-modal-head h2 { font-size: 18px; }
+.d-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+:where(.d-admin) dialog .d-profile.d-is-full { border: 0; padding: 14px 0 0; }
+:where(.d-admin) dialog .d-profile-heading { display: none; }
+:where(.d-admin) dialog .d-profile-service p { font-size: 13px; }
+.d-triage-observation { color: var(--d-text); white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 6px; }
+.d-toast-app { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 200; max-width: 90vw; padding: 12px 20px; color: #fff; background: #24493c; border-radius: 4px; box-shadow: 0 3px 12px #0002; font-size: 13px; }
+
+/* ---------- acessibilidade e menu móvel ---------- */
+.d-skip { position: fixed; top: -100px; left: 10px; padding: 10px; z-index: 999; background: var(--d-surface); }
+.d-skip:focus { top: 10px; }
+.d-mobile-menu, .d-menu-backdrop { display: none; }
+
+/* ---------- dados da API: clínica do token e conta ---------- */
+.d-clinic-label { color: var(--d-muted); font-size: 12px; }
+.d-clinic-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; }
+.d-sair { margin-left: auto; min-height: 36px; padding: 4px 8px; border: 1px solid #3b5b4c; border-radius: 4px; color: #e0e9e3; font-size: 11px; }
+.d-sair:hover { background: #234b40; }
+
+/* ---------- entrar (CPF ou e-mail e senha) ---------- */
+.d-entrar { display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+.d-entrar-cartao { width: 100%; max-width: 420px; }
+.d-entrar-marca { padding: 0; color: var(--d-link); }
+.d-entrar-erro { display: flex; align-items: flex-start; gap: 8px; margin: 12px 0; padding: 10px 12px; border-left: 3px solid var(--d-danger-text); background: var(--d-danger-bg); color: var(--d-danger-text); font-size: 13px; }
+.d-entrar-botao { width: 100%; min-height: 44px; margin-top: 12px; }
+
+/* ---------- responsivo ---------- */
+@media (min-width: 1600px) {
+  .d-split { grid-template-columns: minmax(0,1fr) 320px; gap: 22px; }
+  .d-content { padding: 30px 30px 22px; }
+  :where(.d-admin) td { padding-block: calc(var(--d-row-space) + 2px); }
+}
+@media (max-width: 1200px) {
+  .d-shell { grid-template-columns: 200px minmax(0,1fr); }
+  .d-split { grid-template-columns: 1fr; }
+  .d-profile { display: none; }
+  .d-profile.d-is-full { display: block; }
+  .d-top-actions .d-demo-label { max-width: 110px; line-height: 1.4; }
+}
+@media (max-width: 850px) {
+  .d-clinic-switch label, .d-clinic-label { display: none; }
+  .d-triage-layout { grid-template-columns: 220px minmax(0,1fr); }
+  .d-service-grid { grid-template-columns: 1fr; }
+  .d-topbar { padding-inline: 18px; }
+  .d-content { padding-inline: 18px; }
+}
+@media (max-width: 760px) {
+  .d-shell { display: block; }
+  .d-sidebar { position: fixed; left: -236px; width: 216px; height: 100dvh; z-index: 90; transition: left .15s; }
+  .d-shell.d-menu-open .d-sidebar { left: 0; }
+  .d-shell.d-menu-open .d-menu-backdrop { display: block; position: fixed; inset: 0; left: 216px; z-index: 80; background: #162b2266; }
+  .d-mobile-menu { display: inline-flex; min-width: 44px; min-height: 44px; }
+  .d-topbar { padding: 10px 14px; min-height: 64px; gap: 8px; }
+  .d-clinic-switch { gap: 8px; flex: 1; }
+  .d-clinic-switch select { width: 100%; max-width: 280px; min-width: 0; min-height: 44px; font-size: 12px; }
+  .d-top-actions { gap: 6px; }
+  .d-top-actions .d-demo-label { display: none; }
+  .d-icon-btn { min-width: 44px; min-height: 44px; }
+  .d-content { padding: 20px 14px; }
+  :where(.d-admin) h1 { font-size: 23px; }
+  .d-page-heading { gap: 12px; align-items: start; }
+  .d-page-heading p { font-size: 12px; max-width: 250px; }
+  .d-page-heading .d-button { padding: 8px 10px; min-height: 44px; font-size: 12px; }
+  .d-page-heading .d-button .d-ico { display: none; }
+  .d-metrics { margin-bottom: 18px; }
+  .d-metric { padding: 12px 10px; }
+  .d-metric-title { font-size: 10px; }
+  .d-metric-value { font-size: 22px; }
+  .d-panel-head { padding: 12px 14px; }
+  .d-panel-head h2 { font-size: 15px; }
+  .d-tabs { gap: 18px; padding-inline: 14px; }
+  .d-tab, .d-text-button { min-height: 44px; }
+  .d-filterbar { gap: 8px; padding: 12px 14px; flex-wrap: wrap; }
+  .d-search { flex-basis: 180px; min-height: 44px; }
+  .d-filter-select { flex: 1; max-width: none; min-height: 44px; }
+  :where(.d-admin) table { min-width: 580px; font-size: 13px; }
+  :where(.d-admin) td, :where(.d-admin) th { padding-inline: 14px; }
+  .d-patient-name { min-height: 32px; }
+  .d-table-footer { padding-inline: 14px; }
+  .d-triage-layout, .d-form-grid { grid-template-columns: 1fr; }
+  .d-queue { flex-direction: row; overflow: auto; }
+  .d-queue-card { min-width: 210px; width: auto; border-bottom: 0; border-right: 1px solid var(--d-border); padding: 12px 14px; }
+  .d-field.d-full { grid-column: auto; }
+  .d-field input, .d-field select { min-height: 44px; }
+  .d-form-panel { padding: 18px; }
+  .d-bottom-note { flex-wrap: wrap; font-size: 10px; }
+  .d-service-card { padding: 16px; }
+  .d-service-card .d-disclosure summary { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(.d-admin) * { transition: none!important; scroll-behavior: auto!important; }
+}

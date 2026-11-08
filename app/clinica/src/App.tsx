@@ -1,18 +1,20 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Carregando } from "@uhealth/ui";
-import { ProvedorUHealth, TelaLogin, useSessao } from "@uhealth/api-client";
+import { ProvedorUHealth, useSessao } from "@uhealth/api-client";
 import { Casca } from "./Casca";
-import { ROTAS } from "./rotas";
+import { Entrar } from "./design/Entrar";
+import { INICIO, ROTAS } from "./rotas";
 
 function Roteador() {
   const { usuario, restaurando } = useSessao();
   if (restaurando) return <Carregando texto="Entrando…" />;
-  if (!usuario) return <TelaLogin papel="funcionario" titulo="Painel das clínicas" />;
+  if (!usuario) return <Entrar />;
   return (
     <Routes>
+      {ROTAS.filter((r) => r.telaCheia).map((r) => <Route key={r.caminho} path={r.caminho} element={r.elemento} />)}
       <Route element={<Casca />}>
-        {ROTAS.map((r) => <Route key={r.caminho} path={r.caminho} element={r.elemento} />)}
-        <Route path="*" element={<Navigate to="/pedidos" replace />} />
+        {ROTAS.filter((r) => !r.telaCheia).map((r) => <Route key={r.caminho} path={r.caminho} element={r.elemento} />)}
+        <Route path="*" element={<Navigate to={INICIO} replace />} />
       </Route>
     </Routes>
   );

@@ -451,7 +451,8 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Atualizar contato e recebimento de pedidos da própria clínica (atendimento ou coordenação) */
+        patch: operations["atualizar_clinica_api_v1_clinicas__clinica_id__patch"];
         trace?: never;
     };
     "/solicitacoes": {
@@ -1262,6 +1263,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/painel-clinica/pedidos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pedidos da clínica do token, com o nome de exibição do paciente (funcionário) */
+        get: operations["listar_pedidos_api_v1_painel_clinica_pedidos_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1430,6 +1448,22 @@ export interface components {
             mensagem: string;
             /** Contatos */
             contatos: components["schemas"]["ContatoOut"][];
+        };
+        /**
+         * AtualizarClinicaIn
+         * @description Dados de contato e recebimento. Só os campos enviados mudam.
+         */
+        AtualizarClinicaIn: {
+            /** Nome */
+            nome?: string | null;
+            /** Telefone */
+            telefone?: string | null;
+            /** Endereco */
+            endereco?: string | null;
+            /** Bairro */
+            bairro?: string | null;
+            /** Recebendo Pedidos */
+            recebendo_pedidos?: boolean | null;
         };
         /** AtualizarEstadoIn */
         AtualizarEstadoIn: {
@@ -2467,6 +2501,13 @@ export interface components {
             /** Nao Lidas */
             nao_lidas: number;
         };
+        /** ListaPedidosDoPainel */
+        ListaPedidosDoPainel: {
+            /** Itens */
+            itens: components["schemas"]["PedidoDoPainel"][];
+            /** Total */
+            total: number;
+        };
         /** ListaProfissionais */
         ListaProfissionais: {
             /** Itens */
@@ -2632,6 +2673,48 @@ export interface components {
             texto: string;
             /** Aviso */
             aviso: string;
+        };
+        /**
+         * PedidoDoPainel
+         * @description Pedido como o painel da clínica mostra: o mesmo `SolicitacaoOut` com o nome de exibição do paciente.
+         */
+        PedidoDoPainel: {
+            /** Id */
+            id: string;
+            /** Paciente Id */
+            paciente_id: string;
+            /** Clinica Id */
+            clinica_id: string;
+            /**
+             * Estado
+             * @enum {string}
+             */
+            estado: "enviada" | "em_analise" | "precisa_contato" | "indisponivel" | "aguardando_confirmacao" | "agendada" | "concluida";
+            /** Especialidade */
+            especialidade: string;
+            /**
+             * Publico Alvo
+             * @enum {string}
+             */
+            publico_alvo: "adultos" | "criancas" | "gestantes" | "idosos";
+            /** Descricao Administrativa */
+            descricao_administrativa: string;
+            /** Solicitacao Origem Id */
+            solicitacao_origem_id: string | null;
+            /** Criado Em */
+            criado_em: string;
+            /** Atualizado Em */
+            atualizado_em: string | null;
+            /** Para Quem */
+            para_quem?: ("mim" | "outra") | null;
+            /** Nome Paciente */
+            nome_paciente?: string | null;
+            /** Telefone Contato */
+            telefone_contato?: string | null;
+            /** Trilha */
+            trilha?: string | null;
+            /** Paciente Nome Exibicao */
+            paciente_nome_exibicao: string;
         };
         /** PerfilChatIn */
         PerfilChatIn: {
@@ -4261,6 +4344,43 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClinicaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    atualizar_clinica_api_v1_clinicas__clinica_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                clinica_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AtualizarClinicaIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -6409,6 +6529,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TTSOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listar_pedidos_api_v1_painel_clinica_pedidos_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListaPedidosDoPainel"];
                 };
             };
             /** @description Validation Error */

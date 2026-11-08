@@ -7,4 +7,6 @@ export interface RotaModulo {
   elemento: ReactElement;
   /** se existir, aparece na barra de abas */
   aba?: ItemMenu;
+  /** se true, a tela ocupa a janela inteira, fora da moldura (sem o menu lateral do app) */
+  telaCheia?: boolean;
 }

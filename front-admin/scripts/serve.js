@@ -1,4 +1,0 @@
-// Servidor de revisão restrito aos arquivos públicos do protótipo.
-const http=require('node:http');const fs=require('node:fs');const path=require('node:path');
-const allowed=new Map([['/','index.html'],['/index.html','index.html'],['/styles.css','styles.css'],['/app.js','app.js'],['/uhealth-admin.html','uhealth-admin.html'],['/.frontend-design/uhealth-admin/2026-11-07-uhealth-admin.html','.frontend-design/uhealth-admin/2026-11-07-uhealth-admin.html']]);
-http.createServer((req,res)=>{const file=allowed.get(new URL(req.url,'http://localhost').pathname);if(!file){res.writeHead(404);res.end('Não encontrado');return}res.setHeader('Content-Type',file.endsWith('.css')?'text/css; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':'text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');fs.createReadStream(path.resolve(__dirname,'..',file)).pipe(res)}).listen(4173,'127.0.0.1',()=>console.log('UHealth disponível em http://127.0.0.1:4173'));
