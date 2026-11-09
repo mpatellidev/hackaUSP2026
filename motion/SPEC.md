@@ -12,8 +12,10 @@ Prioridade em conflito: `AGENTS.md` > este SPEC > gosto pessoal.
 |---|---|---|---|
 | Trailer | `index.html` | 45,0 s, loop, sem som | Stand (tela/TV) |
 | Vídeo do trailer | `sorriu-mais-motion.mp4` | 1920×1080, 30 fps, H.264 | Stand sem navegador |
-| Deck | `slides.html` | 12 slides (0–11), avanço por clique | Pitch de 5 min |
+| Deck | `slides.html` | 12 slides (0–11), avanço por clique | Pitch de 5 min (4:04 planejados + folga) |
 | Roteiro | `roteiro.md` | ~620 palavras | Falas e notas do deck |
+| PDF de reserva | `sorriu-mais-deck.pdf` (`exportar-pdf.cjs`) | 15 páginas 16:9 | Plano B sem navegador |
+| Vídeo do deck | `sorriu-mais-deck.mp4` + `.srt` (`render-deck.cjs`) | ~5 min, 1920×1080, 30 fps, legenda, sem voz | Envio para a banca / backup |
 
 O port está pronto quando:
 1. Em 1920×1080, os quadros dos tempos da §8.3 e o estado final de cada slide (§9) batem com a referência (mesmo texto, posição ±4 px, mesmas cores).
@@ -106,7 +108,7 @@ Regras de contraste do app: nunca texto branco sobre `#14BEB9` e nunca `#14BEB9`
 | toque | `fromTo scale .4 opacity 0 → scale 1.3 opacity 1` (0,25 s), depois `opacity 0 scale 1.8` (0,3 s) |
 | contador | Objeto `{v}` animado com `power2.out` e texto em pt-BR: `117,5` com 1 casa, `66%` inteiro |
 | câmera | Zoom em `.cam`: `scale` + `transformOrigin` em px na tela, 0,8–0,9 s `power2.inOut` |
-| `salto` (deck, slide 9) | Agacha (`scaleX 1.2, scaleY .78`, origem na base, 0,14 s) → estica (`.9 / 1.12`, 0,1 s) → voa 0,62 s com `x` linear e `y = lerp − altura·4p(1−p)` (altura 220) → pousa (`1.22 / .8`, 0,09 s) → `elastic.out(1, .45)` até 1/1 em 0,45 s |
+| `salto` (deck; sem uso desde que a escada saiu, fica para reuso) | Agacha (`scaleX 1.2, scaleY .78`, origem na base, 0,14 s) → estica (`.9 / 1.12`, 0,1 s) → voa 0,62 s com `x` linear e `y = lerp − altura·4p(1−p)` (altura 220) → pousa (`1.22 / .8`, 0,09 s) → `elastic.out(1, .45)` até 1/1 em 0,45 s |
 
 **Determinismo do trailer:** uma única timeline pausada, controlada por `seek(t)`. O código expõe `window.__seek(t)`, `window.__duration` (45) e `window.__pronto` (fontes e imagens carregadas). Não use `Date`, `Math.random` nem callbacks com efeito colateral na timeline do trailer, para que o render quadro a quadro seja idêntico. Os textos mudam só via `onUpdate`, que é determinístico.
 
@@ -150,6 +152,12 @@ Compare o port com a referência nestes tempos (s): 0,5 · 1,55 (sorriso no meio
 - **Endereço:** `#sN` abre no slide N já montado. O deck grava `#sN` a cada troca.
 - **Interface:** "NN / 11" no canto superior direito (Lexend 700, 24 px) e barra amarela de progresso de 6 px na base. Ambos ficam ocultos no slide 0.
 - Se o 1º passo ainda não começou, um clique só o inicia.
+- **Demo do app:** **D** (ou clique no celular depois do 1º passo) abre o modo demo: transição `sorriso` para um fundo verde, o celular voa da posição do slide até `left 1180, top 64` (escala 1,02; 0,92 no slide 8) e um halo amarelo de 20 px aparece com `back.out(2.4)`. Tela ao vivo (iframe do servidor de dev, ?paciente/?clinica) ou protótipo clicável (`TELAS`/`TELAS_C` em `slides.html`). **Esc**/**D** fecha revertendo a timeline (1,7×).
+- **Apresentador:** **P** abre `slides.html?apresentador` numa janela; as duas conversam por `postMessage` (estado do deck → janela; comandos ← janela). Meta por slide: 12, 28, 15, 20, 25, 22, 15, 20, 25, 25, 20, 20, 18, 20, 15 s (5:00).
+- **Ensaio (no apresentador):** o botão **Ensaio** zera e começa a gravar o tempo real em cada slide (liga o cronômetro; **Pausar** também pausa o ensaio). A lista mostra `real / meta` por slide (vermelho quando passa). Desligar (ou "Encerrar e ver resumo" no último slide) abre o **resumo**: tabela meta × real × diferença × palavras da fala (`NOTAS`, sem `[clique]`) × palavras por minuto, e a lista dos slides que estouraram, do maior estouro para o menor, com quantas palavras cortar no ritmo daquele ensaio (`palavras × excesso ÷ tempo real`). Fica no `localStorage` do navegador (`sorriu-ensaio-v1`, com `try/catch`); "Apagar ensaio" limpa.
+- **Apêndice da banca:** **A** (ou o botão no apresentador) abre uma camada dentro do palco, fora da contagem de slides (§9.4). **1–6** amplia um cartão (ou clique nele); **Esc** volta da resposta ampliada e, de novo, fecha; **A** fecha. Com o apêndice aberto, → e clique não avançam o deck.
+- **Movimento reduzido:** troca seca, passos já montados, abertura parada no lockup e celular sem flutuar.
+- **API de script:** `window.__deck` = `{ ir, avancar, abrirDemo, fecharDemo, abrirApendice, fecharApendice, ampliar, pronto, NOTAS, PLANO, atual, passo, demo, apendice, passos(i) }`. `pronto` é a promessa de fontes e imagens carregadas; `passos(i)` devolve a duração (s) de cada passo do slide `i`.
 
 ### 9.2 Slide 0: abertura em loop (14 s, `repeat −1`)
 1. Lockup do deck parado, com brilho no "u" pulsando 4 vezes (0,4–3,6).
@@ -163,19 +171,42 @@ O loop pausa 1,2 s depois de sair do slide 0 e reinicia ao voltar.
 
 | # | id | Fundo | Conteúdo | Passos (cliques) |
 |---|---|---|---|---|
-| 1 | `sl1` | claro | "NOSSA DOR · ACESSO"; `117,5 dias` + grade de 118 quadrados; "de espera média para começar um tratamento odontológico."; fonte BMC | **2:** (1) número conta 2,4 s e a grade acende; (2) faixa verde sobe: "Para quem tem baixa renda, a clínica particular não é opção. Saúde bucal ainda é privilégio." |
-| 2 | `sl2` | claro | "NOSSA DOR · CLÍNICAS-ESCOLA"; "20–35%"; "das consultas odontológicas na atenção básica terminam em falta."; 20 cadeiras; fontes | **2:** (1) cadeiras entram e 7 esvaziam; (2) chips "Faltas" (verde), "Encaixes de última hora" (sol), "Agenda no improviso" (branco) |
-| 3 | `sl3` | claro | Metade esquerda (140–900): "POR QUE EXISTIMOS" + "Os dados estão *espalhados.*" + 6 papéis (Planilha, Caderno, Grupo de mensagens, Papel na recepção, Sistema próprio, E-mail; borda de 3 px e sombra dura de 8 px teal/sol). Divisor em x 960. Metade direita (1020–1780): "E DO LADO DO PACIENTE" + "Quem precisa nem sabe que a clínica-escola *existe.*" + mapa com "?" | **2:** (1) papéis surgem girando e flutuam; (2) divisor desce, título da direita entra, mapa sobe e o "?" estoura |
-| 4 | `sl4` | nevoa | "NOSSA SOLUÇÃO"; "Tudo num *só lugar.*"; 2 marcadores (ícone em quadrado amarelo de 64 px): "Dados das clínicas-escola centralizados", "Prontuário único entre as parceiras". Hub de 840² em `right 100, top 120`: centro de 220² verde com o logo; 6 nós no raio 320 nos ângulos −90, −30, 30, 150, 90, 210 (Bela Vista, Vila Mariana, Pinheiros, Barão Geraldo com ícone de casa; 2× Pacientes com ícone de pessoa em círculo amarelo); linhas tracejadas 10/10; nome do nó com fundo nevoa sobre a linha | **2:** (1) centro, linhas, nós e marcador 1; (2) marcador 2 e pulsos amarelos indo e voltando do centro aos nós |
-| 5 | `sl5` | claro | "FUNCIONALIDADES · HUB"; "Paciente e clínica-escola, *conectados.*"; apoio; celular com `p-busca` | **2:** (1) celular e chips "1,7 km de você" e "Gratuito"; (2) troca para `p-clinica`, rola `y −470`, chip "Entrada sem degraus" |
-| 6 | `sl6` | claro | "FUNCIONALIDADES · PRONTUÁRIO"; "O histórico *vai junto.*"; apoio; celular com `p-prontuario` | **2:** (1) celular, rolagem e chip "Registro de quem viu e quando"; (2) chip "Outra clínica só vê com sua confirmação" e chip amarelo "Hoje no protótipo · próxima etapa: prontuário único com consentimento" |
-| 7 | `sl7` | claro | "FUNCIONALIDADES · SCORE"; "Score alto, *prioridade na fila.*" (84 px); fórmula [Comparecimento] + [Situação socioeconômica] = [Score]; fila com posições fixas 1–4 e linhas Bruno 12, Fábio 18, Ana 30, Carla 41 (fictícios); "Pontuação ilustrativa · dados fictícios"; celular com `p-prioridade` | **2:** (1) título, fórmula e fila; (2) barras enchem (pts/45) e pontos contam; linhas reordenam por pontos (92 px por linha) e a 1ª ganha borda e barra amarelas |
-| 8 | `sl8` | claro | "FUNCIONALIDADES · REDIRECIONAMENTO"; "Fila cheia aqui, *cadeira livre ali.*"; Universidade A "Lotada" (10 bolinhas) e B "Cadeiras livres" (2 cheias + 8 livres tracejadas); celular com `p-encaminhamento` | **2:** (1) caixas e bolinhas; (2) 3 bolinhas amarelas voam em arco de A para B (0,25 s entre elas); as de A ficam a 15% e as de B enchem; apoio "O diagnóstico vai junto. Ninguém repete exame." |
-| 9 | `sl9` | claro | "PLANO DE VENDA · O HUB PARA AS CLÍNICAS-ESCOLA"; "Do nicho à *escala governamental.*"; escada de 3 degraus de 520 px (alturas 360/500/640; nevoa com borda, teal, verde): "1 Clínicas-escola parceiras", "2 Rede regional", "3 Escala governamental" | **3:** (1) degrau 1 sobe e o sol cai quicando (`bounce.out`) sobre ele; (2) degrau 2 sobe e o sol dá `salto` (225, 270) → (805, 130); (3) degrau 3 e `salto` (805, 130) → (1385, −10) |
-| 10 | `sl10` | claro | "POR QUE AS FACULDADES TOPAM"; "Bom para o paciente. *Melhor para a clínica.*" (76 px); grade 2×2 (1060 px): Filas equilibradas, Menos desperdício, Menos no-show, Pacientes cadastrados; cartão verde "66%" | **2:** (1) cartões sobem em sequência; (2) cartão 66% (conta), fonte ABENO e "Paciente na cadeira é formação." |
-| 11 | `sl11` | verde | Selo "Sorriu+"; três linhas de 104 px (as mesmas do impacto); sorriso desenhado; "**Foolstack** · Alex · André · Giovanni · Lucca · Murilo"; "Protótipo · dados fictícios · HackaUSP 2026" | **1** |
+| 0 | `sl0` | verde | Abertura parada: só a marca Sorriu+ (logo, palavra, lema "Saúde bucal para todos · clínicas-escola perto de você" e "Foolstack · HackaUSP 2026"). Entra uma vez (logo com `back.out`, letras subindo, brilho no "u") e fica; **não há mais o loop da porta** | 1 |
+| 1 | `sl-ponte` | claro | "Duas pessoas, *a mesma cidade.*"; mapa estilizado de São Paulo com pinos/avatares de **Dona Cida** (Guaianases) e **Rafael** (clínica-escola); cartões laterais; "Personagens ilustrativos" | **3:** (1) mapa, pino e cartão da Cida, dor piscando; (2) pino e cartão do Rafael, "Nunca se encontram."; (3) a rota amarela se desenha (comprimento medido no DOM), a marca pousa no meio, frase com marcador |
+| 2 | `sl-dores` | claro | "BARREIRAS DE ACESSO À SAÚDE"; "Paciente na fila. *Cadeira vazia.*"; `95 dias` à esquerda (até 170 para um canal), 20 cadeiras e "32,9%" à direita; selos "Barreira financeira e de tempo" e "Barreira organizacional" | **2:** (1) **uma animação só**: os dias contam até 95 enquanto 7 das 20 cadeiras esvaziam (0,36 s entre elas) e os selos aparecem; (2) faixa "Para quem tem baixa renda, *saúde bucal ainda é privilégio.*" |
+| 3 | `sl3` | claro | Dados espalhados · clínica invisível (selo "Barreira de informação") | **3:** (3) o fundo esmaece e sobe a faixa "Trocou de clínica-escola? A ficha fica para trás: o paciente refaz o raio-X, conta tudo de novo e começa do zero." |
+| 4 | `sl4` | nevoa | "Não falta oferta nem demanda. *Falta conexão.*"; hub em escala 0,6 no meio; selos Financeira · Geográfica · De informação | **3:** (1) hub e 1º marcador; (2) pulsos no hub, o celular sobe à direita (`p-busca`), "1,7 km de você" derruba Geográfica e "Gratuito" derruba Financeira; (3) toque → `p-clinica`, "Entrada sem degraus" derruba De informação, entram os marcadores de prontuário único e sistema próprio |
+| 5 | `sl7` | claro | "Fila justa: *quem comparece avança.*"; fórmula, fila (Cida no topo), celular; selo "Barreira organizacional" | **2:** (2) a fila reordena, o selo cai e entram os chips das regras humanas |
+| 6 | `sl8` | claro | "Recusa vira *encaminhamento.*"; critérios; A → B; selo "Barreira da recusa" | **2:** (2) 3 bolinhas A → B, realce em "Confirmar encaminhamento", mão dupla B → A (1,3 s) e o selo cai |
+| 7 | `sl6` | claro | Prontuário; selo "Barreira da continuidade" | **2** |
+| 8 | `sl-painel` | nevoa | "DO LADO DA CLÍNICA-ESCOLA"; "Tudo num *painel só.*"; 3 etapas; notebook (escala 0,8) com `c-solicitacoes` → `c-triagem` → `c-prontuario` | **3:** cada passo acende uma etapa, troca a tela e aproxima a câmera (origem 0 0, `x = ox(1−s)`) até o realce. **D** aqui é a demo **animada** de 20 s: o notebook voa do slide, e um roteiro (`tour()`) toca sozinho a jornada da Cida no protótipo offline, com toques visíveis e legenda numerada 1–5; **R** repete |
+| 9 | `sl-ganho` | claro | "A clínica economiza *e fatura.*"; metade **Economiza** (recepção até R$ 91 mil, material, ociosidade) e metade **Fatura** (horários recuperados R$ 36 mil, alunos retidos R$ 108 mil) | **2:** (1) metades entram e os valores contam; (2) os valores pulsam e sobe a faixa "≈ R$ 235 mil" (conservador R$ 72 mil) |
+| 10 | `sl-receita` | nevoa | "A clínica paga por cadeira. *O paciente, não.*"; rodízio (anel de 8 h, 4 turnos) e corrente 800 → 32.000 → 8.000 → 2.400; cartão de preço (R$ 20/cadeira/mês + R$ 20/horário recuperado = R$ 57,6 mil); barras 5 → 20 → 50 clínicas; Programa Nacional de Redução das Filas | **3:** (1) o anel gira e a corrente conta; (2) preço e "R$ 1 → R$ 4"; (3) barras de escala e a linha da rede pública |
+| 11 | `sl11` | verde | "Saúde bucal *para todos.*" (marcador); "A Cida voltou a sorrir. O Rafael ganhou prática."; placar com as 6 barreiras derrubadas; fotos do time (150 px, borda sol); QR com `?qr=` | **1** |
+
+Coesão entre slides: (a) **continuidade do celular** nos slides de produto seguidos (4→5→6→7): em vez do sorriso, os slides se fundem em 0,5 s e um clone do celular desliza da posição antiga para a nova (0,8 s, `power3.inOut`); o celular dos slides 5–7 não entra mais dentro do passo, quem cuida é `ir()` (sobe do fundo 0,6 s depois da troca quando não há continuidade). (b) **Marcador** amarelo (`.marca`, variável `--m` de 0 a 100%, 0,6 s) nas frases-tese: "Falta a ponte", "saúde bucal ainda é privilégio", "Falta conexão", "rede pública", "para todos". (c) **Selo de barreira**: treme 0,3 s, é riscado e vira verde.
 
 As falas de cada slide estão em `roteiro.md` e no array `NOTAS` de `slides.html`.
+
+### 9.4 Apêndice para a banca (tecla A)
+
+Mesmo palco 1920×1080: transição `sorriso` para um fundo verde (`#075E59` com halos teal e sol), "APÊNDICE · PARA A BANCA" e "Perguntas que *a gente espera.*" (Lexend 800, 76 px), e uma grade 3×2 de cartões brancos (borda 3 px tinta, raio 28, sombra 8 px teal/sol alternada, número em selo amarelo). O cartão ampliado tem título de 68 px e texto de 44 px. Rodapé: "1–6 amplia uma resposta · Esc volta · Protótipo · dados fictícios".
+
+| # | Pergunta | Resposta (resumo) |
+|---|---|---|
+| 1 | LGPD e consentimento | Dado de saúde é sensível (Lei 13.709/2018); cada acesso ao prontuário é registrado; outra clínica só vê depois que o paciente confirma. |
+| 2 | Quem paga | A clínica-escola assina; o paciente não paga pelo app; referência: R$ 91 mil/ano, **estimativa do time**. |
+| 3 | Alternativas de hoje | Planilha, caderno, grupo de mensagens, sistema próprio, boca a boca; o Sorriu+ liga a rede e transforma recusa em encaminhamento. |
+| 4 | Como medir no piloto | Faltas, ocupação de cadeira por turno, encaminhamentos aceitos, contra a linha de base da própria clínica (sem meta inventada). |
+| 5 | Por que a clínica-escola adota | Cadeira ocupada é aula dada, menos material perdido, fila sem ligação um a um; 66% (Revista da ABENO). |
+| 6 | Protótipo × próximo passo | Já roda com dados fictícios (busca, pedido, painel, fila com score, encaminhamento com confirmação, registro de acesso); próximo: login real (hoje é demo), integração, piloto. |
+
+### 9.5 Scripts de saída
+
+| Script | Gera | Como |
+|---|---|---|
+| `exportar-pdf.cjs` | `sorriu-mais-deck.pdf` (15 páginas de 1920×1080 px = 16:9) e PNGs em `saida/pdf/` | Abre `slides.html#sN` numa página nova para cada N, com movimento reduzido (abertura parada no lockup), espera `__deck.pronto` e `__deck.atual === N`, fotografa e monta o PDF no próprio Chromium. `--com-apendice` acrescenta o apêndice como página 16. |
+| `render-deck.cjs` | `sorriu-mais-deck.mp4` (1920×1080, 30 fps, H.264) e `sorriu-mais-deck.srt` | Relógio falso do Playwright (`page.clock`): GSAP e timers só andam quando o script manda, então nenhum quadro se perde. Cada trecho de `NOTAS` entre `[clique]` é um passo; o tempo do slide (`PLANO`) é dividido pelas palavras, nunca abaixo da duração da animação do passo (no 1º passo, +0,8 s de troca e 0,55 s de espera). A legenda vai como faixa `mov_text` (por) e em `.srt`; `--legenda-na-tela` queima no vídeo; `--audio` junta uma narração gravada. Sem TTS: não há voz pt-BR offline no projeto. |
 
 ## 10. Conteúdo: números, rótulos e regras
 
@@ -206,12 +237,15 @@ As falas de cada slide estão em `roteiro.md` e no array `NOTAS` de `slides.html
 | `p-cuidado`, `p-boasvindas` | `/cuidado`, `/` sem sessão | reserva |
 | `c-solicitacoes` | clínica `/clinica/agenda` | 1600×1000 @1.5 |
 | `c-fila` | clínica `/clinica/fila` | 1600×1000 @1.5 |
+| `c-triagem` | clínica `/clinica/admin` → Triagem (Dr. Hugo, Bela Vista) | 1600×1000 @1.5 |
+| `c-prontuario` | clínica `/clinica/admin` → Ana Martins → perfil → Abrir prontuário (Dra. Joana, Vila Mariana) | 1600×1000 @1.5 |
+| `d-busca`, `d-cuidado` | paciente `/clinicas`, `/cuidado` (telas da demo, abaixo da barra de status) | 390×796 @2x |
 | `logo` | `app/paciente/src/design/logo.png` | — |
 
 **Como recapturar:**
 1. Suba o app (`app/iniciar.sh`).
 2. Obtenha o token com `POST /api/v1/auth/entrar {login, senha}` usando as contas demo `ana.martins@example.com` (paciente) e `gabriela.nunes@example.com` (clínica), com a senha `DEMO_SENHA` do `backend/.env`.
-3. Grave em `sessionStorage['uhealth.sessao.paciente' | 'uhealth.sessao.clinica']`. No paciente, grave também `localStorage['uh-boasvindas'] = '1'`.
+3. Grave em `sessionStorage['uhealth.sessao.paciente' | 'uhealth.sessao.clinica']`. No paciente, grave também `localStorage['uh-boasvindas'] = '1'` e preencha o endereço da Ana (fictício, a ~1,7 km da Bela Vista: lat −23,5461, lng −46,6487) para as distâncias aparecerem.
 4. Fotografe com Playwright.
 
 Se uma captura mudar de altura, ajuste as rolagens (`y`) e as coordenadas de toque e realce da §8.
@@ -234,5 +268,8 @@ Se uma captura mudar de altura, ajuste as rolagens (`y`) e as coordenadas de toq
 
 ## 13. Limitações conhecidas
 - O cartão "Confirmado pela clínica" (passo 5 do trailer) é montado em HTML porque a conta demo não tem um agendamento confirmado para fotografar.
-- O deck não tem modo apresentador em janela separada; as notas aparecem sobrepostas (tecla N).
+- O modo apresentador depende de pop-up liberado no navegador. Sem ele, as notas continuam na tecla N.
+- O app ao vivo na demo exige login uma vez por aba do deck (as sessões do app ficam no `sessionStorage` do iframe).
 - Cliques muito rápidos no deck pulam a transição para o fim. Isso é de propósito, para nunca travar.
+- O vídeo do deck sai **sem voz**: não há TTS pt-BR offline (o backend usa o `speechSynthesis` do navegador ou a API da OpenAI, que exige chave e envia o texto para fora). Para ter voz, grave a narração seguindo o `.srt` e passe `--audio`, ou ligue um provedor de TTS com autorização do time.
+- O ensaio fica só no navegador onde foi gravado (`localStorage`); outra máquina começa vazia.

@@ -1,0 +1,381 @@
+1
+00:00:00,000 --> 00:00:01,305
+Bom dia, pessoal!
+
+2
+00:00:01,385 --> 00:00:05,920
+Nós somos a Foolstack: Alex,
+André, Giovanni, Lucca e Murilo.
+
+3
+00:00:06,000 --> 00:00:11,920
+Este é o Sorriu+, a porta que
+não se fecha no primeiro “não”.
+
+4
+00:00:12,000 --> 00:00:16,265
+Antes de tudo, imaginem duas
+pessoas na mesma cidade.
+
+5
+00:00:16,345 --> 00:00:19,644
+Uma tem dor de dente há meses,
+
+6
+00:00:19,724 --> 00:00:24,472
+não consegue pagar um dentista
+e encara uma fila enorme.
+
+7
+00:00:24,552 --> 00:00:31,713
+A outra é estudante de odontologia e precisa
+de pacientes para praticar e se formar.
+
+8
+00:00:31,793 --> 00:00:33,644
+Elas nunca se encontram.
+
+9
+00:00:33,724 --> 00:00:35,092
+Não falta dentista.
+
+10
+00:00:35,172 --> 00:00:36,541
+Não falta paciente.
+
+11
+00:00:36,621 --> 00:00:39,920
+Falta uma ponte organizada entre os dois.
+
+12
+00:00:40,000 --> 00:00:45,491
+Quem espera, espera muito: na odontologia,
+são cento e dezessete dias e meio,
+
+13
+00:00:45,571 --> 00:00:48,063
+em média, para começar um tratamento.
+
+14
+00:00:48,143 --> 00:00:52,777
+Para quem tem baixa renda, a
+clínica particular não é opção.
+
+15
+00:00:52,857 --> 00:00:54,920
+Saúde bucal ainda é privilégio.
+
+16
+00:00:55,000 --> 00:00:58,520
+Do outro lado, as clínicas-escola
+vivem o problema inverso.
+
+17
+00:00:58,600 --> 00:01:05,320
+Entre vinte e trinta e cinco por cento das consultas
+da atenção básica odontológica terminam em falta.
+
+18
+00:01:05,400 --> 00:01:07,720
+Cada falta é um box vazio,
+
+19
+00:01:07,800 --> 00:01:11,320
+material estéril já aberto
+que vai para o lixo,
+
+20
+00:01:11,400 --> 00:01:14,920
+um aluno sem prática e
+uma agenda no improviso.
+
+21
+00:01:15,000 --> 00:01:17,003
+E por que isso acontece?
+
+22
+00:01:17,083 --> 00:01:22,837
+Porque a odontologia opera isolada: cada instituição
+tem seu sistema, seu prontuário, seu arquivo.
+
+23
+00:01:22,917 --> 00:01:27,003
+E a divulgação das clínicas-escola
+não chega a quem precisa.
+
+24
+00:01:27,083 --> 00:01:32,420
+Quando o paciente muda de universidade, o
+histórico fica na gaveta: a radiografia,
+
+25
+00:01:32,500 --> 00:01:33,253
+o diagnóstico.
+
+26
+00:01:33,333 --> 00:01:36,587
+O próximo profissional recomeça
+do zero, gastando tempo,
+
+27
+00:01:36,667 --> 00:01:39,920
+insumo e radiação em
+exames que já existiam.
+
+28
+00:01:40,000 --> 00:01:44,720
+O Sorriu+ nasce de uma constatação
+simples: não falta oferta nem demanda;
+
+29
+00:01:44,800 --> 00:01:47,120
+falta infraestrutura que conecte as duas.
+
+30
+00:01:47,200 --> 00:01:50,320
+Somos um hub que conecta
+pacientes a clínicas-escola,
+
+31
+00:01:50,400 --> 00:01:55,520
+e uma camada de prontuário único, que
+faz a informação acompanhar o paciente.
+
+32
+00:01:55,600 --> 00:01:59,120
+E nenhuma instituição precisa
+abrir mão do seu sistema:
+
+33
+00:01:59,200 --> 00:02:01,920
+ela precisa de uma ponte entre eles.
+
+34
+00:02:02,000 --> 00:02:09,770
+Na prática, o paciente acha
+a clínica-escola mais perto,
+
+35
+00:02:09,850 --> 00:02:16,199
+vê custo, horário e acessibilidade,
+e faz o pedido em poucos toques.
+
+36
+00:02:16,279 --> 00:02:19,949
+A clínica recebe tudo
+organizado num painel.
+
+37
+00:02:20,029 --> 00:02:20,288
+Hoje,
+
+38
+00:02:20,368 --> 00:02:25,711
+cada escola guarda o seu prontuário e o paciente
+recomeça do zero a cada nova instituição.
+
+39
+00:02:25,791 --> 00:02:29,779
+Com o prontuário único, a informação
+pertence ao paciente, não ao prédio,
+
+40
+00:02:29,859 --> 00:02:31,474
+e cada acesso fica registrado.
+
+41
+00:02:31,554 --> 00:02:34,186
+Outra clínica só vê com
+a confirmação dele.
+
+42
+00:02:34,266 --> 00:02:35,881
+No protótipo isso já roda;
+
+43
+00:02:35,961 --> 00:02:39,949
+o próximo passo é levar o prontuário
+único a todas as parceiras.
+
+44
+00:02:40,029 --> 00:02:45,718
+Todo coordenador conhece a cena: agenda
+cheia, paciente não aparece, box vazio.
+
+45
+00:02:45,798 --> 00:02:50,525
+O nosso score combina o comparecimento
+com a situação socioeconômica,
+
+46
+00:02:50,605 --> 00:02:54,372
+e organiza a fila: quem
+comparece ganha prioridade.
+
+47
+00:02:54,452 --> 00:02:59,660
+Mas com regras humanas: urgência avaliada
+por profissional sempre vem antes,
+
+48
+00:02:59,740 --> 00:03:04,949
+falta justificada é revista, e ninguém
+perde o direito ao atendimento.
+
+49
+00:03:05,029 --> 00:03:08,327
+Hoje, quando o caso não encaixa
+na grade da universidade,
+
+50
+00:03:08,407 --> 00:03:10,354
+o paciente é recusado e some.
+
+51
+00:03:10,434 --> 00:03:13,732
+Nós transformamos recusa em encaminhamento:
+o sistema cruza a especialidade,
+
+52
+00:03:13,812 --> 00:03:17,111
+a grade do semestre de cada
+parceira e a distância.
+
+53
+00:03:17,191 --> 00:03:20,151
+A vaga certa fica separada,
+o diagnóstico vai junto,
+
+54
+00:03:20,231 --> 00:03:22,516
+e o paciente confirma antes de ir.
+
+55
+00:03:22,596 --> 00:03:24,881
+E o caminho é de mão dupla:
+
+56
+00:03:24,961 --> 00:03:28,597
+o caso que não cabe na outra
+instituição chega até você.
+
+57
+00:03:28,677 --> 00:03:29,949
+Nenhuma recusa vira desistência.
+
+58
+00:03:30,029 --> 00:03:31,688
+Como isso vira negócio?
+
+59
+00:03:31,768 --> 00:03:35,166
+Somos um software que se
+vende às clínicas-escola.
+
+60
+00:03:35,246 --> 00:03:40,383
+O paciente não paga: ele é a
+razão de existir do projeto.
+
+61
+00:03:40,463 --> 00:03:43,862
+Começamos pelas privadas: elas
+decidem internamente, sem licitação,
+
+62
+00:03:43,942 --> 00:03:49,949
+já investem em tecnologia para atrair
+alunos, e o ciclo de venda é curto.
+
+63
+00:03:50,029 --> 00:03:51,260
+E a conta fecha.
+
+64
+00:03:51,340 --> 00:03:53,883
+Pela nossa estimativa, dois
+profissionais de recepção ligando,
+
+65
+00:03:53,963 --> 00:04:00,768
+confirmando consulta e cuidando de ficha física custam cerca
+de noventa e um mil reais por ano em folha e encargos.
+
+66
+00:04:00,848 --> 00:04:04,047
+Com o Sorriu+, pedidos, fila e
+prontuário ficam no sistema.
+
+67
+00:04:04,127 --> 00:04:07,981
+Se o software custa menos que
+isso e ainda enche a cadeira,
+
+68
+00:04:08,061 --> 00:04:09,949
+a decisão é financeira, não estratégica.
+
+69
+00:04:10,029 --> 00:04:13,499
+Depois do nicho privado,
+vem a escala pública.
+
+70
+00:04:13,579 --> 00:04:17,803
+Provamos eficiência no privado e
+levamos o case ao gestor público,
+
+71
+00:04:17,883 --> 00:04:22,890
+para que a rede de clínicas-escola
+vire braço da política de saúde bucal,
+
+72
+00:04:22,970 --> 00:04:28,368
+em linha com o Programa Nacional de
+Redução das Filas do Ministério da Saúde.
+
+73
+00:04:28,448 --> 00:04:30,921
+E por que as faculdades topam?
+
+74
+00:04:31,001 --> 00:04:33,475
+Filas equilibradas entre
+universidades, menos desperdício,
+
+75
+00:04:33,555 --> 00:04:37,730
+menos no-show e uma base de
+pacientes que chega pronta.
+
+76
+00:04:37,810 --> 00:04:39,006
+Não é detalhe:
+
+77
+00:04:39,086 --> 00:04:46,240
+sessenta e seis por cento dos alunos que pensam em
+desistir de odontologia nunca tiveram prática clínica.
+
+78
+00:04:46,320 --> 00:04:48,368
+Paciente na cadeira é formação.
+
+79
+00:04:48,448 --> 00:04:54,479
+O Sorriu+ conecta quem precisa de
+atendimento a quem precisa atender.
+
+80
+00:04:54,559 --> 00:05:00,590
+Mais sorrisos de volta, mais gente
+atendida e mais alunos aprendendo.
+
+81
+00:05:00,670 --> 00:05:02,813
+Nós somos a Foolstack.
+
+82
+00:05:02,893 --> 00:05:03,368
+Obrigado!

@@ -1,8 +1,11 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sorriu+ Pitch</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<!-- tudo local: funciona sem internet no evento -->
+<link rel="stylesheet" href="vendor/fontes.css">
 <link rel="stylesheet" href="comum.css">
 <style>
 /* Deck do pitch: mesmo palco e linguagem do motion. Um clique (ou →, espaço, PageDown) avança uma animação ou o slide. */
@@ -18,32 +21,34 @@
 
 /* 0 · abertura */
 #sl0 .camada { position: absolute; inset: 0; display: none; }
-#sl0 .faixa0 { position: absolute; inset: 0; display: none; background: var(--sol); }
-#ab-a, #ab-a2 { z-index: 10; }
-#ab-b { z-index: 20; background: var(--fundo-claro); }
-#ab-a2 { z-index: 30; }
-.time { position: absolute; left: 0; right: 0; top: 110px; text-align: center; font: 700 30px var(--f-display); letter-spacing: 6px; text-transform: uppercase; color: var(--sol); }
-#ab-b .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; }
-#ab-b svg { width: 520px; height: auto; overflow: visible; }
-#ab-b .lema2 { font: 800 100px/1.05 var(--f-display); letter-spacing: -2.5px; color: var(--tinta); text-align: center; max-width: 1500px; text-wrap: balance; }
-#ab-b .lema2 em { font-style: normal; color: var(--verde); }
+#ab-a { z-index: 10; }
+#ab-a .time { position: absolute; top: 110px; left: 0; right: 0; text-align: center; font: 700 30px var(--f-display); color: #c7f0ee; letter-spacing: 4px; text-transform: uppercase; }
 
-/* 1 · acesso */
-#dias { position: absolute; right: 140px; top: 210px; width: 600px; display: grid; grid-template-columns: repeat(14, 1fr); gap: 14px; }
-#dias i { display: block; aspect-ratio: 1; border-radius: 10px; background: #e1eeed; }
-#dias i.on { background: var(--teal); }
-#dias-leg { position: absolute; right: 140px; top: 740px; width: 600px; font: 700 30px var(--f-display); color: var(--verde); display: flex; justify-content: space-between; }
 .faixa-frase { position: absolute; left: 140px; right: 140px; bottom: 120px; padding: 30px 40px; border-radius: 28px; background: var(--verde); color: var(--branco); font: 700 46px/1.25 var(--f-display); letter-spacing: -.5px; }
 .faixa-frase .u { color: var(--sol); }
 
-/* 2 · clínicas */
-#cadeiras { position: absolute; right: 140px; top: 200px; width: 660px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px 24px; }
-.cad { height: 112px; }
+/* selo de barreira (tema "Saúde para todos"): nas dores, a barreira aparece; nas funcionalidades, ela é riscada e cai */
+.barreira { position: relative; display: inline-flex; align-items: center; gap: 12px; align-self: flex-start; padding: 10px 22px 10px 12px; border-radius: 999px; background: #fbe3e0; color: #7a1712; font: 700 26px var(--f-display); letter-spacing: .2px; white-space: nowrap; }
+.barreira::before { content: "!"; width: 34px; height: 34px; border-radius: 50%; background: var(--perigo); color: var(--branco); display: grid; place-items: center; font: 800 22px var(--f-display); flex: none; }
+.barreira .risco { position: absolute; left: 54px; right: 18px; top: 50%; height: 4px; margin-top: -2px; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; }
+.barreira.caiu { background: var(--verde); color: var(--branco); }
+.barreira.caiu::before { content: "✓"; background: var(--sol); color: var(--tinta); }
+.barreiras { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.barreiras .rot { font: 700 26px var(--f-display); color: var(--muted); }
+
+/* 2 · dores: fila de um lado, cadeira vazia do outro */
+.col-dor { position: absolute; top: 330px; width: 760px; display: flex; flex-direction: column; gap: 22px; }
+#dor-a { left: 140px; } #dor-b { left: 1020px; }
+#dor-a .numero { font-size: 220px; letter-spacing: -9px; }
+#sl-dores .apoio { font-size: 36px; max-width: 740px; }
+#sl-dores .pct { display: block; margin-bottom: 8px; font: 800 80px/1 var(--f-display); color: var(--verde); letter-spacing: -2.5px; }
+#sl-dores .divisor { position: absolute; left: 960px; top: 340px; height: 440px; width: 3px; background: var(--linha); }
+#cadeiras { width: 740px; display: grid; grid-template-columns: repeat(10, 1fr); gap: 14px 12px; }
+.cad { height: 66px; }
 .cad svg { width: 100%; height: 100%; }
-.cad .cheia { fill: var(--teal); stroke: var(--tinta); stroke-width: 4; }
-.cad .vazia { fill: var(--branco); stroke: #9fb5b4; stroke-width: 4; stroke-dasharray: 10 8; opacity: 0; }
-.tags { display: flex; flex-wrap: wrap; gap: 18px; }
-.tags .chip { position: static; }
+.cad .cheia { fill: var(--teal); stroke: var(--tinta); stroke-width: 6; }
+.cad .vazia { fill: var(--branco); stroke: #9fb5b4; stroke-width: 6; stroke-dasharray: 12 9; opacity: 0; }
+#fr1 { bottom: 110px; }
 
 /* 3 · fragmentação */
 #sl3 .metade { position: absolute; top: 0; bottom: 0; width: 820px; display: flex; flex-direction: column; gap: 26px; padding-top: 150px; box-sizing: border-box; }
@@ -53,11 +58,19 @@
 #papeis { position: relative; height: 520px; }
 .papel { position: absolute; padding: 22px 30px; border-radius: 18px; background: var(--branco); border: 3px solid var(--tinta); font: 700 34px var(--f-display); color: var(--tinta); box-shadow: 8px 8px 0 var(--teal); white-space: nowrap; }
 .papel.s { box-shadow: 8px 8px 0 var(--sol); }
-#mapa { width: 520px; align-self: center; }
+#mapa { width: 400px; align-self: center; }
 #divisor { position: absolute; left: 960px; top: 140px; bottom: 140px; width: 3px; background: var(--linha); }
 
 /* 4 · hub */
-#hub { position: absolute; right: 100px; top: 120px; width: 840px; height: 840px; }
+/* hub menor no meio; o celular entra à direita (passo 2) */
+#hub { position: absolute; left: 770px; top: 150px; width: 840px; height: 840px; transform: scale(.6); transform-origin: 0 0; }
+#sl4 .no { font-size: 40px; }
+#sl4 .esq { left: 120px; width: 640px; gap: 26px; }
+#sl4 .titulo { font-size: 78px; letter-spacing: -2px; }
+#sl4 .bullet { font-size: 32px; gap: 18px; }
+#sl4 .bullet .ic { width: 54px; height: 54px; border-radius: 16px; }
+#sl4 .bullet .ic svg { width: 30px; height: 30px; }
+#cel5 { left: 1400px; }
 #hub > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .no { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 10px; font: 700 28px var(--f-display); color: var(--tinta); text-align: center; white-space: nowrap; }
 .no b { width: 96px; height: 96px; box-sizing: border-box; border-radius: 28px; background: var(--branco); border: 4px solid var(--tinta); display: grid; place-items: center; overflow: hidden; box-shadow: 0 16px 30px -14px rgba(11,36,35,.4); }
@@ -115,26 +128,304 @@
 .d3 .n { color: var(--sol); }
 #sol-escada { position: absolute; left: 225px; top: 270px; width: 70px; height: 70px; will-change: transform; border-radius: 50%; background: var(--sol); border: 4px solid var(--tinta); box-sizing: border-box; z-index: 3; }
 
-/* 10 · faculdades */
-#ganhos { position: absolute; left: 140px; top: 400px; width: 1060px; display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
-.ganho { background: var(--branco); border: 3px solid var(--tinta); border-radius: 28px; padding: 30px 32px; display: flex; flex-direction: column; gap: 12px; box-shadow: 8px 8px 0 var(--teal); }
-.ganho:nth-child(2n) { box-shadow: 8px 8px 0 var(--sol); }
-.ganho h3 { margin: 0; font: 800 38px/1.1 var(--f-display); letter-spacing: -.5px; }
-.ganho p { margin: 0; font: 400 28px/1.3 var(--f-corpo); color: var(--muted); }
-#c66 { position: absolute; right: 140px; top: 400px; width: 480px; background: var(--verde); color: var(--branco); border-radius: 32px; padding: 40px 42px; display: flex; flex-direction: column; gap: 12px; }
-#c66 .n { font: 800 150px/0.9 var(--f-display); color: var(--sol); letter-spacing: -6px; }
-#c66 p { margin: 0; font: 400 32px/1.3 var(--f-corpo); }
-#c66 .src { font-size: 24px; color: #a6d9d5; }
-#c66 .final { font: 800 40px/1.15 var(--f-display); color: var(--branco); margin-top: 8px; }
+/* painel da clínica: notebook com câmera que passeia por pedidos, fila e prontuário */
+#sl-painel .esq { left: 120px; width: 600px; gap: 30px; }
+#sl-painel .titulo { font-size: 76px; letter-spacing: -2px; }
+.etapas { display: flex; flex-direction: column; gap: 16px; }
+.etapa { display: flex; align-items: center; gap: 18px; padding: 16px 20px; border-radius: 22px; border: 3px solid var(--linha); background: rgba(255,255,255,.6); font: 700 32px/1.2 var(--f-display); color: var(--tinta); }
+.etapa b { width: 50px; height: 50px; border-radius: 16px; background: var(--branco); border: 3px solid var(--tinta); display: grid; place-items: center; flex: none; font: 800 26px var(--f-display); color: var(--tinta); }
+.etapa.on { opacity: 1; color: var(--tinta); background: var(--branco); border-color: var(--tinta); box-shadow: 8px 8px 0 var(--sol); }
+.etapa.on b { background: var(--sol); }
+#note-wrap { position: absolute; left: 770px; top: 200px; width: 1316px; height: 818px; transform: scale(.8); transform-origin: 0 0; }
+#note-p { left: 0; top: 0; }
+#note-p .cam { transform-origin: 0 0; }
+#note-p .shot { visibility: hidden; }
+#note-p .shot.um { visibility: visible; }
 
-/* 11 · fechamento */
-#sl11 .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; text-align: center; }
-#sl11 .linhas { display: flex; flex-direction: column; align-items: center; }
-#sl11 .linha { font: 800 104px/1.08 var(--f-display); letter-spacing: -3px; color: var(--branco); }
-#sl11 .time2 { font: 700 40px var(--f-display); color: #c7f0ee; }
+/* 11 · fechamento com o time */
+#sl11 .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; text-align: center; padding-bottom: 20px; box-sizing: border-box; }
+#sl11 .linha { margin: 0; font: 800 100px/1.02 var(--f-display); letter-spacing: -3.5px; color: var(--branco); }
+#sl11 .linha em { font-style: normal; color: var(--sol); }
+#sl11 .sub { margin: 0; font: 400 38px/1.3 var(--f-corpo); color: #c7f0ee; }
+#sl11 .sub b { color: var(--branco); font-family: var(--f-display); }
+#sl11 .time2 { font: 700 34px var(--f-display); color: #c7f0ee; }
 #sl11 .time2 b { color: var(--sol); }
-#sl11 .tag { font: 700 26px var(--f-display); color: var(--branco); border: 2px solid #a6d9d5; border-radius: 999px; padding: 8px 20px; }
-#sorriso2 { width: 460px; height: 110px; }
+#sl11 .tag { font: 700 24px var(--f-display); color: var(--branco); border: 2px solid #a6d9d5; border-radius: 999px; padding: 8px 20px; }
+#sorriso2 { width: 300px; height: 60px; margin: -10px 0 -8px; }
+#sl11 .sub { display: flex; align-items: center; gap: 16px; }
+#sl11 .duo { display: inline-flex; }
+#sl11 .duo svg { width: 64px; height: 64px; }
+#sl11 .duo svg + svg { margin-left: -16px; }
+.placar .barreira { font-size: 22px; padding: 7px 18px 7px 8px; }
+.placar .barreira::before { width: 28px; height: 28px; font-size: 18px; }
+#placar { justify-content: center; gap: 12px; }
+#sl11 .tag { margin-left: 14px; vertical-align: 3px; }
+#time11 { display: flex; gap: 40px; margin-top: 6px; }
+.membro { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.membro img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 6px solid var(--sol); box-shadow: 0 24px 50px -18px rgba(0,0,0,.55); background: var(--nevoa); }
+.membro figcaption { font: 700 30px var(--f-display); color: var(--branco); }
+
+/* ponte · Dona Cida e Rafael, a mesma cidade (personagens do fio condutor) */
+.pessoa-card { position: absolute; width: 440px; box-sizing: border-box; padding: 28px 30px; border-radius: 30px; background: var(--branco); border: 3px solid var(--tinta); display: flex; flex-direction: column; gap: 14px; box-shadow: 10px 10px 0 var(--teal); z-index: 3; }
+.pessoa-card.a { left: 140px; top: 470px; }
+.pessoa-card.b { right: 140px; top: 290px; box-shadow: 10px 10px 0 var(--sol); }
+.pessoa-card h3 { margin: 0; font: 800 46px/1.05 var(--f-display); letter-spacing: -1.2px; color: var(--tinta); }
+.pessoa-card .papel2 { font: 700 22px var(--f-display); letter-spacing: 3px; text-transform: uppercase; color: var(--verde); }
+.pessoa-card ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.pessoa-card li { font: 400 28px/1.28 var(--f-corpo); color: var(--muted); padding-left: 30px; position: relative; }
+.pessoa-card li::before { content: ""; position: absolute; left: 0; top: .48em; width: 14px; height: 14px; border-radius: 50%; background: var(--teal); }
+.pessoa-card.b li::before { background: var(--sol); }
+.pessoa-card li b { font-family: var(--f-display); color: var(--verde); }
+#mapa-sp { position: absolute; left: 580px; top: 300px; width: 760px; height: 560px; overflow: visible; }
+.pino { position: absolute; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); z-index: 4; }
+.pino svg { width: 128px; height: 128px; display: block; filter: drop-shadow(0 14px 18px rgba(11,36,35,.28)); }
+.pino::after { content: ""; width: 0; height: 0; border: 14px solid transparent; border-top: 20px solid var(--tinta); margin-top: -4px; }
+.pino span { position: absolute; top: -40px; white-space: nowrap; font: 700 24px var(--f-display); color: var(--branco); background: var(--tinta); padding: 4px 14px 6px; border-radius: 999px; }
+#pino-a { left: 730px; top: 730px; } #pino-b { left: 1190px; top: 450px; }
+#vao { position: absolute; left: 760px; width: 400px; top: 560px; text-align: center; font: 700 34px/1.2 var(--f-display); color: var(--muted); z-index: 3; }
+#ponte-logo { position: absolute; width: 104px; height: 104px; margin: -52px 0 0 -52px; border-radius: 28px; z-index: 5; box-shadow: 0 20px 40px -14px rgba(7,94,89,.6); }
+#frase-ponte { position: absolute; left: 140px; right: 140px; bottom: 96px; text-align: center; font: 800 54px/1.1 var(--f-display); letter-spacing: -1.2px; color: var(--tinta); }
+#frase-ponte em { font-style: normal; color: var(--verde); }
+.personagens { position: absolute; right: 140px; bottom: 40px; font: 700 22px var(--f-display); color: var(--verde); letter-spacing: .3px; }
+/* avatar da Cida que acompanha o celular nos slides de produto */
+.dona { position: absolute; left: -34px; top: -26px; z-index: 7; display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px 6px 6px; border-radius: 999px; background: var(--branco); border: 3px solid var(--tinta); font: 700 24px var(--f-display); color: var(--tinta); box-shadow: 0 16px 30px -14px rgba(11,36,35,.45); }
+.dona svg { width: 52px; height: 52px; display: block; }
+/* marcador amarelo nas frases-tese (o mesmo gesto em todo o deck) */
+.marca { --m: 0%; background: linear-gradient(rgba(255,184,28,.55), rgba(255,184,28,.55)) no-repeat 0 88% / var(--m) .3em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.verde .marca, .faixa-frase .marca { background-image: linear-gradient(rgba(20,190,185,.55), rgba(20,190,185,.55)); }
+/* 3 · histórico na gaveta */
+#fr3 { bottom: 70px; display: flex; align-items: center; gap: 30px; z-index: 5; box-shadow: 0 30px 60px -24px rgba(11,36,35,.55); }
+#fr3 svg { width: 92px; height: 92px; flex: none; }
+#fr3 b { color: var(--sol); }
+/* 4 · cada clínica mantém o próprio sistema */
+.no .sys { position: absolute; left: calc(50% + 28px); top: -14px; width: 46px; height: 46px; border-radius: 50%; background: var(--sol); border: 3px solid var(--tinta); display: grid; place-items: center; opacity: 0; }
+.no .sys svg { width: 26px; height: 26px; }
+/* 8 · regras do score */
+#sl7 .cel-dir .chip { font-size: 28px; padding: 16px 24px; }
+/* 9 · critérios do encaminhamento */
+.criterios { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font: 700 30px var(--f-display); color: var(--muted); }
+.criterios .chip { position: static; font-size: 28px; padding: 14px 22px; }
+#volta svg { width: 28px; height: 16px; }
+#volta { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 10px; font: 700 24px var(--f-display); background: var(--sol); color: var(--tinta); padding: 8px 18px; border-radius: 999px; opacity: 0; white-space: nowrap; z-index: 3; }
+/* 10 · quem paga */
+#fluxo { position: absolute; right: 140px; top: 170px; width: 640px; display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+.fx { display: flex; align-items: center; gap: 24px; padding: 26px 30px; border-radius: 28px; background: var(--branco); border: 3px solid var(--tinta); font: 800 40px/1.1 var(--f-display); color: var(--tinta); }
+.fx small { display: block; font: 400 26px/1.3 var(--f-corpo); color: var(--muted); margin-top: 6px; }
+.fx .ico { width: 84px; height: 84px; border-radius: 24px; display: grid; place-items: center; flex: none; background: var(--nevoa); border: 3px solid var(--tinta); }
+.fx .ico img { width: 64px; height: 64px; border-radius: 16px; }
+.fx .ico svg { width: 46px; height: 46px; }
+.fx.marca { background: var(--verde); color: var(--branco); border-color: var(--verde); }
+.fx.marca small { color: #c7f0ee; }
+.fx.paciente .ico { background: var(--sol); border-radius: 50%; }
+.seta-fx { align-self: center; display: flex; flex-direction: column; align-items: center; padding: 8px 0; font: 700 24px var(--f-display); color: var(--verde); }
+.seta-fx svg { width: 40px; height: 54px; }
+.seta-fx.trac svg path { stroke-dasharray: 8 8; }
+.lista-check { display: flex; flex-direction: column; gap: 18px; }
+.lista-check div { display: flex; align-items: center; gap: 20px; font: 700 38px/1.2 var(--f-display); color: var(--tinta); }
+.lista-check i { width: 52px; height: 52px; border-radius: 16px; background: var(--sol); display: grid; place-items: center; flex: none; font-style: normal; }
+.lista-check i svg { width: 30px; height: 30px; }
+/* 9 · a clínica-escola ganha: metade economiza, metade fatura */
+.lado { position: absolute; top: 352px; width: 780px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; }
+#lado-a { left: 140px; } #lado-b { right: 140px; }
+.lado h3 { margin: 0 0 2px; display: flex; align-items: center; gap: 16px; font: 800 40px var(--f-display); letter-spacing: -1px; color: var(--tinta); }
+.lado h3 i { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; font: 800 32px var(--f-display); font-style: normal; flex: none; }
+#lado-a h3 i { background: var(--nevoa); border: 3px solid var(--tinta); color: var(--verde); }
+#lado-b h3 i { background: var(--sol); color: var(--tinta); }
+.ganho { display: flex; align-items: center; gap: 20px; padding: 14px 22px; border-radius: 24px; background: var(--branco); border: 3px solid var(--tinta); box-shadow: 8px 8px 0 var(--teal); }
+#lado-b .ganho { box-shadow: 8px 8px 0 var(--sol); }
+.ganho div { flex: 1; font: 700 30px/1.2 var(--f-display); color: var(--tinta); }
+.ganho small { display: block; margin-top: 4px; font: 400 22px/1.25 var(--f-corpo); color: var(--muted); }
+#base9 { position: absolute; left: 140px; right: 140px; top: 252px; display: flex; align-items: stretch; gap: 14px; }
+#base9 .rot { align-self: center; font: 700 20px var(--f-display); letter-spacing: 3px; text-transform: uppercase; color: var(--verde); white-space: nowrap; }
+#base9 .dado { flex: 1; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; padding: 8px 18px; border-radius: 18px; background: var(--nevoa); border: 2px solid var(--linha); font: 700 22px var(--f-display); color: var(--tinta); }
+#base9 .dado b { font: 800 30px var(--f-display); color: var(--verde); letter-spacing: -.5px; }
+#base9 .dado small { flex-basis: 100%; font: 400 18px var(--f-corpo); color: var(--muted); }
+.ganho b { font: 800 46px/1 var(--f-display); color: var(--verde); letter-spacing: -1.5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ganho b.txt { font-size: 28px; letter-spacing: 0; color: var(--muted); }
+#sl-ganho .divisor { position: absolute; left: 959px; top: 362px; height: 430px; width: 3px; background: var(--linha); }
+#total-ganho { position: absolute; left: 140px; right: 140px; bottom: 104px; display: flex; align-items: center; justify-content: space-between; gap: 30px; padding: 22px 40px; border-radius: 28px; background: var(--verde); color: var(--branco); }
+#total-ganho .rot { font: 700 34px/1.2 var(--f-display); }
+#total-ganho .rot small { display: block; font: 400 24px var(--f-corpo); color: #c7f0ee; margin-top: 4px; }
+#total-ganho .v { font: 800 84px/1 var(--f-display); color: var(--sol); letter-spacing: -3px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+#total-ganho .v small { font-size: 40px; letter-spacing: -.5px; color: var(--branco); margin-left: 8px; }
+
+/* 10 · como a gente ganha: rodízio da cadeira → preço → escala */
+#sl-receita .topo .titulo { font-size: 76px; letter-spacing: -2px; }
+#rodizio { position: absolute; left: 140px; top: 370px; width: 270px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+#rodizio svg { width: 270px; height: 270px; overflow: visible; }
+#rodizio p { margin: 0; text-align: center; font: 700 26px/1.25 var(--f-display); color: var(--verde); }
+#elos { position: absolute; left: 450px; top: 340px; width: 580px; display: flex; flex-direction: column; gap: 14px; }
+.elo { position: relative; display: grid; grid-template-columns: 210px 1fr; align-items: center; gap: 18px; padding: 12px 20px; border-radius: 22px; background: var(--branco); border: 2px solid var(--linha); }
+.elo .op { font: 700 23px/1.2 var(--f-display); color: var(--muted); }
+.elo .op .ref { font: 400 17px/1.2 var(--f-corpo); color: var(--muted); }
+.elo .n { font: 800 58px/1 var(--f-display); color: var(--verde); letter-spacing: -2px; font-variant-numeric: tabular-nums; }
+.elo .n small { display: block; font: 400 22px var(--f-corpo); color: var(--muted); letter-spacing: 0; margin-top: 4px; }
+.elo.falta .n { color: var(--perigo); }
+.elo.nosso { border: 3px solid var(--tinta); box-shadow: 8px 8px 0 var(--sol); }
+.elo + .elo::before { content: ""; position: absolute; left: 104px; top: -16px; width: 4px; height: 16px; border-radius: 2px; background: var(--teal); }
+#preco .lin.destaque small { color: var(--sol); font-weight: 700; }
+#preco { position: absolute; right: 140px; top: 340px; width: 680px; box-sizing: border-box; padding: 16px 30px; border-radius: 28px; background: var(--verde); color: var(--branco); display: flex; flex-direction: column; gap: 6px; }
+#preco .lin { display: flex; flex-direction: column; gap: 0; font: 700 28px/1.15 var(--f-display); }
+#preco .lin small { font: 400 21px/1.25 var(--f-corpo); color: #c7f0ee; }
+#preco hr { width: 100%; border: 0; border-top: 2px solid rgba(255,255,255,.3); margin: 2px 0; }
+#preco .tot { display: flex; justify-content: space-between; align-items: baseline; font: 700 30px var(--f-display); }
+#preco .tot b { font: 800 56px/1 var(--f-display); color: var(--sol); letter-spacing: -2.5px; font-variant-numeric: tabular-nums; }
+#um-quatro { align-self: flex-start; margin-top: 2px; display: inline-flex; align-items: center; gap: 12px; padding: 6px 18px; border-radius: 999px; background: var(--sol); color: var(--tinta); font: 800 26px var(--f-display); }
+#crescer { position: absolute; right: 140px; top: 704px; width: 680px; height: 150px; }
+.barra-c { position: absolute; bottom: 52px; width: 170px; border-radius: 18px 18px 0 0; background: var(--teal); transform-origin: bottom; }
+.barra-c b { position: absolute; left: 0; right: 0; top: -44px; text-align: center; font: 800 32px var(--f-display); color: var(--verde); white-space: nowrap; }
+.barra-c span { position: absolute; left: -30px; right: -30px; bottom: -50px; text-align: center; font: 700 24px/1.15 var(--f-corpo); color: var(--tinta); white-space: nowrap; }
+.barra-c span em { display: block; font-style: normal; font-weight: 400; font-size: 20px; color: var(--muted); }
+#bc1 { left: 0; height: 8px; } #bc2 { left: 250px; height: 32px; } #bc3 { left: 500px; height: 80px; background: var(--verde); }
+#publico { position: absolute; right: 140px; top: 884px; width: 680px; box-sizing: border-box; padding: 10px 20px; border-radius: 16px; background: var(--branco); border: 2px solid var(--linha); font: 700 24px/1.3 var(--f-corpo); color: var(--verde); }
+#publico small { display: block; font: 400 20px/1.3 var(--f-corpo); color: var(--muted); margin-top: 2px; }
+/* rodapé de premissas: largura toda, linha própria, mesma família das legendas */
+#premissas { position: absolute; left: 140px; right: 140px; bottom: 28px; padding-top: 10px; border-top: 2px solid var(--linha); font: 400 20px/1.35 var(--f-corpo); color: var(--muted); }
+#premissas b { color: var(--tinta); font-weight: 700; }
+/* 12 · escala: fonte do programa público */
+#sl9 .fonte-topo { font: 400 24px var(--f-corpo); color: var(--muted); }
+
+/* celular vivo: reflexo na tela; clicar no celular abre o app (modo demo) */
+.cel-dir .tela::after { content: ""; position: absolute; inset: 0; z-index: 6; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(118deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 74%, rgba(255,255,255,.08) 100%); }
+.cel-dir .cel { cursor: zoom-in; will-change: transform; }
+.cel-dir .shot { will-change: transform; }
+.realce-cel { position: absolute; border: 6px solid var(--sol); border-radius: 22px; opacity: 0; z-index: 5; box-sizing: border-box; box-shadow: 0 0 0 9999px rgba(11,36,35,0); }
+/* 11 · QR (só com ?qr=) */
+#qr11 { position: absolute; right: 48px; bottom: 44px; width: 390px; box-sizing: border-box; padding: 18px; border-radius: 26px; background: var(--branco); color: var(--tinta); display: grid; grid-template-columns: 150px 1fr; grid-template-rows: auto auto 1fr; column-gap: 16px; row-gap: 4px; align-items: start; text-align: left; box-shadow: 0 30px 60px -24px rgba(0,0,0,.45); }
+#qr11[hidden] { display: none; }
+#qr11-img { grid-row: 1 / 4; }
+#qr11-img svg { display: block; width: 150px; height: 150px; }
+#qr11 b { font: 800 28px/1.1 var(--f-display); letter-spacing: -.5px; }
+#qr11 span { font: 400 18px/1.3 var(--f-corpo); color: var(--muted); word-break: break-all; }
+#qr11 small { align-self: end; font: 700 15px var(--f-display); color: var(--verde); letter-spacing: .3px; }
+
+/* modo demo: o celular sai do slide, cresce no centro e vira o app (ao vivo ou protótipo clicável) */
+#demo { position: absolute; inset: 0; z-index: 3000; display: none; }
+#demo-faixa { position: absolute; inset: 0; z-index: 1; display: none; background: var(--sol); }
+#demo-fundo { position: absolute; inset: 0; z-index: 2; display: none; background: radial-gradient(1200px 900px at 72% -10%, rgba(20,190,185,.38), transparent 62%), radial-gradient(900px 700px at -10% 110%, rgba(255,184,28,.18), transparent 60%), var(--verde); }
+#demo-palco { position: absolute; inset: 0; z-index: 3; }
+#demo-cab { position: absolute; left: 120px; top: 110px; width: 720px; display: flex; flex-direction: column; gap: 24px; color: var(--branco); }
+#demo-cab .eyebrow { color: var(--sol); }
+#demo-cab h2 { margin: 0; font: 800 84px/1.03 var(--f-display); letter-spacing: -2.5px; color: var(--branco); text-wrap: balance; }
+#demo-cab h2 em { font-style: normal; color: var(--sol); }
+#demo-cab p { margin: 0; font: 400 34px/1.35 var(--f-corpo); color: #c7f0ee; max-width: 680px; }
+#demo-modo { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; padding: 10px 20px; border-radius: 999px; background: rgba(255,255,255,.12); font: 700 24px var(--f-display); color: var(--branco); }
+#demo-modo i { width: 14px; height: 14px; border-radius: 50%; background: #5ad3cf; box-shadow: 0 0 0 0 rgba(90,211,207,.7); animation: aoVivo 1.6s infinite; }
+#demo-ok { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; padding: 10px 22px 10px 10px; border-radius: 999px; background: var(--sol); color: var(--tinta); font: 700 26px var(--f-display); visibility: hidden; }
+#demo-ok b { width: 36px; height: 36px; border-radius: 50%; background: var(--tinta); color: var(--sol); display: grid; place-items: center; font-size: 20px; }
+#demo.clinica #demo-cab p { min-height: 1.4em; }
+#demo.clinica #demo-ok { position: absolute; left: 510px; bottom: 0; }
+#demo-modo.off i { background: var(--sol); animation: none; }
+@keyframes aoVivo { 70% { box-shadow: 0 0 0 14px rgba(90,211,207,0); } 100% { box-shadow: 0 0 0 0 rgba(90,211,207,0); } }
+#demo-acoes { position: absolute; left: 120px; bottom: 96px; display: flex; flex-wrap: wrap; gap: 16px; max-width: 760px; }
+#demo-acoes button { font: 700 26px var(--f-display); padding: 16px 26px; border-radius: 20px; border: 2px solid transparent; background: var(--branco); color: var(--tinta); cursor: pointer; }
+#demo-acoes button.sec { background: transparent; color: var(--branco); border-color: rgba(255,255,255,.55); }
+#demo-acoes button:focus-visible, .alvo:focus-visible { outline: 4px solid var(--sol); outline-offset: 4px; }
+#demo-cel { left: 1180px; top: 64px; }
+#demo-halo { position: absolute; inset: -20px; border-radius: 88px; background: var(--sol); box-shadow: 0 0 140px 10px rgba(255,184,28,.45); }
+#demo-cel .cel { box-shadow: 0 70px 140px -30px rgba(0,0,0,.55), 0 0 0 3px #2d4645 inset; }
+#demo-cel .tela iframe, #demo-note .tela iframe { position: absolute; left: 0; top: 0; border: 0; z-index: 2; background: var(--branco); opacity: 0; }
+/* barra de status: o app começa abaixo do notch, como num celular de verdade */
+#demo-cel .status { position: absolute; left: 0; right: 0; top: 0; height: 48px; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: 6px 30px 0 34px; box-sizing: border-box; background: var(--branco); font: 700 16px var(--f-display); color: var(--tinta); }
+#demo-cel .status span { display: flex; align-items: flex-end; gap: 3px; }
+#demo-cel .status i { display: block; width: 4px; background: var(--tinta); border-radius: 2px; }
+#demo-cel .status i:nth-child(1) { height: 6px; } #demo-cel .status i:nth-child(2) { height: 9px; } #demo-cel .status i:nth-child(3) { height: 12px; }
+#demo-cel .status em { display: block; width: 24px; height: 12px; margin-left: 6px; border: 2px solid var(--tinta); border-radius: 4px; box-sizing: border-box; background: linear-gradient(90deg, var(--tinta) 70%, transparent 70%) content-box; padding: 1px; }
+#demo-cel .proto { top: 48px; }
+#demo-cel .tela iframe { top: 48px; width: 390px; height: 796px; }
+#demo-note-wrap { position: absolute; left: 100px; top: 446px; width: 1316px; height: 818px; transform: scale(.62); transform-origin: 0 0; }
+#demo-note-wrap[hidden] { display: none; }
+#demo-note { left: 0; top: 0; }
+#demo-note .tela iframe { width: 1280px; height: 800px; }
+.proto { position: absolute; inset: 0; z-index: 1; overflow: hidden; background: var(--branco); }
+.proto .pg { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; overscroll-behavior: contain; }
+.proto .pg::-webkit-scrollbar { display: none; }
+.proto .pg .miolo { position: relative; }
+.proto .pg img { display: block; width: 100%; }
+.proto .alvo { position: absolute; display: block; padding: 0; border: 0; background: transparent; border-radius: 16px; cursor: pointer; }
+.proto .alvo:hover { box-shadow: inset 0 0 0 4px rgba(255,184,28,.95); }
+#demo-note .proto .zoom { position: absolute; left: 0; top: 0; width: 1600px; height: 1000px; transform: scale(.8); transform-origin: 0 0; }
+#demo-note .proto .pg { width: 1600px; height: 1000px; }
+#demo.clinica #demo-cab { top: 80px; width: 1100px; gap: 16px; }
+#demo.clinica #demo-cab h2 { font-size: 64px; letter-spacing: -2px; }
+#demo.clinica #demo-cab p { font-size: 28px; max-width: 1080px; }
+#demo.clinica #demo-acoes { left: 100px; bottom: 30px; max-width: 1100px; }
+#demo.clinica #demo-cel { left: 1330px; top: 100px; }
+
+/* apêndice para a banca (tecla A): mesmo palco, fundo verde, cartões de pergunta e resposta */
+#apendice { position: absolute; inset: 0; z-index: 3500; }
+#apendice[hidden] { display: none; }
+#apx-faixa { position: absolute; inset: 0; z-index: 1; display: none; background: var(--sol); }
+#apx-fundo { position: absolute; inset: 0; z-index: 2; display: none; background: radial-gradient(1100px 800px at 100% -10%, rgba(20,190,185,.34), transparent 62%), radial-gradient(900px 700px at -10% 110%, rgba(255,184,28,.16), transparent 60%), var(--verde); }
+#apx-palco { position: absolute; inset: 0; z-index: 3; }
+#apx-cab { position: absolute; left: 120px; top: 84px; display: flex; flex-direction: column; gap: 14px; }
+#apx-cab h2 { margin: 0; font: 800 76px/1.02 var(--f-display); letter-spacing: -2px; color: var(--branco); }
+#apx-cab h2 em { font-style: normal; color: var(--sol); }
+#apendice .eyebrow { color: var(--sol); }
+#apx-cards { position: absolute; left: 120px; right: 120px; top: 266px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 348px; gap: 28px; }
+.apx-card { position: relative; box-sizing: border-box; padding: 30px 32px; border-radius: 28px; background: var(--branco); border: 3px solid var(--tinta); box-shadow: 8px 8px 0 var(--teal); display: flex; flex-direction: column; gap: 14px; cursor: zoom-in; }
+.apx-card:nth-child(2n) { box-shadow: 8px 8px 0 var(--sol); }
+.apx-card h3, #apx-zoom h3 { margin: 0; padding-right: 64px; font: 800 36px/1.1 var(--f-display); letter-spacing: -.6px; color: var(--tinta); }
+.apx-card p, #apx-zoom p { margin: 0; font: 400 26px/1.36 var(--f-corpo); color: var(--muted); }
+.apx-card p b, #apx-zoom p b { color: var(--verde); }
+.apx-n { position: absolute; right: 26px; top: 24px; width: 52px; height: 52px; border-radius: 16px; background: var(--sol); display: grid; place-items: center; font: 800 28px var(--f-display); color: var(--tinta); }
+#apx-zoom { position: absolute; left: 260px; right: 260px; top: 250px; box-sizing: border-box; padding: 56px 64px; border-radius: 40px; background: var(--branco); border: 4px solid var(--tinta); box-shadow: 14px 14px 0 var(--sol), 0 60px 120px -30px rgba(0,0,0,.5); display: flex; flex-direction: column; gap: 26px; z-index: 5; }
+#apx-zoom[hidden] { display: none; }
+#apx-zoom h3 { font-size: 68px; letter-spacing: -1.6px; padding-right: 110px; }
+#apx-zoom p { font-size: 44px; line-height: 1.38; }
+#apx-zoom .apx-n { width: 88px; height: 88px; border-radius: 26px; font-size: 46px; right: 52px; top: 50px; }
+#apendice.foco #apx-cards { opacity: .25; }
+#apx-rodape { position: absolute; left: 120px; right: 120px; bottom: 34px; font: 700 24px var(--f-display); color: #a6d9d5; letter-spacing: .3px; }
+
+/* modo apresentador (?apresentador): segunda janela com notas, próximo slide e cronômetro */
+body.apres { overflow: auto; background: #031c1b; color: #e6f6f5; }
+body.apres #janela, body.apres #notas, body.apres #dica { display: none !important; }
+#apres { display: none; }
+body.apres #apres { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; padding: 22px; min-height: 100vh; box-sizing: border-box; font: 400 18px/1.5 var(--f-corpo); }
+#apres h1 { margin: 0; font: 700 15px var(--f-display); letter-spacing: 3px; text-transform: uppercase; color: var(--sol); }
+#apres .bloco { background: rgba(255,255,255,.06); border-radius: 18px; padding: 18px 20px; }
+#apres .atual { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+#apres .atual b { font: 800 30px/1.15 var(--f-display); color: var(--branco); }
+#apres .atual span { font: 700 18px var(--f-display); color: #a6c7c5; white-space: nowrap; }
+#apres .fala { font-size: 24px; line-height: 1.5; color: #e6f6f5; }
+#apres .fala b { color: var(--sol); font-family: var(--f-display); }
+#apres .prox { color: #a6c7c5; }
+#apres .prox b { color: var(--branco); }
+#apres .relogio { font: 800 64px/1 var(--f-display); font-variant-numeric: tabular-nums; color: var(--branco); }
+#apres .relogio.atencao { color: var(--sol); }
+#apres .relogio.estourou { color: #ffb4ab; }
+#apres .meta { color: #a6c7c5; font-size: 16px; }
+#apres .controles { display: flex; flex-wrap: wrap; gap: 10px; }
+#apres button { font: 700 18px var(--f-display); padding: 12px 18px; border-radius: 14px; border: 0; background: var(--branco); color: var(--tinta); cursor: pointer; }
+#apres button.sec { background: transparent; color: var(--branco); border: 2px solid rgba(255,255,255,.4); }
+#apres button:focus-visible { outline: 3px solid var(--sol); outline-offset: 3px; }
+#apres ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 15px; }
+#apres li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 10px; border-radius: 10px; color: #a6c7c5; }
+#apres li.agora { background: rgba(255,184,28,.16); color: var(--branco); font-weight: 700; }
+#apres li.feito { color: #6f9896; }
+#apres li .t { font-variant-numeric: tabular-nums; white-space: nowrap; }
+#apres li .nome { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#apres li { cursor: pointer; }
+#apres li.passou .t { color: #ffb4ab; }
+#apres .coluna { display: grid; gap: 16px; align-content: start; }
+#apres .aviso { color: var(--sol); font-size: 16px; }
+/* ensaio: tempo real por slide ao lado da meta, e resumo no fim */
+#apres li .r { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; color: #c7f0ee; }
+#apres li .r.passou { color: #ffb4ab; }
+#apres button[aria-pressed="true"] { background: var(--sol); color: var(--tinta); border-color: var(--sol); }
+#apres button.chama { box-shadow: 0 0 0 3px var(--sol); }
+#ap-resumo[hidden] { display: none; }
+#ap-resumo h2 { margin: 0 0 6px; font: 800 24px var(--f-display); color: var(--branco); }
+#ap-resumo table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+#ap-resumo th, #ap-resumo td { text-align: right; padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,.1); }
+#ap-resumo th:first-child, #ap-resumo td:first-child { text-align: left; }
+#ap-resumo th { color: #a6c7c5; font: 700 13px var(--f-display); letter-spacing: 1px; text-transform: uppercase; }
+#ap-resumo tr.passou td { color: #ffb4ab; }
+#ap-resumo tr.passou td:first-child { color: var(--branco); }
+#ap-resumo .cortes { margin: 10px 0 0; padding-left: 20px; color: #e6f6f5; }
+#ap-resumo .cortes li { display: list-item; list-style: disc; padding: 3px 0; border-radius: 0; cursor: auto; color: #e6f6f5; font-size: 16px; }
+#ap-resumo .cortes b { color: var(--branco); }
 
 /* notas do apresentador */
 #notas { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(1100px, calc(100vw - 32px)); max-height: 38vh; overflow: auto; box-sizing: border-box; padding: 18px 22px; border-radius: 18px; background: rgba(3,28,27,.92); color: #e6f6f5; font: 400 18px/1.5 var(--f-corpo); z-index: 10; }
@@ -146,54 +437,67 @@ body:hover #dica { opacity: 1; }
 <div id="janela">
   <div id="palco" aria-live="polite">
     <div id="faixa"></div>
+    <!-- avatares dos personagens (Dona Cida e Rafael), reaproveitados com <use> -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="av-cida" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#E8F9F8" stroke="#0B2423" stroke-width="4"/><circle cx="60" cy="24" r="11" fill="#B9C9C8" stroke="#0B2423" stroke-width="3"/><path d="M24 106a36 30 0 0 1 72 0" fill="#14BEB9" stroke="#0B2423" stroke-width="4"/><circle cx="60" cy="54" r="21" fill="#FFE3C8" stroke="#0B2423" stroke-width="4"/><path d="M39 52a21 21 0 0 1 42 0c-6-9-14-13-21-13s-15 4-21 13z" fill="#B9C9C8" stroke="#0B2423" stroke-width="3"/><circle cx="38" cy="62" r="3.5" fill="#FFB81C"/><circle cx="82" cy="62" r="3.5" fill="#FFB81C"/><path d="M53 64q7 4 14 0" fill="none" stroke="#0B2423" stroke-width="3" stroke-linecap="round"/></symbol>
+      <symbol id="av-rafael" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#FFF1CC" stroke="#0B2423" stroke-width="4"/><path d="M22 110a38 32 0 0 1 76 0" fill="#FFF" stroke="#0B2423" stroke-width="4"/><path d="M49 80l11 14 11-14" fill="none" stroke="#0B2423" stroke-width="3" stroke-linejoin="round"/><rect x="72" y="92" width="12" height="10" rx="3" fill="#14BEB9"/><circle cx="60" cy="52" r="21" fill="#FFE3C8" stroke="#0B2423" stroke-width="4"/><path d="M39 50c0-14 9-21 21-21s21 7 21 19c-8-2-14-6-17-11-5 7-14 11-25 13z" fill="#0B2423"/><path d="M53 62q7 4 14 0" fill="none" stroke="#0B2423" stroke-width="3" stroke-linecap="round"/></symbol>
+    </svg>
 
     <!-- 0 · abertura (loop) -->
     <section class="cena verde" id="sl0" style="z-index:10" aria-label="Abertura: Sorriu+, Foolstack">
-      <div class="faixa0" id="faixa0a"></div><div class="faixa0" id="faixa0b"></div>
-      <div class="camada" id="ab-a"><div class="lockup"><img src="assets/logo.webp" alt=""><div class="palavra"><span>S</span><span>o</span><span>r</span><span>r</span><span>i</span><span class="u" id="u0">u</span><span>+</span></div><div class="lema">clínicas-escola de odontologia perto de você</div><div class="time">Foolstack · HackaUSP 2026</div></div></div>
-      <div class="camada" id="ab-b"><div class="centro">
-        <svg viewBox="0 0 260 220" aria-hidden="true"><defs><linearGradient id="luz0" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFB81C" stop-opacity=".75"/><stop offset="1" stop-color="#FFB81C" stop-opacity="0"/></linearGradient></defs>
-          <ellipse cx="130" cy="205" rx="110" ry="9" fill="#0E9E99"/>
-          <g id="ab-p1"><path d="M30 200V100a40 40 0 0 1 80 0v100z" fill="#F4FBFB" stroke="#0B2423" stroke-width="3"/><path d="M44 200V104a26 26 0 0 1 52 0v96z" fill="#0B7C78" stroke="#0B2423" stroke-width="3"/></g>
-          <path id="ab-seta" d="M118 120h22m-8-9l9 9-9 9" fill="none" stroke="#0B2423" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path id="ab-feixe" d="M216 200 L262 214 L262 96 L216 104z" fill="url(#luz0)" opacity="0"/>
-          <path d="M150 200V100a40 40 0 0 1 80 0v100z" fill="#F4FBFB" stroke="#0B2423" stroke-width="3"/><path d="M164 200V104a26 26 0 0 1 52 0v96z" fill="#FFF1CC" stroke="#0B2423" stroke-width="3"/>
-          <path id="ab-folha" d="M164 200V104a26 26 0 0 1 52 0v96z" fill="#FFB81C" stroke="#0B2423" stroke-width="3"/>
-        </svg>
-        <div class="lema2" id="ab-lema">A porta que não se fecha <em>no primeiro “não”.</em></div>
-      </div></div>
-      <div class="camada" id="ab-a2"><div class="lockup"><img src="assets/logo.webp" alt=""><div class="palavra" id="ab-pal2"><span>S</span><span>o</span><span>r</span><span>r</span><span>i</span><span class="u">u</span><span>+</span></div><div class="lema">clínicas-escola de odontologia perto de você</div><div class="time">Foolstack · HackaUSP 2026</div></div></div>
+      <div class="camada" id="ab-a"><div class="lockup"><img src="assets/logo.webp" alt=""><div class="palavra"><span>S</span><span>o</span><span>r</span><span>r</span><span>i</span><span class="u" id="u0">u</span><span>+</span></div><div class="lema">Saúde bucal para todos · clínicas-escola perto de você</div><div class="time">Foolstack · HackaUSP 2026 · Saúde para todos</div></div></div>
     </section>
 
-    <!-- 1 · dor: acesso -->
-    <section class="cena" id="sl1" aria-label="Dor 1: acesso à saúde bucal">
-      <div class="esq" style="justify-content:flex-start; padding-top:150px; box-sizing:border-box">
-        <div class="eyebrow">Nossa dor · acesso</div>
+    <!-- história: Dona Cida e Rafael, a mesma cidade, sem ponte (personagens ilustrativos que voltam no deck todo) -->
+    <section class="cena" id="sl-ponte" aria-label="Imagine: Dona Cida e Rafael, na mesma cidade, sem ponte entre eles">
+      <div class="topo"><div class="eyebrow">Imagine</div><h2 class="titulo" id="t-ponte">Duas pessoas, <em>a mesma cidade.</em></h2></div>
+      <svg id="mapa-sp" viewBox="0 0 760 560" aria-hidden="true">
+        <rect x="2" y="2" width="756" height="556" rx="44" fill="#E8F9F8" stroke="#0B2423" stroke-width="3"/>
+        <g fill="#FFF" stroke="#D2E5E4" stroke-width="3">
+          <rect x="40" y="40" width="150" height="110" rx="18"/><rect x="215" y="40" width="190" height="80" rx="18"/><rect x="430" y="40" width="120" height="120" rx="18"/><rect x="575" y="200" width="145" height="120" rx="18"/>
+          <rect x="40" y="180" width="120" height="150" rx="18"/><rect x="190" y="300" width="170" height="90" rx="18"/><rect x="40" y="470" width="190" height="50" rx="16"/><rect x="390" y="420" width="160" height="100" rx="18"/><rect x="575" y="350" width="145" height="170" rx="18"/>
+        </g>
+        <path d="M-2 250 C 120 230, 210 170, 330 200 S 560 330, 762 300" fill="none" stroke="#C7F0EE" stroke-width="30" stroke-linecap="round"/>
+        <circle cx="300" cy="460" r="46" fill="#C7F0EE"/>
+        <text x="380" y="545" text-anchor="middle" font-family="Lexend, sans-serif" font-weight="700" font-size="20" letter-spacing="4" fill="#3F5958">SÃO PAULO</text>
+        <path id="rota" d="M150 430 C 260 430, 250 290, 380 300 S 520 150, 610 150" fill="none" stroke="#0B2423" stroke-width="4" stroke-dasharray="2 18" stroke-linecap="round" opacity=".35"/>
+        <path id="rota-sol" d="M150 430 C 260 430, 250 290, 380 300 S 520 150, 610 150" fill="none" stroke="#FFB81C" stroke-width="16" stroke-linecap="round"/>
+      </svg>
+      <div class="pino" id="pino-a"><span>Guaianases</span><svg viewBox="0 0 120 120"><use href="#av-cida"/><path class="dor" d="M90 38l9-8M94 50l12-2M86 28l3-11" stroke="#B3261E" stroke-width="5" stroke-linecap="round"/></svg></div>
+      <div class="pino" id="pino-b"><span>Clínica-escola</span><svg viewBox="0 0 120 120"><use href="#av-rafael"/></svg></div>
+      <div class="pessoa-card a" id="pc-a"><div class="papel2">Paciente · 54 anos</div><h3>Dona Cida</h3>
+        <ul><li>Dor de dente há 4 meses</li><li>Não pode pagar um dentista</li><li>Não sabe que a clínica-escola existe</li></ul></div>
+      <div class="pessoa-card b" id="pc-b"><div class="papel2">Estudante · 3º ano</div><h3>Rafael</h3>
+        <ul><li>Precisa de pacientes para se formar</li><li>O paciente de hoje faltou</li><li><b>66%</b> dos que pensam em desistir nunca tiveram prática clínica</li></ul></div>
+      <div id="vao">Nunca<br>se encontram.</div>
+      <img id="ponte-logo" src="assets/logo.webp" alt="">
+      <div id="frase-ponte">Não falta dentista. Não falta paciente. <em class="marca">Falta a ponte.</em></div>
+      <div class="fonte" style="bottom:40px" id="f-ponte">66%: Carmo Filho et al., Revista da ABENO, 2023 (UFC, 74 calouros).</div>
+      <div class="personagens">Personagens ilustrativos</div>
+    </section>
+
+    <!-- 2 · dores: fila de um lado, cadeira vazia do outro (uma animação só: os dias contam enquanto as cadeiras esvaziam) -->
+    <section class="cena" id="sl-dores" aria-label="Barreiras de acesso: paciente na fila, cadeira vazia">
+      <div class="topo"><div class="eyebrow">Barreiras de acesso à saúde</div><h2 class="titulo" id="t-dores">Paciente na fila. <em>Cadeira vazia.</em></h2></div>
+      <div class="col-dor" id="dor-a">
         <div class="numero"><span id="cont1">0</span><small>dias</small></div>
-        <p class="apoio" id="ap1">de espera média para começar um tratamento odontológico.</p>
+        <p class="apoio">de espera média pela primeira consulta odontológica especializada no SUS. Para um canal, até 170.</p>
+        <span class="barreira"><i class="risco"></i>Barreira financeira e de tempo</span>
       </div>
-      <div id="dias"></div>
-      <div id="dias-leg"><span>1 quadrado = 1 dia</span><span id="dias-n">dia 0</span></div>
-      <div class="faixa-frase" id="fr1">Para quem tem baixa renda, a clínica particular não é opção. Saúde bucal ainda é privilégio.</div>
-      <div class="fonte" style="bottom:40px">Fonte: BMC Public Health (NCBI), 2025.</div>
-    </section>
-
-    <!-- 2 · dor: clínicas -->
-    <section class="cena" id="sl2" aria-label="Dor 2: faltas e desorganização nas clínicas-escola">
-      <div class="esq">
-        <div class="eyebrow">Nossa dor · clínicas-escola</div>
-        <div class="numero" style="font-size:210px">20–35%</div>
-        <p class="apoio" id="ap2">das consultas odontológicas na atenção básica terminam em falta.</p>
-        <div class="tags" id="tags2"><span class="chip escuro">Faltas</span><span class="chip sol">Encaixes de última hora</span><span class="chip">Agenda no improviso</span></div>
+      <div class="divisor"></div>
+      <div class="col-dor" id="dor-b">
+        <div id="cadeiras" role="img" aria-label="20 cadeiras; 7 ficam vazias, cerca de um terço"></div>
+        <p class="apoio"><span class="pct">32,9%</span>das primeiras consultas odontológicas especializadas terminam em falta.</p>
+        <span class="barreira"><i class="risco"></i>Barreira organizacional</span>
       </div>
-      <div id="cadeiras"></div>
-      <div class="fonte">Fontes: BMC Public Health (NCBI), 2025; Holtzman et al., J. Public Health Dentistry, 2013.</div>
+      <div class="faixa-frase" id="fr1">Para quem tem baixa renda, <span class="u marca">saúde bucal ainda é privilégio.</span></div>
+      <div class="fonte" style="bottom:40px; font-size:22px">Fontes: CEO de Pelotas, Epidemiol. Serv. Saúde, 2015 (95 dias); atenção secundária em Belo Horizonte, Ciênc. Saúde Coletiva, 2018 (32,9%).</div>
     </section>
 
     <!-- 3 · justificativa -->
-    <section class="cena" id="sl3" aria-label="Por que existimos: dados fragmentados e clínicas invisíveis">
+    <section class="cena" id="sl3" aria-label="Por que a barreira existe: dados fragmentados e clínicas invisíveis">
       <div class="metade m1">
-        <div class="eyebrow">Por que existimos</div>
+        <div class="eyebrow">Por que a barreira existe</div>
         <h2 class="titulo" id="t3a">Os dados estão <em>espalhados.</em></h2>
         <div id="papeis">
           <div class="papel" style="left:0; top:40px">Planilha</div>
@@ -205,55 +509,99 @@ body:hover #dica { opacity: 1; }
         </div>
       </div>
       <div id="divisor"></div>
+      <div class="faixa-frase" id="fr3"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="20" width="52" height="38" rx="6" fill="#0E9E99" stroke="#FFF" stroke-width="3"/><path d="M6 34h52" stroke="#FFF" stroke-width="3"/><rect x="24" y="40" width="16" height="6" rx="3" fill="#FFF"/><rect x="16" y="6" width="32" height="22" rx="4" fill="#FFB81C" stroke="#FFF" stroke-width="3"/><path d="M24 20q8-12 16 0" fill="none" stroke="#0B2423" stroke-width="3"/></svg><span>Trocou de clínica-escola? A ficha fica para trás: <b>o paciente refaz o raio-X, conta tudo de novo e começa do zero.</b></span></div>
       <div class="metade m2">
         <div class="eyebrow">E do lado do paciente</div>
         <h2 class="titulo" id="t3b">Quem precisa nem sabe que a clínica-escola <em>existe.</em></h2>
+        <span class="barreira" id="br3b"><i class="risco"></i>Barreira de informação</span>
         <svg id="mapa" viewBox="0 0 260 220" role="img" aria-label="Mapa com um ponto de interrogação"><ellipse cx="130" cy="205" rx="90" ry="9" fill="#C7F0EE"/><path d="M40 60l60-18 60 18 60-18v140l-60 18-60-18-60 18z" fill="#E8F9F8" stroke="#0B2423" stroke-width="3" stroke-linejoin="round"/><path d="M100 42v140M160 60v140" stroke="#0B2423" stroke-width="2" stroke-dasharray="6 6"/><g id="interrog"><circle cx="130" cy="106" r="30" fill="#FFB81C" stroke="#0B2423" stroke-width="3"/><path d="M119 98a11 11 0 1 1 16 9c-4 2-5 5-5 9M130 128v1" fill="none" stroke="#0B2423" stroke-width="5" stroke-linecap="round"/></g></svg>
       </div>
     </section>
 
-    <!-- 4 · solução -->
-    <section class="cena nevoa" id="sl4" aria-label="Nossa solução: hub com dados centralizados e prontuário único">
-      <div class="esq" style="width:820px">
-        <div class="eyebrow">Nossa solução</div>
-        <h2 class="titulo" id="t4">Tudo num <em>só lugar.</em></h2>
+    <!-- 4 · solução: o hub e, no passo 2, o celular do paciente (a animação que era do slide do hub) -->
+    <section class="cena nevoa" id="sl4" aria-label="Nossa solução: um hub que conecta pacientes e clínicas-escola">
+      <div class="esq">
+        <div class="eyebrow">Nossa solução · acesso conectado</div>
+        <h2 class="titulo" id="t4">Não falta oferta nem demanda. <em class="marca">Falta conexão.</em></h2>
         <div class="bullets">
-          <div class="bullet" id="b4a"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10" stroke="#0B2423" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></span>Dados das clínicas-escola centralizados</div>
-          <div class="bullet" id="b4b"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="#0B2423" stroke-width="2.4" stroke-linejoin="round"/><path d="M10 12h5M10 16h5" stroke="#0B2423" stroke-width="2.4" stroke-linecap="round"/></svg></span>Prontuário único entre as parceiras</div>
+          <div class="bullet" id="b4a"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10" stroke="#0B2423" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></span>Um hub de clínicas-escola no celular do paciente</div>
+          <div class="bullet" id="b4b"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" fill="none" stroke="#0B2423" stroke-width="2.4" stroke-linejoin="round"/><path d="M10 12h5M10 16h5" stroke="#0B2423" stroke-width="2.4" stroke-linecap="round"/></svg></span>Prontuário único que acompanha o paciente</div>
+          <div class="bullet" id="b4c"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="#0B2423" stroke-width="2.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="#0B2423" stroke-width="2.4" stroke-linecap="round"/></svg></span>Cada clínica mantém o próprio sistema</div>
         </div>
+        <div class="barreiras" id="br4"><span class="barreira" id="br4a"><i class="risco"></i>Financeira</span><span class="barreira" id="br4b"><i class="risco"></i>Geográfica</span><span class="barreira" id="br4c"><i class="risco"></i>De informação</span></div>
       </div>
       <div id="hub">
         <svg viewBox="0 0 840 840" aria-hidden="true"><g id="hub-linhas" stroke="#0B2423" stroke-width="4" stroke-dasharray="10 10" fill="none"></g><g id="hub-pulsos"></g></svg>
         <div id="hub-centro"><img src="assets/logo.webp" alt="Sorriu+"></div>
       </div>
+      <div class="cel-wrap cel-dir" id="cel5"><div class="dona"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#av-cida"/></svg>Cida</div><div class="cel"><div class="tela"><div class="notch"></div>
+        <img class="shot" id="s5a" src="assets/p-busca.webp" alt="Tela de busca de clínicas"><img class="shot" id="s5b" src="assets/p-clinica.webp" alt="Tela de detalhes da clínica" style="visibility:hidden">
+        <div class="toque" id="tq5" style="left:195px; top:560px"></div>
+      </div></div>
+        <div class="chip" id="c5a" style="left:-330px; top:700px"><span class="dot"></span>1,7 km de você</div>
+        <div class="chip sol" id="c5b" style="left:-260px; top:810px">Taxa social · R$ 15</div>
+        <div class="chip escuro" id="c5c" style="left:-400px; top:760px">Entrada sem degraus</div>
+      </div>
+      <div class="selo-demo">Telas do protótipo · dados fictícios</div>
     </section>
 
-    <!-- 5 · hub -->
-    <section class="cena" id="sl5" aria-label="Funcionalidade: hub entre pacientes e clínicas-escola">
-      <div class="esq">
-        <div class="eyebrow">Funcionalidades · hub</div>
-        <h2 class="titulo" id="t5">Paciente e clínica-escola, <em>conectados.</em></h2>
-        <p class="apoio" id="ap5">Encontre a clínica mais perto, veja custo, horário e acessibilidade, e faça o pedido em poucos toques.</p>
+    <!-- 7 · score -->
+    <section class="cena" id="sl7" aria-label="Funcionalidade: score de prioridade">
+      <div class="esq" style="gap:30px; width:980px">
+        <div class="eyebrow">Acesso justo · score</div>
+        <h2 class="titulo" id="t7" style="font-size:80px">Fila justa: <em>quem comparece avança.</em></h2>
+        <span class="barreira" id="br7"><i class="risco"></i>Barreira organizacional</span>
+        <div class="formula" id="f7"><span class="chip">Comparecimento</span><span class="op">+</span><span class="chip">Situação socioeconômica</span><span class="op">=</span><span class="chip sol">Score</span></div>
+        <div id="fila">
+          <span class="pos fixa" style="top:15px">1</span><span class="pos fixa" style="top:107px">2</span><span class="pos fixa" style="top:199px">3</span><span class="pos fixa" style="top:291px">4</span>
+          <div class="pessoa" data-pts="12" style="top:0">Bruno<span class="barra"><i></i></span><span class="pts">0</span></div>
+          <div class="pessoa" data-pts="18" style="top:92px">Fábio<span class="barra"><i></i></span><span class="pts">0</span></div>
+          <div class="pessoa" data-pts="30" style="top:184px">Ana<span class="barra"><i></i></span><span class="pts">0</span></div>
+          <div class="pessoa" data-pts="41" style="top:276px">Cida<span class="barra"><i></i></span><span class="pts">0</span></div>
+        </div>
+        <div class="legenda">Pontuação ilustrativa · dados fictícios</div>
       </div>
-      <div class="cel-wrap cel-dir" id="cel5"><div class="cel"><div class="tela"><div class="notch"></div>
-        <img class="shot" id="s5a" src="assets/p-busca.webp" alt="Tela de busca de clínicas"><img class="shot" id="s5b" src="assets/p-clinica.webp" alt="Tela de detalhes da clínica" style="visibility:hidden">
+      <div class="cel-wrap cel-dir" id="cel7"><div class="dona"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#av-cida"/></svg>Cida</div><div class="cel"><div class="tela"><div class="notch"></div>
+        <img class="shot" id="s7" src="assets/p-prioridade.webp" alt="Tela Minha prioridade com a pontuação do paciente">
+        <div class="realce-cel" id="rl7"></div>
       </div></div>
-        <div class="chip" id="c5a" style="left:-180px; top:320px"><span class="dot"></span>1,7 km de você</div>
-        <div class="chip sol" id="c5b" style="left:-110px; top:470px">Gratuito</div>
-        <div class="chip escuro" id="c5c" style="left:-240px; top:600px">Entrada sem degraus</div>
+        <div class="chip escuro" id="c7a" style="left:-150px; top:610px">Urgência avaliada vem antes</div>
+        <div class="chip sol" id="c7b" style="left:-110px; top:705px">Falta justificada é revista</div>
+        <div class="chip" id="c7c" style="left:-70px; top:800px"><span class="dot"></span>Ninguém perde o direito</div>
       </div>
+      <div class="selo-demo">Telas do protótipo · dados fictícios</div>
+    </section>
+
+    <!-- 8 · redirecionamento -->
+    <section class="cena" id="sl8" aria-label="Funcionalidade: redirecionamento de fila">
+      <div class="esq" style="gap:34px">
+        <div class="eyebrow">Acesso sem recusa · encaminhamento</div>
+        <h2 class="titulo" id="t8" style="font-size:84px">Recusa vira <em>encaminhamento.</em></h2>
+        <span class="barreira" id="br8"><i class="risco"></i>Barreira da recusa</span>
+        <div class="criterios" id="crit8">Cruza <span class="chip">Especialidade</span><span class="chip sol">Grade do semestre</span><span class="chip escuro">Distância</span></div>
+        <div id="redir"><span id="volta"><svg viewBox="0 0 28 16" aria-hidden="true"><path d="M2 8h24M8 2L2 8l6 6M20 2l6 6-6 6" fill="none" stroke="#0B2423" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Mão dupla</span>
+          <div class="uni a"><h3>Universidade A</h3><span class="tag">Lotada</span><div class="pontos" id="pa"></div></div>
+          <div class="uni b"><h3>Universidade B</h3><span class="tag">Cadeiras livres</span><div class="pontos" id="pb"></div></div>
+        </div>
+        <p class="apoio" id="ap8" style="font-size:36px">O diagnóstico vai junto e o paciente confirma antes de ir. Nenhuma recusa vira desistência.</p>
+      </div>
+      <div class="cel-wrap cel-dir" id="cel8"><div class="dona"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#av-cida"/></svg>Cida</div><div class="cel"><div class="tela"><div class="notch"></div>
+        <img class="shot" id="s8" src="assets/p-encaminhamento.webp" alt="Tela de encaminhamento para outra universidade">
+        <div class="realce-cel" id="rl8"></div>
+      </div></div></div>
       <div class="selo-demo">Telas do protótipo · dados fictícios</div>
     </section>
 
     <!-- 6 · prontuário -->
     <section class="cena" id="sl6" aria-label="Funcionalidade: prontuário integrado">
       <div class="esq">
-        <div class="eyebrow">Funcionalidades · prontuário</div>
+        <div class="eyebrow">Continuidade do cuidado · prontuário</div>
         <h2 class="titulo" id="t6">O histórico <em>vai junto.</em></h2>
-        <p class="apoio" id="ap6">Triagem, exames e diagnóstico num prontuário integrado, com registro de cada acesso.</p>
+        <span class="barreira" id="br6"><i class="risco"></i>Barreira da continuidade</span>
+        <p class="apoio" id="ap6">A informação é do paciente, não do prédio. Triagem, exames e laudo seguem com ele, e o aluno trata já na primeira consulta.</p>
         <div class="chip sol" id="c6v" style="position:static; align-self:flex-start; font-size:30px; white-space:normal; max-width:780px; line-height:1.25">Hoje no protótipo · próxima etapa: prontuário único com consentimento</div>
       </div>
-      <div class="cel-wrap cel-dir" id="cel6"><div class="cel"><div class="tela"><div class="notch"></div>
+      <div class="cel-wrap cel-dir" id="cel6"><div class="dona"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#av-cida"/></svg>Cida</div><div class="cel"><div class="tela"><div class="notch"></div>
         <img class="shot" id="s6" src="assets/p-prontuario.webp" alt="Tela do prontuário do paciente">
       </div></div>
         <div class="chip escuro" id="c6a" style="left:-250px; top:200px">Registro de quem viu e quando</div>
@@ -262,105 +610,189 @@ body:hover #dica { opacity: 1; }
       <div class="selo-demo">Telas do protótipo · dados fictícios</div>
     </section>
 
-    <!-- 7 · score -->
-    <section class="cena" id="sl7" aria-label="Funcionalidade: score de prioridade">
-      <div class="esq" style="gap:30px; width:980px">
-        <div class="eyebrow">Funcionalidades · score</div>
-        <h2 class="titulo" id="t7" style="font-size:84px">Score alto, <em>prioridade na fila.</em></h2>
-        <div class="formula" id="f7"><span class="chip">Comparecimento</span><span class="op">+</span><span class="chip">Situação socioeconômica</span><span class="op">=</span><span class="chip sol">Score</span></div>
-        <div id="fila">
-          <span class="pos fixa" style="top:15px">1</span><span class="pos fixa" style="top:107px">2</span><span class="pos fixa" style="top:199px">3</span><span class="pos fixa" style="top:291px">4</span>
-          <div class="pessoa" data-pts="12" style="top:0">Bruno<span class="barra"><i></i></span><span class="pts">0</span></div>
-          <div class="pessoa" data-pts="18" style="top:92px">Fábio<span class="barra"><i></i></span><span class="pts">0</span></div>
-          <div class="pessoa" data-pts="30" style="top:184px">Ana<span class="barra"><i></i></span><span class="pts">0</span></div>
-          <div class="pessoa" data-pts="41" style="top:276px">Carla<span class="barra"><i></i></span><span class="pts">0</span></div>
+    <!-- painel da clínica-escola: visão por cima (pedidos → fila → prontuário); D abre o app com o notebook -->
+    <section class="cena nevoa" id="sl-painel" aria-label="Painel da clínica-escola: pedidos, fila e prontuário">
+      <div class="esq">
+        <div class="eyebrow">Do lado da clínica-escola</div>
+        <h2 class="titulo" id="t-painel">Tudo num <em>painel só.</em></h2>
+        <div class="etapas">
+          <div class="etapa" id="et1"><b>1</b>Pedidos chegam organizados</div>
+          <div class="etapa" id="et2"><b>2</b>Fila por prioridade, urgência antes</div>
+          <div class="etapa" id="et3"><b>3</b>Prontuário validado pelo professor</div>
         </div>
-        <div class="legenda">Pontuação ilustrativa · dados fictícios</div>
       </div>
-      <div class="cel-wrap cel-dir" id="cel7"><div class="cel"><div class="tela"><div class="notch"></div>
-        <img class="shot" id="s7" src="assets/p-prioridade.webp" alt="Tela Minha prioridade com a pontuação do paciente">
-      </div></div></div>
+      <div id="note-wrap"><div class="note" id="note-p"><div class="tela"><div class="cam" id="cam-p">
+        <img class="shot um" id="pn1" src="assets/c-solicitacoes.webp" alt="Painel: solicitações recebidas">
+        <img class="shot" id="pn2" src="assets/c-triagem.webp" alt="Painel: triagem com fila por prioridade">
+        <img class="shot" id="pn3" src="assets/c-prontuario.webp" alt="Painel: prontuário do paciente">
+        <div class="realce" id="rp1" style="left:197px; top:163px; width:1058px; height:69px"></div>
+        <div class="realce" id="rp2a" style="left:197px; top:213px; width:231px; height:108px"></div>
+        <div class="realce" id="rp2b" style="left:463px; top:206px; width:643px; height:80px"></div>
+        <div class="realce" id="rp3a" style="left:356px; top:117px; width:568px; height:125px"></div>
+        <div class="realce" id="rp3b" style="left:780px; top:46px; width:156px; height:34px"></div>
+      </div></div></div></div>
       <div class="selo-demo">Telas do protótipo · dados fictícios</div>
     </section>
 
-    <!-- 8 · redirecionamento -->
-    <section class="cena" id="sl8" aria-label="Funcionalidade: redirecionamento de fila">
-      <div class="esq" style="gap:34px">
-        <div class="eyebrow">Funcionalidades · redirecionamento</div>
-        <h2 class="titulo" id="t8" style="font-size:84px">Fila cheia aqui, <em>cadeira livre ali.</em></h2>
-        <div id="redir">
-          <div class="uni a"><h3>Universidade A</h3><span class="tag">Lotada</span><div class="pontos" id="pa"></div></div>
-          <div class="uni b"><h3>Universidade B</h3><span class="tag">Cadeiras livres</span><div class="pontos" id="pb"></div></div>
-        </div>
-        <p class="apoio" id="ap8" style="font-size:36px">O diagnóstico vai junto. Ninguém repete exame.</p>
+    <!-- 9 · ganha-ganha: o que a clínica-escola economiza e fatura (metade a metade) -->
+    <section class="cena" id="sl-ganho" aria-label="A clínica-escola ganha: economiza e fatura">
+      <div class="topo"><div class="eyebrow">Ganha-ganha · a clínica-escola</div><h2 class="titulo" id="t-ganho" style="font-size:80px">A clínica economiza <em class="marca">e fatura.</em></h2></div>
+      <div id="base9"><span class="rot">Base de pesquisa</span>
+        <span class="dado"><b>36–63</b> cadeiras por clínica-escola<small>UniCesumar 36 · PUCRS 52 · UPE 63</small></span>
+        <span class="dado"><b>~250</b> alunos por curso<small>162,7 mil alunos ÷ 650 cursos</small></span>
+        <span class="dado"><b>1.200–1.500</b> pacientes/mês<small>Uniban (SP) · FO-USP</small></span>
       </div>
-      <div class="cel-wrap cel-dir" id="cel8"><div class="cel"><div class="tela"><div class="notch"></div>
-        <img class="shot" id="s8" src="assets/p-encaminhamento.webp" alt="Tela de encaminhamento para outra universidade">
-      </div></div></div>
-      <div class="selo-demo">Telas do protótipo · dados fictícios</div>
+      <div class="lado" id="lado-a"><h3><i>−</i>Economiza</h3>
+        <div class="ganho"><div>Recepção automatizada<small>confirmação, fila e ficha no sistema</small></div><b>até R$ 91 mil</b></div>
+        <div class="ganho"><div>Material estéril<small>falta deixa de abrir kit à toa</small></div><b class="txt">menos lixo</b></div>
+        <div class="ganho"><div>Cadeira e professor<small>1 professor para cada 5 alunos em clínica (CNE/CES 230/2004): box vazio é professor parado</small></div><b class="txt">sem ociosidade</b></div>
+      </div>
+      <div class="divisor"></div>
+      <div class="lado" id="lado-b"><h3><i>+</i>Fatura</h3>
+        <div class="ganho"><div>Horários recuperados<small>40 cadeiras (abaixo das privadas pesquisadas) · 2.400/ano × R$ 15 de taxa social</small></div><b>R$ <span id="g36">0</span> mil</b></div>
+        <div class="ganho"><div>Alunos que não desistem<small>evasão de 20% a 46% (UFRGS, UFPB): 3 de ~250 alunos × R$ 36 mil de mensalidade</small></div><b>R$ <span id="g108">0</span> mil</b></div>
+      </div>
+      <div id="total-ganho"><div class="rot">Por clínica de 40 cadeiras, por ano<small>Conservador (sem recepção, 1 aluno): R$ 72 mil · capacidade de 32 mil horários/ano</small></div><div class="v">≈ R$ <span id="g235">0</span><small>mil</small></div></div>
+      <div class="fonte" style="bottom:36px; font-size:21px; right:140px">Fontes: notícias UniCesumar, PUCRS e UPE (cadeiras); MEC via Bip, 2024 (alunos e cursos); Catraca Livre e FO-USP (pacientes/mês); CNE/CES 230/2004; Pravaler e Guia da Carreira (mensalidade R$ 2,5–3,3 mil); Newton Paiva (taxa social). Ganhos: estimativas do time.</div>
     </section>
 
-    <!-- 9 · plano de venda -->
-    <section class="cena" id="sl9" aria-label="Plano de venda: do nicho à escala governamental">
-      <div class="topo">
-        <div class="eyebrow">Plano de venda · o hub para as clínicas-escola</div>
-        <h2 class="titulo" id="t9">Do nicho à <em>escala governamental.</em></h2>
+    <!-- 10 · como a gente ganha: o rodízio da cadeira vira preço, e o preço vira escala -->
+    <section class="cena nevoa" id="sl-receita" aria-label="Modelo de negócio: como o Sorriu+ ganha e escala">
+      <div class="topo"><div class="eyebrow">Modelo de negócio · como a gente ganha</div><h2 class="titulo" id="t-receita">A clínica paga por cadeira. <em>O paciente, não.</em></h2></div>
+      <div id="rodizio">
+        <svg viewBox="0 0 270 270" aria-hidden="true">
+          <circle cx="135" cy="135" r="112" fill="#FFF" stroke="#D2E5E4" stroke-width="18"/>
+          <circle id="anel" cx="135" cy="135" r="112" fill="none" stroke="#FFB81C" stroke-width="18" stroke-linecap="round" transform="rotate(-90 135 135)" stroke-dasharray="704" stroke-dashoffset="704"/>
+          <g transform="translate(75 72)"><g id="cadeira-r"><path d="M30 18h34a10 10 0 0 1 10 10v44h24a8 8 0 0 1 8 8v8a8 8 0 0 1-8 8H30a10 10 0 0 1-10-10V28a10 10 0 0 1 10-10z" fill="#14BEB9" stroke="#0B2423" stroke-width="5"/><path d="M40 106v10M90 106v10" stroke="#0B2423" stroke-width="5" stroke-linecap="round"/></g></g>
+          <g id="turnos" fill="#FFF" stroke="#0B2423" stroke-width="4">
+            <circle cx="135" cy="23" r="17"/><circle cx="247" cy="135" r="17"/><circle cx="135" cy="247" r="17"/><circle cx="23" cy="135" r="17"/>
+          </g>
+          <g font-family="Lexend, sans-serif" font-weight="700" font-size="15" text-anchor="middle" fill="#0B2423"><text x="135" y="28">8h</text><text x="247" y="140">10h</text><text x="135" y="252">12h</text><text x="23" y="140">14h</text></g>
+        </svg>
+        <p>1 cadeira · 8 h por dia<br>a cada 2 h, um paciente</p>
       </div>
-      <div id="escada">
-        <div class="degrau d1" id="d1"><span class="n">1</span><h3>Clínicas-escola parceiras</h3><p>Começamos num nicho, com as universidades parceiras.</p></div>
-        <div class="degrau d2" id="d2"><span class="n">2</span><h3>Rede regional</h3><p>Mais universidades, filas e dados compartilhados.</p></div>
-        <div class="degrau d3" id="d3"><span class="n">3</span><h3>Escala governamental</h3><p>Hub integrado à saúde pública.</p></div>
-        <div id="sol-escada"></div>
+      <div id="elos">
+        <div class="elo"><span class="op">4 por dia × 200 dias letivos</span><span class="n" data-v="800">0<small>atendimentos por cadeira/ano</small></span></div>
+        <div class="elo"><span class="op">× 40 cadeiras<br><small class="ref">privadas pesquisadas: 36–52</small></span><span class="n" data-v="32000">0<small>horários por clínica/ano</small></span></div>
+        <div class="elo falta"><span class="op">25% faltam<br><small class="ref">BH: 32,9% (C&amp;SC 2018) · usamos 25%</small></span><span class="n" data-v="8000">0<small>horários vazios</small></span></div>
+        <div class="elo nosso"><span class="op">O Sorriu+ recupera 30%</span><span class="n" data-v="2400">0<small>viram atendimento</small></span></div>
       </div>
+      <div id="preco">
+        <div class="lin">R$ 20 por cadeira/mês<small>40 cadeiras = R$ 9,6 mil/ano</small></div>
+        <div class="lin destaque">+ R$ 20 por horário recuperado<small>2.400 recuperados = R$ 48 mil/ano</small></div>
+        <hr>
+        <div class="tot">por clínica, por ano<b>R$ <span id="r576">0</span> mil</b></div>
+        <span id="um-quatro">A clínica paga R$ 1 e ganha R$ 4</span>
+      </div>
+      <div id="crescer">
+        <div class="barra-c" id="bc1"><b>R$ 288 mil</b><span>Ano 1<em>5 clínicas</em></span></div>
+        <div class="barra-c" id="bc2"><b>R$ 1,15 mi</b><span>Ano 2<em>20 clínicas</em></span></div>
+        <div class="barra-c" id="bc3"><b>R$ 2,9 mi</b><span>Ano 3<em>50 clínicas</em></span></div>
+      </div>
+      <div id="publico">Depois, a rede pública<small>Programa Nacional de Redução das Filas (Portaria GM/MS 90/2023)</small></div>
+      <div id="premissas"><b>Premissas do time:</b> 40 cadeiras (UniCesumar 36, PUCRS 52, UPE 63) · 4 atendimentos por dia · 200 dias letivos (LDB, art. 47) · 25% de faltas (conservador; BH: 32,9%, Ciênc. Saúde Coletiva, 2018) · 30% dos horários vazios recuperados, a medir no piloto · volume real hoje: 1.200–1.500 pacientes/mês (Uniban, FO-USP).</div>
     </section>
 
-    <!-- 10 · por que as faculdades -->
-    <section class="cena" id="sl10" aria-label="Por que as faculdades fariam esse acordo">
-      <div class="topo">
-        <div class="eyebrow">Por que as faculdades topam</div>
-        <h2 class="titulo" id="t10" style="font-size:76px">Bom para o paciente. <em>Melhor para a clínica.</em></h2>
-      </div>
-      <div id="ganhos">
-        <div class="ganho"><h3>Filas equilibradas</h3><p>Da universidade cheia para a vazia, conforme cada caso de estudo.</p></div>
-        <div class="ganho"><h3>Menos desperdício</h3><p>Cadeira ocupada e insumo usado, não perdido.</p></div>
-        <div class="ganho"><h3>Menos no-show</h3><p>O score valoriza quem comparece.</p></div>
-        <div class="ganho"><h3>Pacientes cadastrados</h3><p>Uma base que chega pronta para a clínica.</p></div>
-      </div>
-      <div id="c66">
-        <div class="n" id="n66">66%</div>
-        <p>dos estudantes que pensam em desistir de odontologia nunca tiveram prática clínica.</p>
-        <p class="src">Fonte: Revista da ABENO.</p>
-        <div class="final">Paciente na cadeira é formação.</div>
-      </div>
-    </section>
-
-    <!-- 11 · fechamento -->
-    <section class="cena verde" id="sl11" aria-label="Encerramento">
+    <!-- 11 · fechamento: tema, o time com fotos e o QR do protótipo -->
+    <section class="cena verde" id="sl11" aria-label="Encerramento: Saúde bucal para todos e o time Foolstack">
       <div class="centro">
-        <span class="mini" style="background:transparent; font-size:64px" id="m11">Sorri<span class="u">u</span>+</span>
-        <div class="linhas">
-          <div class="linha" id="l11a">Mais sorrisos de volta.</div>
-          <div class="linha" id="l11b">Mais gente atendida.</div>
-          <div class="linha" id="l11c">Mais alunos aprendendo.</div>
-        </div>
+        <span class="mini" style="background:transparent; font-size:56px" id="m11">Sorri<span class="u">u</span>+</span>
+        <h2 class="linha" id="l11a">Saúde bucal <em class="marca">para todos.</em></h2>
+        <p class="sub" id="l11b"><span class="duo"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#av-cida"/></svg><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#av-rafael"/></svg></span>A <b>Cida</b> voltou a sorrir. O <b>Rafael</b> ganhou prática.</p>
+        <div class="barreiras placar" id="placar"><span class="barreira caiu">Financeira</span><span class="barreira caiu">Geográfica</span><span class="barreira caiu">De informação</span><span class="barreira caiu">Organizacional</span><span class="barreira caiu">Da recusa</span><span class="barreira caiu">Da continuidade</span></div>
         <svg id="sorriso2" viewBox="0 0 460 110" aria-hidden="true"><path id="sp11" d="M20 18 Q230 190 440 18" fill="none" stroke="#FFB81C" stroke-width="16" stroke-linecap="round"/></svg>
-        <div class="time2" id="tm11"><b>Foolstack</b> · Alex · André · Giovanni · Lucca · Murilo</div>
-        <div class="tag" id="tg11">Protótipo · dados fictícios · HackaUSP 2026</div>
+        <div id="time11">
+          <figure class="membro"><img src="assets/time/alex.webp" alt="Foto de Alex"><figcaption>Alex</figcaption></figure>
+          <figure class="membro"><img src="assets/time/andre.webp" alt="Foto de André"><figcaption>André</figcaption></figure>
+          <figure class="membro"><img src="assets/time/giovanni.webp" alt="Foto de Giovanni"><figcaption>Giovanni</figcaption></figure>
+          <figure class="membro"><img src="assets/time/lucca.webp" alt="Foto de Lucca"><figcaption>Lucca</figcaption></figure>
+          <figure class="membro"><img src="assets/time/murilo.webp" alt="Foto de Murilo"><figcaption>Murilo</figcaption></figure>
+        </div>
+        <div class="time2" id="tm11"><b>Foolstack</b> · HackaUSP 2026 <span class="tag" id="tg11">Protótipo · dados fictícios</span></div>
       </div>
+      <div id="qr11" hidden><div id="qr11-img" role="img" aria-label="QR code para abrir o protótipo"></div><b>Experimente agora</b><span id="qr11-url"></span><small>Protótipo · dados fictícios</small></div>
     </section>
+
+    <!-- modo demo (tecla D ou clique no celular) -->
+    <div id="demo" role="dialog" aria-modal="true" aria-labelledby="demo-titulo">
+      <div id="demo-faixa"></div><div id="demo-fundo"></div>
+      <div id="demo-palco">
+        <div id="demo-cab">
+          <div class="eyebrow" id="demo-eyebrow">Demonstração</div>
+          <h2 id="demo-titulo"></h2>
+          <p id="demo-apoio"></p>
+          <span id="demo-modo"><i></i><span id="demo-modo-txt"></span></span>
+          <span id="demo-ok"><b>✓</b><span></span></span>
+        </div>
+        <div id="demo-note-wrap" hidden><div class="note" id="demo-note"><div class="tela"><div class="proto" id="proto-c"></div><iframe id="app-c" title="Painel da clínica (protótipo)" tabindex="-1"></iframe></div></div></div>
+        <div class="cel-wrap" id="demo-cel"><div id="demo-halo"></div><div class="cel"><div class="tela"><div class="notch"></div><div class="status" aria-hidden="true"><b>9:41</b><span><i></i><i></i><i></i><em></em></span></div><div class="proto" id="proto-p"></div><iframe id="app-p" title="App do paciente (protótipo)" tabindex="-1"></iframe></div></div></div>
+        <div id="demo-acoes"></div>
+      </div>
+    </div>
+
+    <!-- apêndice para a banca (tecla A): perguntas e respostas curtas, fora da contagem de slides -->
+    <div id="apendice" role="dialog" aria-modal="true" aria-labelledby="apx-titulo" hidden>
+      <div id="apx-faixa"></div><div id="apx-fundo"></div>
+      <div id="apx-palco">
+        <div id="apx-cab"><div class="eyebrow">Apêndice · para a banca</div><h2 id="apx-titulo">Perguntas que <em>a gente espera.</em></h2></div>
+        <div id="apx-cards">
+          <article class="apx-card"><span class="apx-n">1</span><h3>LGPD e consentimento</h3><p>Dado de saúde é dado sensível (Lei 13.709/2018). Cada acesso ao prontuário fica registrado: quem viu e quando. Outra clínica só vê depois que o paciente confirma.</p></article>
+          <article class="apx-card"><span class="apx-n">2</span><h3>Quem paga e quanto</h3><p>A clínica-escola: <b>R$ 20 por cadeira/mês + R$ 20 por horário recuperado</b> ≈ R$ 57,6 mil/ano em 40 cadeiras. Retorno ≈ 4× no cenário base e 1,25× no conservador. O paciente não paga pelo app.</p></article>
+          <article class="apx-card"><span class="apx-n">3</span><h3>Alternativas e mercado privado</h3><p>Hoje: planilha e o sistema de cada faculdade; o Sorriu+ liga a rede. Caso fora da rede pode ir a uma clínica privada parceira, <b>se o paciente escolher</b>. E o aluno de hoje é o dentista-cliente de amanhã.</p></article>
+          <article class="apx-card"><span class="apx-n">4</span><h3>Base e piloto</h3><p><b>36–63 cadeiras</b> por clínica (UniCesumar, PUCRS, UPE), <b>~250 alunos</b> por curso, <b>1.200–1.500 pacientes/mês</b> (Uniban, FO-USP). O piloto mede faltas, ocupação e encaminhamentos contra a base da clínica.</p></article>
+          <article class="apx-card"><span class="apx-n">5</span><h3>Por que a clínica-escola adota</h3><p>Cadeira ocupada é aula dada, com menos material estéril perdido e fila sem ligação um a um. 66% dos que pensam em desistir ainda não tinham prática clínica (Revista da ABENO, 2023).</p></article>
+          <article class="apx-card"><span class="apx-n">6</span><h3>Protótipo × próximo passo</h3><p>Já roda, com dados fictícios: busca, pedido, painel, fila com score, encaminhamento com confirmação e registro de acesso. Próximo: login real (hoje é demo), integração e piloto.</p></article>
+        </div>
+        <div id="apx-zoom" hidden><span class="apx-n"></span><h3></h3><p></p></div>
+        <div id="apx-rodape">1–6 amplia uma resposta · Esc volta · Protótipo · dados fictícios</div>
+      </div>
+    </div>
 
     <div id="num"></div>
     <div id="rodape"><i id="prog"></i></div>
   </div>
 </div>
 <div id="notas" hidden></div>
-<div id="dica">→ avança · ← volta · F tela cheia · N notas</div>
+<div id="dica">→ avança · ← volta · D abre o app · A apêndice · P apresentador · N notas · F tela cheia</div>
+<div id="apres" aria-live="polite"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="vendor/gsap-3.12.5.min.js"></script>
+<script src="vendor/qrcode-generator-1.4.4.js"></script>
 <script src="comum.js"></script>
 <script>
 (() => {
   const { $, $$, ajustarPalco, quebrar, sorriso } = window.Sorriu;
+  // [clique] separa os passos de cada slide (o número de trechos = número de passos); [demo] marca onde abrir o app (D)
+  // [clique] separa os passos de cada slide (o número de trechos = número de passos); [demo] marca onde abrir o app (D)
+  const NOTAS = [
+    "Bom dia! Nós somos a Foolstack, e este é o Sorriu+: a porta que não se fecha no primeiro “não”.",
+    "Esta é a Dona Cida, diarista em Guaianases. Está com dor de dente há quatro meses, não pode pagar um dentista e encara uma fila enorme. [clique] Este é o Rafael, terceiro ano de odontologia. Ele precisa de pacientes para se formar, e o paciente de hoje faltou. [clique] Os dois moram na mesma cidade e nunca se encontram. Não falta dentista. Não falta paciente. Falta a ponte.",
+    "E a Cida não é exceção. No SUS, a espera média pela primeira consulta odontológica especializada é de noventa e cinco dias; para um canal, até cento e setenta. Enquanto isso, um terço das consultas termina em falta, como a do Rafael. [clique] Para quem tem baixa renda, saúde bucal ainda é privilégio.",
+    "Por quê? Cada clínica-escola trabalha isolada, com planilha, caderno e sistema próprio. [clique] Quem precisa nem sabe que ela existe. [clique] E se o paciente troca de clínica-escola, a ficha fica para trás: ele refaz o raio-X e começa tudo do zero.",
+    "O Sorriu+ derruba essas barreiras: um hub que conecta pacientes às clínicas-escola. [clique] No celular, a Cida acha uma clínica-escola a um vírgula sete quilômetros, com taxa social de quinze reais, [clique] vê horário e acessibilidade e faz o pedido em poucos toques. E nenhuma clínica precisa abandonar o próprio sistema.",
+    "Na fila, o score soma comparecimento e situação socioeconômica, para não punir quem falta por falta de dinheiro. [clique] Quem comparece avança, e a Cida sobe. Mas com regras humanas: urgência avaliada por profissional vem antes, falta justificada é revista e ninguém perde o direito ao atendimento.",
+    "Só que o tratamento da Cida não cabe na grade deste semestre. Em vez de recusa, encaminhamento: o sistema cruza especialidade, grade e distância. [clique] Ela confirma antes de ir, e o caminho é de mão dupla. Nenhuma recusa vira desistência.",
+    "E o histórico vai junto. Com o prontuário único, triagem, exames e laudo seguem a Cida, e cada acesso fica registrado. [clique] Outra clínica só vê com a confirmação dela. Ninguém recomeça do zero.",
+    "Do lado da clínica-escola, tudo num painel: os pedidos chegam organizados, [clique] a fila aparece por prioridade, com a urgência primeiro, [clique] e o prontuário é validado pelo professor. [demo] Em vinte segundos, a jornada da Cida, do pedido à confirmação.",
+    "A clínica-escola ganha dos dois lados. Economiza até noventa e um mil reais de recepção e deixa de jogar material fora. E fatura: horário recuperado vira atendimento, e cada aluno que não desiste vale trinta e seis mil reais de mensalidade por ano. [clique] Numa clínica de quarenta cadeiras, são cerca de duzentos e trinta e cinco mil reais por ano.",
+    "E a gente? Cada cadeira gira a cada duas horas: oitocentos atendimentos por ano. Em quarenta cadeiras, um quarto falta: oito mil horários vazios, e recuperamos trinta por cento. [clique] Cobramos vinte reais por cadeira por mês e vinte por horário recuperado: cinquenta e sete mil e seiscentos por clínica. Para cada real, a clínica ganha quatro. [clique] Com cinquenta clínicas, quase três milhões por ano, e depois a rede pública, com o Programa Nacional de Redução das Filas.",
+    "A Cida voltou a sorrir, e o Rafael ganhou prática. Saúde para todos começa pelo acesso. Nós somos a Foolstack. Obrigado!",
+  ];
+  /** Tempo planejado por slide (s), do roteiro.md: ~542 palavras a 145/min + 2 s de clique por slide + 22 s de demo no painel = 4:32. */
+  const PLANO = [10, 29, 24, 19, 22, 21, 19, 16, 40, 27, 34, 11];
+  // Config pela URL: ?paciente=…&clinica=… (servidores de dev do app, que aceitam iframe) e ?qr=… (endereço para a banca).
+  const PRM = new URLSearchParams(location.search);
+  const urlOk = (v, padrao) => { try { const u = new URL(v || padrao); return /^https?:$/.test(u.protocol) ? u.href.replace(/\/$/, "") : padrao; } catch { return padrao; } };
+  const CFG = {
+    paciente: urlOk(PRM.get("paciente"), "http://localhost:5173"),
+    clinica: urlOk(PRM.get("clinica"), "http://localhost:5174/clinica"),
+    // QR do fechamento: o protótipo publicado (?qr=0 esconde; ?qr=<url> troca)
+    qr: PRM.get("qr") === "0" ? null : urlOk(PRM.get("qr"), "https://sorriu-web.vercel.app"),
+  };
+  /** Fala com marcadores: ▸ onde clicar, e o aviso de abrir o app. */
+  const fala = (n) => n.replace(/\[clique\]/g, "<b>▸</b>").replace(/\[demo\]/g, "<b>◆ D: abre o app (20 s) ◆</b>");
+  const REDUZ = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (PRM.has("apresentador")) { modoApresentador(); return; }
   ajustarPalco($("#palco"), false);
   const entra = (tl, el, t, o = {}) => tl.from(quebrar(typeof el === "string" ? $(el) : el), { yPercent: 110, duration: .7, stagger: .045, ease: "power3.out", ...o }, t);
   const pop = (tl, el, t) => tl.fromTo(el, { scale: .4, opacity: 0, y: 30 }, { scale: 1, opacity: 1, y: 0, duration: .5, ease: "back.out(2.2)" }, t);
@@ -377,17 +809,38 @@ body:hover #dica { opacity: 1; }
       .to(el, { scaleX: 1.22, scaleY: .8, duration: .09, ease: "power1.out" }, t + .14 + voo)
       .to(el, { scaleX: 1, scaleY: 1, duration: .45, ease: "elastic.out(1, .45)" }, t + .23 + voo);
   };
-  const cel = (tl, sel, t) => tl.from(sel, { y: 700, rotation: 8, duration: 1, ease: "power4.out" }, t).fromTo(`${sel} .cel`, { rotationY: -22, rotationX: 7 }, { rotationY: -9, rotationX: 3, duration: 6, ease: "sine.out" }, t);
+  /** Toque no celular: círculo que aparece e se desfaz (mesmo do trailer). */
+  const toque = (tl, sel, t) => tl.fromTo(sel, { scale: .4, opacity: 0 }, { scale: 1.3, opacity: 1, duration: .25, ease: "power2.out" }, t).to(sel, { opacity: 0, scale: 1.8, duration: .3, ease: "power2.in" }, t + .25);
+  /** Barreira derrubada: um risco atravessa o selo, que vira verde com check (tema "Saúde para todos"). */
+  const derruba = (tl, sel, t) => tl.to(sel, { keyframes: { x: [0, -6, 6, -4, 3, 0] }, duration: .3, ease: "none" }, t - .3)
+    .fromTo(`${sel} .risco`, { scaleX: 0 }, { scaleX: 1, duration: .3, ease: "power2.in" }, t)
+    .set(sel, { attr: { class: "barreira caiu" } }, t + .3)
+    .fromTo(sel, { scale: 1 }, { scale: 1.12, duration: .15, yoyo: true, repeat: 1, ease: "power1.out" }, t + .3);
+  /** Marcador amarelo que se desenha sob a frase-tese do slide (mesmo gesto em todo o deck). */
+  const marca = (tl, sel, t) => tl.fromTo(sel, { "--m": "0%" }, { "--m": "100%", duration: .6, ease: "power2.inOut" }, t);
+  /** Painel: acende a etapa n da lista. */
+  const etapa = (tl, n, t) => tl.set(".etapa", { attr: { class: "etapa" } }, t).set(`#et${n}`, { attr: { class: "etapa on" } }, t)
+    .fromTo(`#et${n}`, { x: -12 }, { x: 0, duration: .4, ease: "back.out(2.4)" }, t);
+  /** Câmera do notebook (origem 0 0): aproxima mantendo o ponto (ox, oy) da tela no lugar, sem pulo entre passos. */
+  const camera = (tl, s, ox, oy, t) => tl.to("#cam-p", { scale: s, x: ox * (1 - s), y: oy * (1 - s), duration: .8, ease: "power2.inOut" }, t);
+  /** Troca de tela do notebook por esmaecimento. */
+  const tela = (tl, de, para, t) => tl.set(para, { visibility: "visible" }, t).fromTo(para, { opacity: 0 }, { opacity: 1, duration: .4, immediateRender: false }, t).to(de, { opacity: 0, duration: .3 }, t + .25);
 
   // conteúdo gerado
-  for (let i = 0; i < 118; i++) $("#dias").appendChild(document.createElement("i"));
   const CAD = '<svg viewBox="0 0 120 120"><path class="cheia" d="M30 18h34a10 10 0 0 1 10 10v44h24a8 8 0 0 1 8 8v8a8 8 0 0 1-8 8H30a10 10 0 0 1-10-10V28a10 10 0 0 1 10-10z"/><path class="vazia" d="M30 18h34a10 10 0 0 1 10 10v44h24a8 8 0 0 1 8 8v8a8 8 0 0 1-8 8H30a10 10 0 0 1-10-10V28a10 10 0 0 1 10-10z"/><path d="M40 106v10M90 106v10" stroke="#0B2423" stroke-width="5" stroke-linecap="round"/></svg>';
   for (let i = 0; i < 20; i++) { const d = document.createElement("div"); d.className = "cad"; d.innerHTML = CAD; $("#cadeiras").appendChild(d); }
   for (let i = 0; i < 10; i++) $("#pa").appendChild(document.createElement("i"));
   for (let i = 0; i < 10; i++) { const d = document.createElement("i"); if (i >= 2) d.className = "livre"; $("#pb").appendChild(d); }
+  // QR do fechamento (local, sem serviço externo)
+  if (CFG.qr && window.qrcode) {
+    const q = qrcode(0, "M"); q.addData(CFG.qr); q.make();
+    $("#qr11-img").innerHTML = q.createSvgTag({ cellSize: 6, margin: 0, scalable: true });
+    $("#qr11-url").textContent = CFG.qr.replace(/^https?:\/\//, "");
+    $("#qr11").hidden = false;
+  }
   // hub: nós em círculo
   const NOS = [["Bela Vista", 0], ["Vila Mariana", 1], ["Pinheiros", 1], ["Barão Geraldo", 1], ["Pacientes", 2], ["Pacientes", 2]];
-  const ICONE = ['', '<svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9h14v-9M10 19v-5h4v5" fill="none" stroke="#0B2423" stroke-width="2.2" stroke-linejoin="round"/></svg>', '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#0B2423" stroke-width="2.4"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="#0B2423" stroke-width="2.4" stroke-linecap="round"/></svg>'];
+  const ICONE = ['', '<svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9h14v-9M10 19v-5h4v5" fill="none" stroke="#0B2423" stroke-width="2.2" stroke-linejoin="round"/></svg>', '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#0B2423" stroke-width="2.4"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="#0B2423" stroke-width="2.4" stroke-linecap="round"/></svg>', '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="#0B2423" stroke-width="2.6"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" stroke="#0B2423" stroke-width="2.6" stroke-linecap="round"/></svg>'];
   const linhas = $("#hub-linhas"), pulsos = $("#hub-pulsos"), NS = "http://www.w3.org/2000/svg";
   const ANG = [-90, -30, 30, 150, 90, 210];
   ANG.forEach((a, k) => {
@@ -395,33 +848,58 @@ body:hover #dica { opacity: 1; }
     const l = document.createElementNS(NS, "line"); l.setAttribute("x1", 420); l.setAttribute("y1", 420); l.setAttribute("x2", x); l.setAttribute("y2", y); linhas.appendChild(l);
     const p = document.createElementNS(NS, "circle"); p.setAttribute("r", 12); p.setAttribute("fill", "#FFB81C"); p.setAttribute("stroke", "#0B2423"); p.setAttribute("stroke-width", 3); p.setAttribute("cx", 420); p.setAttribute("cy", 420); p.dataset.x = x; p.dataset.y = y; p.setAttribute("opacity", 0); pulsos.appendChild(p);
     const n = document.createElement("div"); n.className = "no" + (tipo === 2 ? " pac" : ""); n.style.left = x + "px"; n.style.top = y + "px";
-    n.innerHTML = `<b>${tipo === 2 ? ICONE[2] : ICONE[1]}</b><span>${nome}</span>`; $("#hub").appendChild(n);
+    n.innerHTML = `<b>${tipo === 2 ? ICONE[2] : ICONE[1]}</b><span>${nome}</span>` + (tipo === 2 ? "" : `<i class="sys" aria-hidden="true">${ICONE[3]}</i>`); $("#hub").appendChild(n);
   });
+
+  const ROTA = (() => {
+    const r = $("#rota-sol"), L = r.getTotalLength ? r.getTotalLength() : 640, m = r.getPointAtLength ? r.getPointAtLength(L / 2) : { x: 380, y: 300 };
+    Object.assign(r.style, { strokeDasharray: L, strokeDashoffset: L });
+    Object.assign($("#ponte-logo").style, { left: 580 + m.x + "px", top: 300 + m.y + "px" });
+    return L;
+  })();
+  gsap.set(".cel-dir .cel", { rotationY: -9, rotationX: 3 });
 
   /* passos de cada slide: cada função monta uma timeline; o 1º passo roda ao chegar, os outros a cada clique */
   const PASSOS = {
-    sl1: [(tl) => {
-      entra(tl, "#sl1 .eyebrow", 0);
-      tl.from("#sl1 .numero", { yPercent: 40, opacity: 0, duration: .8, ease: "power3.out" }, .1);
-      tl.from("#dias i", { scale: 0, duration: .4, stagger: .005, ease: "back.out(2)" }, .1);
-      conta(tl, null, 117.5, .3, 2.4, (v) => {
-        $("#cont1").textContent = v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-        const n = Math.round(v); $("#dias-n").textContent = `dia ${n}`; $$("#dias i").forEach((d, i) => d.classList.toggle("on", i < n));
+    // a história: dois pinos na mesma cidade; a rota amarela se desenha entre eles e a marca pousa no meio
+    "sl-ponte": [(tl) => {
+      entra(tl, "#sl-ponte .eyebrow", 0); entra(tl, "#t-ponte", .1);
+      tl.from("#mapa-sp", { scale: .94, opacity: 0, transformOrigin: "50% 60%", duration: .7, ease: "power3.out" }, .3);
+      tl.from("#pino-a", { y: -120, opacity: 0, duration: .6, ease: "bounce.out" }, .7);
+      tl.from("#pc-a", { x: -60, opacity: 0, duration: .6, ease: "power3.out" }, .9);
+      tl.from("#pc-a li", { x: -24, opacity: 0, duration: .35, stagger: .1, ease: "power2.out" }, 1.1);
+      tl.to("#pino-a .dor", { opacity: .15, duration: .22, repeat: 5, yoyo: true, ease: "none" }, 1.3);
+    }, (tl) => {
+      tl.from("#pino-b", { y: -120, opacity: 0, duration: .6, ease: "bounce.out" }, 0);
+      tl.from("#pc-b", { x: 60, opacity: 0, duration: .6, ease: "power3.out" }, .2);
+      tl.from("#pc-b li", { x: 24, opacity: 0, duration: .35, stagger: .1, ease: "power2.out" }, .4);
+      tl.from("#f-ponte", { opacity: 0, duration: .4 }, .8);
+      tl.fromTo("#vao", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .45 }, .8);
+    }, (tl) => {
+      tl.to("#vao", { opacity: 0, y: -16, duration: .25 }, 0);
+      tl.fromTo("#rota-sol", { strokeDashoffset: ROTA }, { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut" }, .1);
+      tl.fromTo("#ponte-logo", { scale: 0, rotation: -20 }, { scale: 1, rotation: 0, duration: .6, ease: "back.out(2.4)" }, .75);
+      tl.fromTo("#pino-a svg, #pino-b svg", { scale: 1 }, { scale: 1.12, duration: .2, yoyo: true, repeat: 1, stagger: .9, ease: "power1.out" }, .1);
+      tl.to("#pc-a", { boxShadow: "10px 10px 0 #FFB81C", duration: .4 }, 1.1);
+      entra(tl, "#frase-ponte", 1.0, { stagger: .05 });
+      marca(tl, "#frase-ponte .marca", 1.6);
+    }],
+    // uma animação só: enquanto os dias de espera contam, as cadeiras da clínica-escola esvaziam
+    "sl-dores": [(tl) => {
+      entra(tl, "#sl-dores .eyebrow", 0); entra(tl, "#t-dores", .1);
+      tl.from("#dor-a .numero, #dor-a .apoio", { y: 40, opacity: 0, duration: .6, stagger: .12, ease: "power3.out" }, .3);
+      tl.from("#sl-dores .divisor", { scaleY: 0, transformOrigin: "top", duration: .6, ease: "power2.inOut" }, .4);
+      tl.from(".cad", { y: 30, opacity: 0, duration: .4, stagger: .02, ease: "power3.out" }, .4);
+      tl.from("#dor-b .apoio", { y: 40, opacity: 0, duration: .6, ease: "power3.out" }, .6);
+      conta(tl, null, 95, .6, 3, (v) => { $("#cont1").textContent = Math.round(v); });
+      [2, 13, 7, 18, 5, 11, 16].forEach((i, k) => {
+        const t = .9 + k * .36, c = `#cadeiras .cad:nth-child(${i + 1})`;
+        tl.to(`${c} .cheia`, { opacity: 0, duration: .3 }, t).to(`${c} .vazia`, { opacity: 1, duration: .3 }, t)
+          .fromTo(c, { y: 0 }, { y: -10, duration: .15, yoyo: true, repeat: 1, ease: "power1.out" }, t);
       });
-      tl.from("#dias-leg, #sl1 .fonte", { opacity: 0, duration: .5 }, .6);
-      entra(tl, "#ap1", .8, { stagger: .03 });
-    }, (tl) => { tl.from("#fr1", { y: 160, opacity: 0, duration: .7, ease: "back.out(1.4)" }, 0); }],
-    sl2: [(tl) => {
-      entra(tl, "#sl2 .eyebrow", 0);
-      tl.from("#sl2 .numero", { x: 160, opacity: 0, duration: .7, ease: "power3.out" }, .05);
-      entra(tl, "#ap2", .4, { stagger: .03 });
-      tl.from(".cad", { y: 60, opacity: 0, duration: .5, stagger: .03, ease: "power3.out" }, .1);
-      tl.from("#sl2 .fonte", { opacity: 0, duration: .5 }, .6);
-      [2, 7, 13, 18, 5, 11, 16].forEach((i, k) => {
-        const t = 1.2 + k * (k < 4 ? .2 : .3), c = `#cadeiras .cad:nth-child(${i + 1})`;
-        tl.to(`${c} .cheia`, { opacity: 0, duration: .35 }, t).to(`${c} .vazia`, { opacity: 1, duration: .35 }, t);
-      });
-    }, (tl) => { tl.fromTo("#tags2 .chip", { scale: .4, opacity: 0, y: 30 }, { scale: 1, opacity: 1, y: 0, duration: .5, stagger: .18, ease: "back.out(2.2)" }, 0); }],
+      tl.fromTo("#sl-dores .barreira", { scale: .4, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, stagger: .2, ease: "back.out(2.4)" }, 3.4);
+      tl.from("#sl-dores .fonte", { opacity: 0, duration: .5 }, 1.0);
+    }, (tl) => { tl.from("#fr1", { y: 160, opacity: 0, duration: .7, ease: "back.out(1.4)" }, 0); marca(tl, "#fr1 .marca", .6); }],
     sl3: [(tl) => {
       entra(tl, "#sl3 .m1 .eyebrow", 0); entra(tl, "#t3a", .1);
       tl.from(".papel", { scale: 0, rotation: () => gsap.utils.random(-40, 40), duration: .6, stagger: .08, ease: "back.out(2)" }, .3);
@@ -431,41 +909,49 @@ body:hover #dica { opacity: 1; }
       entra(tl, "#sl3 .m2 .eyebrow", .2); entra(tl, "#t3b", .3);
       tl.from("#mapa", { y: 60, opacity: 0, duration: .6, ease: "power3.out" }, .6);
       tl.from("#interrog", { scale: 0, svgOrigin: "130 106", duration: .6, ease: "back.out(3)" }, 1.0);
+      tl.fromTo("#br3b", { scale: .4, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: "back.out(2.4)" }, 1.2);
+    }, (tl) => {
+      tl.to("#sl3 .metade, #divisor", { opacity: .3, duration: .5 }, 0);
+      tl.from("#fr3", { y: 200, opacity: 0, duration: .7, ease: "back.out(1.4)" }, 0);
+      tl.from("#fr3 svg", { rotation: -20, scale: .4, duration: .6, ease: "back.out(2.4)" }, .3);
     }],
+    // hub → celular do paciente: do mapa da rede para a mão de quem precisa; cada chip derruba uma barreira
     sl4: [(tl) => {
       entra(tl, "#sl4 .eyebrow", 0); entra(tl, "#t4", .1);
       tl.from("#hub-centro", { scale: 0, rotation: -20, duration: .7, ease: "back.out(2)" }, .2);
       tl.fromTo("#hub-linhas line", { strokeDashoffset: 340, opacity: 0 }, { strokeDashoffset: 0, opacity: 1, duration: .8, stagger: .08, ease: "power2.out" }, .5);
       tl.from("#hub .no", { scale: 0, opacity: 0, duration: .5, stagger: .08, ease: "back.out(2.2)" }, .7);
+      marca(tl, "#t4 .marca", .8);
       tl.from("#b4a", { x: -60, opacity: 0, duration: .6, ease: "power3.out" }, 1.1);
+      tl.from("#br4 .barreira", { scale: .4, opacity: 0, duration: .4, stagger: .1, ease: "back.out(2.4)" }, 1.3);
     }, (tl) => {
-      tl.from("#b4b", { x: -60, opacity: 0, duration: .6, ease: "power3.out" }, 0);
       $$("#hub-pulsos circle").forEach((p, k) => {
-        tl.fromTo(p, { attr: { cx: 420, cy: 420 }, opacity: 1 }, { attr: { cx: +p.dataset.x, cy: +p.dataset.y }, duration: .9, ease: "power1.inOut", repeat: 3, yoyo: true }, .2 + k * .12);
+        tl.fromTo(p, { attr: { cx: 420, cy: 420 }, opacity: 1 }, { attr: { cx: +p.dataset.x, cy: +p.dataset.y }, duration: .9, ease: "power1.inOut", repeat: 1, yoyo: true }, k * .1);
       });
-    }],
-    sl5: [(tl) => {
-      entra(tl, "#sl5 .eyebrow", 0); entra(tl, "#t5", .1); entra(tl, "#ap5", .5, { stagger: .02 });
-      cel(tl, "#cel5", .1);
-      pop(tl, "#c5a", .9); pop(tl, "#c5b", 1.1);
+      tl.from("#cel5", { y: 1000, rotation: 8, duration: 1, ease: "power4.out" }, .1)
+        .fromTo("#cel5 .cel", { rotationY: -22, rotationX: 7 }, { rotationY: -9, rotationX: 3, duration: 4, ease: "sine.out" }, .1);
+      pop(tl, "#c5a", .9); derruba(tl, "#br4b", 1.1);
+      pop(tl, "#c5b", 1.3); derruba(tl, "#br4a", 1.5);
     }, (tl) => {
-      tl.set("#s5b", { visibility: "visible" }, 0).fromTo("#s5b", { xPercent: 100 }, { xPercent: 0, duration: .5, ease: "power3.inOut" }, 0).to("#s5a", { xPercent: -30, duration: .5, ease: "power3.inOut" }, 0);
-      tl.to("#c5a, #c5b", { opacity: 0, duration: .3 }, .01);
-      tl.to("#s5b", { y: -470, duration: 1.6, ease: "power2.inOut" }, .6);
-      pop(tl, "#c5c", 1.0);
+      toque(tl, "#tq5", 0);
+      tl.set("#s5b", { visibility: "visible" }, .35).fromTo("#s5b", { xPercent: 100 }, { xPercent: 0, duration: .5, ease: "power3.inOut", immediateRender: false }, .35).to("#s5a", { xPercent: -30, duration: .5, ease: "power3.inOut" }, .35);
+      tl.to("#c5a, #c5b", { opacity: 0, duration: .3 }, .2);
+      tl.to("#s5b", { y: -470, duration: 1.6, ease: "power2.inOut" }, .95);
+      pop(tl, "#c5c", 1.2); derruba(tl, "#br4c", 1.4);
+      tl.from("#b4b, #b4c", { x: -60, opacity: 0, duration: .6, stagger: .15, ease: "power3.out" }, .3);
+      tl.fromTo("#hub .sys", { scale: 0, opacity: 0, rotation: -90 }, { scale: 1, opacity: 1, rotation: 0, duration: .5, stagger: .1, ease: "back.out(2.4)" }, .6);
     }],
     sl6: [(tl) => {
       entra(tl, "#sl6 .eyebrow", 0); entra(tl, "#t6", .1); entra(tl, "#ap6", .5, { stagger: .02 });
-      cel(tl, "#cel6", .1);
       tl.to("#s6", { y: -78, duration: 1.6, ease: "power2.inOut" }, 1.0);
       pop(tl, "#c6a", 1.0);
+      derruba(tl, "#br6", 1.5);
     }, (tl) => { pop(tl, "#c6b", 0); pop(tl, "#c6v", .3); }],
     sl7: [(tl) => {
       entra(tl, "#sl7 .eyebrow", 0); entra(tl, "#t7", .1);
       tl.fromTo("#f7 .chip", { scale: .4, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, stagger: .15, ease: "back.out(2)" }, .5);
       tl.from(".pessoa", { x: -80, opacity: 0, duration: .5, stagger: .08, ease: "power3.out" }, .7);
       tl.from("#sl7 .legenda", { opacity: 0, duration: .4 }, 1.0);
-      cel(tl, "#cel7", .2);
     }, (tl) => {
       const ps = $$(".pessoa");
       ps.forEach((p) => {
@@ -478,12 +964,18 @@ body:hover #dica { opacity: 1; }
         tl.to(p, { top: i * 92, duration: .7, ease: "power3.inOut" }, 1.1);
       });
       tl.set(ord[0], { attr: { class: "pessoa topo1" } }, 1.5);
+      derruba(tl, "#br7", 1.7);
+      // no celular: a mesma conta, explicada para o paciente (rola até os componentes e realça a renda)
+      tl.to("#s7", { y: -260, duration: 1.2, ease: "power2.inOut" }, .2);
+      tl.set("#rl7", { left: 14, top: 164, width: 362, height: 142 }, 0).fromTo("#rl7", { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: .4, ease: "back.out(2)" }, 1.3);
+      // regras humanas, no mesmo passo
+      pop(tl, "#c7a", 1.9); pop(tl, "#c7b", 2.1); pop(tl, "#c7c", 2.3);
     }],
     sl8: [(tl) => {
       entra(tl, "#sl8 .eyebrow", 0); entra(tl, "#t8", .1);
-      tl.from(".uni", { y: 60, opacity: 0, duration: .6, stagger: .12, ease: "power3.out" }, .4);
+      tl.fromTo("#crit8 .chip", { scale: .4, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, stagger: .15, ease: "back.out(2)" }, .35);
+      tl.from(".uni", { y: 60, opacity: 0, duration: .6, stagger: .12, ease: "power3.out" }, .6);
       tl.from("#pa i, #pb i", { scale: 0, duration: .3, stagger: .03, ease: "back.out(2)" }, .7);
-      cel(tl, "#cel8", .2);
     }, (tl) => {
       // grade: borda 3 + padding 24; topo da grade ≈ 134 px; passo 62 px; universidade B começa em 500 px
       const pos = (uni, i) => ({ x: (uni ? 500 : 0) + 27 + (i % 5) * 62, y: 137 + Math.floor(i / 5) * 62 });
@@ -497,98 +989,477 @@ body:hover #dica { opacity: 1; }
           .to(v, { keyframes: [{ x: dx / 2, y: dy - 140, duration: .45, ease: "power2.out" }, { x: dx, y: dy, duration: .45, ease: "power2.in" }] }, i * .25)
           .set(alvo[i], { attr: { class: "" } }, i * .25 + .9).to(v, { opacity: 0, duration: .01 }, i * .25 + .9);
       });
-      entra(tl, "#ap8", 1.2, { stagger: .03 });
+      // mão dupla: o caso que não cabe em B volta para uma cadeira livre em A
+      const a2 = pos(1, 4), b2 = pos(0, 9);
+      const v2 = document.createElement("div"); v2.className = "voa"; v2.style.left = a2.x + "px"; v2.style.top = a2.y + "px"; $("#redir").appendChild(v2);
+      tl.fromTo(v2, { opacity: 0 }, { opacity: 1, duration: .01 }, 1.3).set("#pb i:nth-child(5)", { attr: { class: "livre" } }, 1.3)
+        .to(v2, { keyframes: [{ x: (b2.x - a2.x) / 2, y: -140, duration: .4, ease: "power2.out" }, { x: b2.x - a2.x, y: 0, duration: .4, ease: "power2.in" }] }, 1.3)
+        .to("#pa i:nth-child(10)", { opacity: 1, duration: .01 }, 2.1).to(v2, { opacity: 0, duration: .01 }, 2.1);
+      tl.fromTo("#volta", { opacity: 0, scale: .5 }, { opacity: 1, scale: 1, duration: .45, ease: "back.out(2.4)" }, 2.1);
+      entra(tl, "#ap8", 1.0, { stagger: .03 });
+      derruba(tl, "#br8", 2.4);
+      // no celular: o consentimento e o botão de confirmar (nada é enviado sem o paciente)
+      tl.to("#s8", { y: -165, duration: 1.2, ease: "power2.inOut" }, .2);
+      tl.set("#rl8", { left: 30, top: 630, width: 330, height: 74 }, 0).fromTo("#rl8", { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: .4, ease: "back.out(2)" }, 1.4);
     }],
-    sl9: [(tl) => {
-      entra(tl, "#sl9 .eyebrow", 0); entra(tl, "#t9", .1);
-      tl.from("#d1", { yPercent: 100, duration: .7, ease: "power3.out" }, .4);
-      tl.fromTo("#sol-escada", { top: -420, opacity: 0 }, { top: 270, opacity: 1, duration: .9, ease: "bounce.out" }, .9);
+    // painel: o notebook sobe e a câmera passeia por pedidos → fila → prontuário (telas de 1280 × 800)
+    "sl-painel": [(tl) => {
+      entra(tl, "#sl-painel .eyebrow", 0); entra(tl, "#t-painel", .1);
+      tl.from(".etapa", { x: -50, opacity: 0, duration: .5, stagger: .1, ease: "power3.out" }, .4);
+      tl.fromTo("#note-p", { y: 900, rotationX: -50, transformPerspective: 2400, transformOrigin: "50% 100%" }, { y: 0, rotationX: 0, duration: 1.1, ease: "power4.out" }, .2);
+      etapa(tl, 1, 1.0);
+      camera(tl, 1.15, 726, 198, 1.2).to("#rp1", { opacity: 1, duration: .3 }, 1.8);
     }, (tl) => {
-      tl.from("#d2", { yPercent: 100, duration: .7, ease: "power3.out" }, 0);
-      salto(tl, "#sol-escada", { x: 225, y: 270 }, { x: 805, y: 130 }, .55, 220);
+      tl.to("#rp1", { opacity: 0, duration: .2 }, 0);
+      tela(tl, "#pn1", "#pn2", .1); etapa(tl, 2, .1);
+      camera(tl, 1.25, 650, 250, .3).to("#rp2a, #rp2b", { opacity: 1, duration: .3, stagger: .2 }, .9);
     }, (tl) => {
-      tl.from("#d3", { yPercent: 100, duration: .7, ease: "power3.out" }, 0);
-      salto(tl, "#sol-escada", { x: 805, y: 130 }, { x: 1385, y: -10 }, .55, 220);
+      tl.to("#rp2a, #rp2b", { opacity: 0, duration: .2 }, 0);
+      tela(tl, "#pn2", "#pn3", .1); etapa(tl, 3, .1);
+      camera(tl, 1.3, 640, 140, .3).to("#rp3a, #rp3b", { opacity: 1, duration: .3, stagger: .25 }, .9);
     }],
-    sl10: [(tl) => {
-      entra(tl, "#sl10 .eyebrow", 0); entra(tl, "#t10", .1);
-      tl.from(".ganho", { y: 80, opacity: 0, duration: .6, stagger: .14, ease: "back.out(1.6)" }, .5);
+    // ganha-ganha: as duas metades entram; no clique, os valores pulsam e somam no total
+    "sl-ganho": [(tl) => {
+      entra(tl, "#sl-ganho .eyebrow", 0); entra(tl, "#t-ganho", .1); marca(tl, "#t-ganho .marca", .7);
+      tl.from("#base9 > *", { y: 16, opacity: 0, duration: .4, stagger: .08, ease: "power2.out" }, .25);
+      tl.from("#sl-ganho .divisor", { scaleY: 0, transformOrigin: "top", duration: .5, ease: "power2.inOut" }, .3);
+      tl.from("#lado-a h3, #lado-a .ganho", { x: -50, opacity: 0, duration: .5, stagger: .12, ease: "power3.out" }, .4);
+      tl.from("#lado-b h3, #lado-b .ganho", { x: 50, opacity: 0, duration: .5, stagger: .12, ease: "power3.out" }, .9);
+      conta(tl, null, 36, 1.1, 1, (v) => { $("#g36").textContent = Math.round(v); });
+      conta(tl, null, 108, 1.25, 1.2, (v) => { $("#g108").textContent = Math.round(v); });
+      tl.from("#sl-ganho .fonte", { opacity: 0, duration: .4 }, 1.4);
     }, (tl) => {
-      tl.from("#c66", { y: 200, rotation: 4, opacity: 0, duration: .8, ease: "back.out(1.4)" }, 0);
-      conta(tl, null, 66, .1, .9, (v) => { $("#n66").textContent = Math.round(v) + "%"; });
-      tl.from("#c66 .final", { opacity: 0, y: 20, duration: .5 }, 1.0);
+      tl.fromTo("#sl-ganho .ganho b", { scale: 1 }, { scale: 1.12, duration: .16, yoyo: true, repeat: 1, stagger: .1, ease: "power1.out" }, 0);
+      tl.from("#total-ganho", { y: 140, opacity: 0, duration: .6, ease: "back.out(1.4)" }, .3);
+      conta(tl, null, 235, .5, 1.4, (v) => { $("#g235").textContent = Math.round(v); });
+    }],
+    // como a gente ganha: (1) o rodízio da cadeira vira 2.400 horários recuperados; (2) o preço; (3) a escala
+    "sl-receita": [(tl) => {
+      entra(tl, "#sl-receita .eyebrow", 0); entra(tl, "#t-receita", .1);
+      // a cadeira: o anel de 8 h fecha e cada turno de 2 h acende com um pulinho da cadeira
+      tl.from("#rodizio", { scale: .85, opacity: 0, duration: .5, ease: "back.out(1.8)" }, .25);
+      tl.fromTo("#anel", { strokeDashoffset: 704 }, { strokeDashoffset: 0, duration: 1.6, ease: "none" }, .5);
+      $$("#turnos circle").forEach((c, k) => {
+        const t = .5 + k * .4;
+        tl.to(c, { attr: { fill: "#14BEB9" }, duration: .15 }, t)
+          .fromTo("#cadeira-r", { y: 0 }, { y: -8, duration: .12, yoyo: true, repeat: 1, ease: "power1.out", immediateRender: false }, t);
+      });
+      // a corrente desce depois que a cadeira fechou o dia: cada elo conta a partir do anterior
+      $$("#elos .elo").forEach((e, k) => {
+        const n = e.querySelector(".n"), alvo = +n.dataset.v, txt = n.firstChild, t = 1.5 + k * .38;
+        tl.from(e, { y: -14, opacity: 0, duration: .35, ease: "power3.out" }, t);
+        conta(tl, null, alvo, t + .05, .5, (v) => { txt.textContent = Math.round(v).toLocaleString("pt-BR"); });
+      });
+      tl.fromTo("#elos .nosso", { scale: 1 }, { scale: 1.04, duration: .18, yoyo: true, repeat: 1, ease: "power1.out" }, 2.8);
+      tl.from("#premissas", { opacity: 0, duration: .4 }, 1.2);
+    }, (tl) => {
+      // os 2.400 recuperados viram receita: o elo acende e o cartão de preço entra destacando essa linha
+      tl.fromTo("#elos .nosso", { boxShadow: "8px 8px 0 #FFB81C" }, { boxShadow: "0 0 0 10px rgba(255,184,28,.6)", duration: .3, yoyo: true, repeat: 1 }, 0);
+      tl.from("#preco", { x: 60, opacity: 0, duration: .55, ease: "power3.out" }, .15);
+      tl.from("#preco .lin", { y: 14, opacity: 0, duration: .35, stagger: .15, ease: "power2.out" }, .4);
+      conta(tl, null, 57.6, .75, 1, (v) => { $("#r576").textContent = v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }); });
+      tl.fromTo("#um-quatro", { scale: .4, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: "back.out(2.4)" }, 1.5);
+    }, (tl) => {
+      // escala: a base de cada ano aparece, as barras sobem levando o valor no topo (sem achatar o texto)
+      tl.from(".barra-c span", { opacity: 0, y: 8, duration: .3, stagger: .1 }, 0);
+      tl.from(".barra-c", { height: 0, duration: .7, stagger: .22, ease: "power3.out" }, .15);
+      tl.from(".barra-c b", { opacity: 0, duration: .3, stagger: .22 }, .2);
+      tl.from("#publico", { opacity: 0, y: 12, duration: .4 }, 1.1);
     }],
     sl11: [(tl) => {
       tl.from("#m11", { scale: .6, opacity: 0, duration: .5, ease: "back.out(2)" }, 0);
-      entra(tl, "#l11a", .2); entra(tl, "#l11b", .55); entra(tl, "#l11c", .9);
-      tl.fromTo("#sp11", { strokeDasharray: 600, strokeDashoffset: 600 }, { strokeDashoffset: 0, duration: .9, ease: "power2.out" }, 1.2);
-      tl.from("#tm11, #tg11", { y: 20, opacity: 0, duration: .5, stagger: .15 }, 1.5);
+      entra(tl, "#l11a", .1); marca(tl, "#l11a .marca", .6);
+      tl.from("#l11b", { y: 20, opacity: 0, duration: .5, ease: "power3.out" }, .5);
+      tl.from("#l11b .duo svg", { scale: 0, duration: .45, stagger: .12, ease: "back.out(2.4)" }, .6);
+      // placar do tema: as seis barreiras, todas derrubadas
+      tl.from("#placar .barreira", { y: 24, scale: .6, opacity: 0, duration: .4, stagger: .08, ease: "back.out(2.2)" }, .9);
+      tl.fromTo("#sp11", { strokeDasharray: 600, strokeDashoffset: 600 }, { strokeDashoffset: 0, duration: .8, ease: "power2.out" }, 1.3);
+      tl.from(".membro img", { scale: 0, rotation: -14, duration: .55, stagger: .08, ease: "back.out(2)" }, 1.5);
+      tl.from(".membro figcaption", { y: 14, opacity: 0, duration: .35, stagger: .08, ease: "power2.out" }, 1.7);
+      tl.from("#tm11", { y: 16, opacity: 0, duration: .45 }, 2.1);
+      if (CFG.qr) tl.fromTo("#qr11", { scale: .5, opacity: 0, rotation: -6 }, { scale: 1, opacity: 1, rotation: 0, duration: .6, ease: "back.out(2)" }, 2.2);
     }],
   };
 
-  /* abertura em loop (14 s): marca → porta que se abre → marca */
-  const ab = gsap.timeline({ repeat: -1, paused: true, defaults: { ease: "power3.out" } });
-  ab.set("#ab-a", { display: "block", clipPath: "none" }, 0).set("#ab-b, #ab-a2", { display: "none" }, 0);
-  ab.to("#u0", { textShadow: "0 0 40px rgba(255,184,28,.9)", duration: .8, yoyo: true, repeat: 3, ease: "sine.inOut" }, .4);
-  sorriso(ab, $("#faixa0a"), $("#ab-a"), $("#ab-b"), 4.4);
-  ab.from("#ab-b svg", { y: 60, opacity: 0, duration: .7 }, 4.9)
-    .to("#ab-folha", { scaleX: .12, svgOrigin: "164 150", duration: 1.0, ease: "power2.inOut" }, 5.6)
-    .to("#ab-feixe", { opacity: 1, duration: .8 }, 5.9)
-    .to("#ab-p1", { opacity: .45, duration: .6 }, 5.4);
-  entra(ab, "#ab-lema", 5.4, { stagger: .05 });
-  sorriso(ab, $("#faixa0b"), $("#ab-b"), $("#ab-a2"), 11.2);
-  ab.from("#ab-a2 img", { scale: .5, rotation: -12, opacity: 0, duration: .6, ease: "back.out(2)" }, 11.5)
-    .from("#ab-pal2 span", { yPercent: 80, opacity: 0, duration: .5, stagger: .04, ease: "back.out(2)" }, 11.55)
-    .set({}, {}, 14);
+  /* abertura: só a marca Sorriu+ (entra uma vez e fica parada) */
+  const ab = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
+  ab.set("#ab-a", { display: "block", clipPath: "none" }, 0)
+    .from("#ab-a img", { scale: .6, rotation: -10, opacity: 0, duration: .6, ease: "back.out(2)" }, .1)
+    .from("#ab-a .palavra span", { yPercent: 80, opacity: 0, duration: .5, stagger: .04, ease: "back.out(2)" }, .2)
+    .from("#ab-a .lema, #ab-a .time", { opacity: 0, y: 16, duration: .5, stagger: .12 }, .6)
+    .to("#u0", { textShadow: "0 0 40px rgba(255,184,28,.9)", duration: .6, yoyo: true, repeat: 1, ease: "sine.inOut" }, .9);
 
   /* navegação */
   const SL = $$("#palco > .cena");
   const TL = SL.map((s) => (PASSOS[s.id] || []).map((f) => { const t = gsap.timeline({ paused: true }); f(t); t.progress(0); return t; }));
-  const NOTAS = [
-    "Boa tarde! Nós somos a Foolstack: Alex, André, Giovanni, Lucca e Murilo. E este é o Sorriu+, a porta que não se fecha no primeiro “não”. Em cinco minutos, vamos mostrar como um app pode devolver o sorriso de quem mais espera e, ao mesmo tempo, resolver um problema antigo das clínicas-escola.",
-    "Começa pela dor. Na odontologia, a espera média para começar um tratamento é de cento e dezessete dias e meio. Quase quatro meses com dor e sem resposta. [clique] E para quem tem baixa renda, pagar uma clínica particular simplesmente não é opção. Na prática, saúde bucal ainda é privilégio.",
-    "Do outro lado, as clínicas-escola das universidades vivem o problema inverso. Entre vinte e trinta e cinco por cento das consultas terminam em falta. [clique] É cadeira vazia, aluno sem paciente, encaixe de última hora e agenda organizada no improviso.",
-    "Por que isso acontece? Primeiro, os dados estão fragmentados. Cada clínica tem a sua planilha, o seu caderno, o seu grupo de mensagens, e nada conversa. [clique] Segundo, quem mais precisa nem sabe que a clínica-escola existe, ou não sabe como chegar até ela.",
-    "A nossa solução é o Sorriu+. Centralizamos os dados das clínicas-escola parceiras num só lugar [clique] e criamos um prontuário de saúde único, que acompanha o paciente entre todas elas.",
-    "Na prática, o Sorriu+ é um hub. O paciente encontra a clínica-escola mais perto, [clique] vê custo, horário e acessibilidade, e faz o pedido em poucos toques. A clínica recebe tudo organizado num painel.",
-    "Com o prontuário integrado, o histórico vai junto com o paciente. Triagem, exames e diagnóstico não se perdem, e cada acesso fica registrado. [clique] Hoje ele já roda no protótipo; o próximo passo é o prontuário único entre todas as parceiras, sempre com o consentimento do paciente.",
-    "Depois vem o score. Ele combina o histórico de comparecimento às consultas já marcadas com a situação socioeconômica. [clique] Quem tem score alto ganha prioridade na fila. Assim, a vaga vai para quem mais precisa e para quem vai aparecer.",
-    "E quando uma clínica lota, entra o redirecionamento de fila. [clique] A fila cheia de uma universidade vai para outra com cadeira livre, levando junto o diagnóstico já feito. Ninguém repete exame.",
-    "Como isso vira negócio? Vendemos o hub para as clínicas-escola. Começamos num nicho, com as universidades parceiras, [clique] crescemos para uma rede regional, [clique] e o destino é a escala governamental, integrada à saúde pública.",
-    "E por que as faculdades topariam? Porque equilibramos as filas: a universidade cheia manda para a vazia, e vice-versa, conforme a necessidade de cada clínica e os casos de estudo de cada semestre. Isso reduz o desperdício de insumos. O score diminui o no-show. E a nossa base de pacientes cadastrados é, por si só, um atrativo. [clique] Não é detalhe: sessenta e seis por cento dos alunos que pensam em desistir de odontologia nunca tiveram prática clínica. Paciente na cadeira é formação.",
-    "O Sorriu+ conecta quem precisa de atendimento a quem precisa atender. Mais sorrisos de volta, mais gente atendida e mais alunos aprendendo. Nós somos a Foolstack. Obrigado!",
-  ];
   const faixa = $("#faixa");
-  let atual = 0, passo = 0, z = 100, trans = null, espera = null;
+  let atual = 0, passo = 0, z = 100, trans = null, espera = null, flutua = null, janelaApres = null;
+
+  /** Celular "vivo": flutua devagar enquanto o slide está na tela. */
+  function flutuar(i) {
+    if (flutua) { flutua.kill(); flutua = null; }
+    const c = SL[i].querySelector(".cel-dir .cel");
+    if (!c || REDUZ) return;
+    gsap.set(c, { y: 0 });
+    flutua = gsap.to(c, { y: -14, duration: 2.6, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 1.2 });
+  }
+  /** Toca um passo; com movimento reduzido, mostra direto o estado final. */
+  const tocar = (t) => (REDUZ ? t.progress(1) : t.play());
+  function avisarApresentador() {
+    if (!janelaApres || janelaApres.closed) return;
+    janelaApres.postMessage({ sorriu: "estado", atual, passo, passos: TL[atual].length, demo: !!demo.aberto, apendice: apx.aberto }, "*");
+  }
 
   function hud() {
     $("#num").textContent = atual ? `${String(atual).padStart(2, "0")} / ${SL.length - 1}` : "";
     $("#num").classList.toggle("claro", SL[atual].classList.contains("verde"));
     gsap.to("#prog", { width: `${(atual / (SL.length - 1)) * 100}%`, duration: .5 });
-    const n = $("#notas"); n.innerHTML = `<b>${atual} · </b>` + NOTAS[atual].replace(/\[clique\]/g, "<b>▸</b>");
+    const n = $("#notas"); n.innerHTML = `<b>${atual} · </b>` + fala(NOTAS[atual]);
     try { location.hash = `s${atual}`; } catch {}
+    avisarApresentador();
   }
+  /** Slides de produto seguidos: o celular não sai de cena. Um fantasma leva o celular de onde estava até o lugar
+      novo enquanto os slides se fundem; no fim, o celular do slide novo assume. */
+  function continuar(t, de, para) {
+    const a = de.querySelector(".cel-dir"), b = para.querySelector(".cel-dir"), bc = b.querySelector(".cel");
+    const g = a.cloneNode(true);
+    g.removeAttribute("id"); g.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
+    g.querySelectorAll(".chip, .realce-cel, .toque").forEach((e) => e.remove());
+    Object.assign(g.style, { left: a.offsetLeft + "px", top: a.offsetTop + "px", zIndex: 999, pointerEvents: "none" });
+    $("#palco").appendChild(g);
+    gsap.set(b, { y: 0, rotation: 0 }); gsap.set(bc, { autoAlpha: 0 });
+    t.to(g, { x: b.offsetLeft - a.offsetLeft, y: b.offsetTop - a.offsetTop, duration: .8, ease: "power3.inOut" }, 0)
+      .to(g.querySelector(".cel"), { y: 0, duration: .8, ease: "power3.inOut" }, 0)
+      .set(bc, { autoAlpha: 1 }, .8).to(g, { autoAlpha: 0, duration: .2 }, .8).call(() => g.remove(), null, 1.0);
+  }
+  let entrada = null;
   function ir(i, completo = false) {
     if (i < 0 || i >= SL.length) return;
     if (trans) trans.progress(1); if (espera) espera.kill();
     TL[atual].forEach((t) => t.pause());
     const de = SL[atual], para = SL[i];
-    TL[i].forEach((t) => t.pause().progress(completo ? 1 : 0));
-    if (i === 0) ab.restart(); else if (atual === 0) gsap.delayedCall(1.2, () => ab.pause());
-    if (i !== atual) { z += 10; para.style.zIndex = z; trans = gsap.timeline(); sorriso(trans, faixa, de, para, 0, .8); }
+    // montar vai do 1º passo ao último; rebobinar vai do último ao 1º (senão um passo devolve o estado que o seguinte apagou)
+    (completo ? TL[i] : [...TL[i]].reverse()).forEach((t) => t.pause().progress(completo ? 1 : 0));
+    if (i === 0) (REDUZ ? ab.progress(1) : ab.restart());
+    if (demo.aberto) fecharDemo(true);
+    const ca = de.querySelector(".cel-dir"), cp = para.querySelector(".cel-dir");
+    const seguido = !completo && !REDUZ && i === atual + 1 && ca && cp && gsap.getProperty(ca, "y") < 50;
+    if (entrada) { entrada.kill(); entrada = null; }
+    if (i !== atual) {
+      z += 10; para.style.zIndex = z; trans = gsap.timeline();
+      if (seguido) {
+        // fusão curta em vez do sorriso: o assunto continua, só a tela muda
+        gsap.set(para, { display: "block", clipPath: "none", opacity: 0 });
+        trans.to(para, { opacity: 1, duration: .5, ease: "power1.inOut" }, 0).set(de, { display: "none" }, .5).set(para, { clearProps: "opacity" }, .5);
+        continuar(trans, de, para);
+      } else sorriso(trans, faixa, de, para, 0, REDUZ ? .01 : .8);
+    }
+    // celular dos slides de produto (menos o da solução, que entra no passo 2): sobe do fundo ao chegar
+    if (cp && para.id !== "sl4" && !seguido) {
+      if (completo || REDUZ) gsap.set(cp, { y: 0, rotation: 0 });
+      else entrada = gsap.timeline({ delay: .6 }).fromTo(cp, { y: 1000, rotation: 8 }, { y: 0, rotation: 0, duration: 1, ease: "power4.out", immediateRender: true })
+        .fromTo(cp.querySelector(".cel"), { rotationY: -22, rotationX: 7 }, { rotationY: -9, rotationX: 3, duration: 3, ease: "sine.out" }, 0);
+    }
     atual = i; passo = completo ? TL[i].length : 0;
-    if (!completo && TL[i].length) { passo = 1; espera = gsap.delayedCall(i === 0 ? 0 : .55, () => TL[i][0].play()); }
+    flutuar(i);
+    if (!completo && TL[i].length) { passo = 1; espera = gsap.delayedCall(i === 0 || REDUZ ? 0 : .55, () => (i === 0 ? TL[i][0].play() : tocar(TL[i][0]))); }
     hud();
   }
   function avancar() {
     const ts = TL[atual];
-    if (espera && espera.isActive()) { espera.kill(); espera = null; ts[0].play(); return; }
-    if (passo < ts.length) { if (passo > 0) ts[passo - 1].progress(1); ts[passo].play(); passo++; }
+    if (espera && espera.isActive()) { espera.kill(); espera = null; tocar(ts[0]); return; }
+    if (passo < ts.length) { if (passo > 0) ts[passo - 1].progress(1); tocar(ts[passo]); passo++; avisarApresentador(); }
     else ir(atual + 1);
   }
   function voltar() { ir(atual - 1, true); }
 
+  /* ---------- modo demo: o celular sai do slide e vira o app ---------- */
+  // Telas do protótipo offline e áreas de toque (px de CSS, tela de 390 × 796 abaixo da barra de status; medidas no DOM do app).
+  const TELAS = {
+    busca: { img: "d-busca", alvos: [[20, 425, 350, 300, "clinica", "Abrir a clínica"], [195, 734, 90, 56, "cuidado", "Aba Cuidado"]] },
+    clinica: { img: "p-clinica", alvos: [[20, 24, 90, 44, "busca", "Voltar"]] },
+    cuidado: { img: "d-cuidado", alvos: [[20, 173, 350, 148, "encaminhamento", "Encaminhamentos"], [20, 461, 350, 112, "prontuario", "Meu prontuário"], [20, 587, 350, 88, "prioridade", "Minha prioridade"], [16, 734, 90, 56, "busca", "Aba Clínicas"]] },
+    prontuario: { img: "p-prontuario", alvos: [[20, 24, 128, 44, "cuidado", "Voltar"]] },
+    prioridade: { img: "p-prioridade", alvos: [[20, 24, 128, 44, "cuidado", "Voltar"]] },
+    encaminhamento: { img: "p-encaminhamento", alvos: [[20, 24, 128, 44, "cuidado", "Voltar"]] },
+  };
+  // Painel da clínica (px de CSS da tela de 1600 × 1000).
+  const TELAS_C = {
+    triagem: { img: "c-triagem", alvos: [[12, 104, 196, 44, "solicitacoes", "Solicitações"]] },
+    solicitacoes: { img: "c-solicitacoes", alvos: [[12, 152, 196, 44, "triagem", "Triagem"]] },
+    prontuario: { img: "c-prontuario", alvos: [] },
+  };
+  const DEMOS = {
+    sl4: { eyebrow: "Acesso conectado · hub", titulo: "Ache a clínica-escola <em>mais perto.</em>", apoio: "Distância, custo, turnos e acessibilidade, no app de verdade.", rota: "/clinicas", tela: "busca" },
+    sl6: { eyebrow: "Continuidade do cuidado", titulo: "O histórico <em>vai junto.</em>", apoio: "Quem viu e quando. Outra clínica só vê com a confirmação do paciente.", rota: "/prontuario", tela: "prontuario" },
+    sl7: { eyebrow: "Acesso justo · score", titulo: "A prioridade, <em>explicada.</em>", apoio: "O paciente vê como a vez dele é calculada. Urgência avaliada sempre vem antes.", rota: "/prioridade", tela: "prioridade" },
+    sl8: { eyebrow: "Acesso sem recusa", titulo: "A clínica sugere.<br><em>O paciente escolhe.</em>", apoio: "Se a clínica não ensina o tratamento neste semestre, outra parceira é sugerida e o paciente confirma.", rota: "/encaminhamentos", tela: "encaminhamento" },
+    // a demo de ~20 s do pitch: notebook da clínica e celular do paciente juntos
+    "sl-painel": { eyebrow: "Demonstração · 20 segundos", titulo: "A jornada da Cida, <em>do pedido à confirmação.</em>", apoio: "Protótipo navegável · dados fictícios.", rota: "/clinicas", tela: "busca", clinica: { rota: "/admin", tela: "solicitacoes" }, auto: true },
+    geral: { eyebrow: "Sorriu+ na prática", titulo: "Experimente <em>o app.</em>", apoio: "Protótipo navegável · dados fictícios.", rota: "/clinicas", tela: "busca" },
+  };
+  const demo = { aberto: null, tl: null, fonte: null, aoVivo: null, rotas: {} };
+  const k = () => $("#palco").getBoundingClientRect().width / 1920;
+  setTimeout(() => noAr(CFG.paciente).then((v) => { if (demo.aoVivo === null) demo.aoVivo = v; }), 0);
+
+  /** O app do paciente está no ar nesse endereço? Carrega o logo dele como imagem: só passa se for o app de verdade
+      (um 404 ou outro servidor na mesma porta não conta). */
+  function noAr(url) {
+    return new Promise((ok) => {
+      const img = new Image(), t = setTimeout(() => { img.src = ""; ok(false); }, 1500);
+      img.onload = () => { clearTimeout(t); ok(img.naturalWidth > 0); };
+      img.onerror = () => { clearTimeout(t); ok(false); };
+      img.src = `${url}/src/design/logo.png?v=${Date.now()}`;
+    });
+  }
+  /** Protótipo clicável: troca de tela com o mesmo deslize do trailer, e um toque visível onde clicou. */
+  function montarProto(caixa, telas, inicial, largura) {
+    caixa.innerHTML = "";
+    const tocarEm = (x, y) => {
+      const raiz = caixa.querySelector(".zoom") || caixa;
+      const tq = document.createElement("div"); tq.className = "toque"; Object.assign(tq.style, { left: x + "px", top: y + "px" }); raiz.appendChild(tq);
+      const t2 = gsap.timeline({ onComplete: () => tq.remove() }); toque(t2, tq, 0);
+    };
+    const mostrar = (nome, x, y) => {
+      const t = telas[nome]; if (!t) return;
+      const pg = document.createElement("div"); pg.className = "pg";
+      const miolo = document.createElement("div"); miolo.className = "miolo";
+      miolo.innerHTML = `<img src="assets/${t.img}.webp" alt="" draggable="false">`;
+      t.alvos.forEach(([ax, ay, w, h, para, rotulo]) => {
+        const b = document.createElement("button"); b.className = "alvo"; b.type = "button"; b.setAttribute("aria-label", rotulo);
+        Object.assign(b.style, { left: ax + "px", top: ay + "px", width: w + "px", height: h + "px" });
+        b.addEventListener("click", (e) => { e.stopPropagation(); const r = caixa.getBoundingClientRect(), s = r.width / largura; mostrar(para, (e.clientX - r.left) / s, (e.clientY - r.top) / s); });
+        miolo.appendChild(b);
+      });
+      pg.appendChild(miolo);
+      const raiz = caixa.querySelector(".zoom") || caixa;
+      const antiga = [...raiz.querySelectorAll(".pg")].pop();
+      raiz.appendChild(pg);
+      if (x !== undefined) tocarEm(x, y);
+      if (antiga && !REDUZ) {
+        gsap.fromTo(pg, { xPercent: 100 }, { xPercent: 0, duration: .5, ease: "power3.inOut", delay: .2 });
+        gsap.to(antiga, { xPercent: -30, duration: .5, ease: "power3.inOut", delay: .2, onComplete: () => antiga.remove() });
+      } else if (antiga) antiga.remove();
+    };
+    if (caixa.id === "proto-c") { const z = document.createElement("div"); z.className = "zoom"; caixa.appendChild(z); }
+    mostrar(inicial);
+    const rolar = (y, d = 1) => gsap.to([...caixa.querySelectorAll(".pg")].pop(), { scrollTop: y, duration: d, ease: "power2.inOut" });
+    return { mostrar, tocarEm, rolar };
+  }
+
+  /** Demo do pitch (~20 s, offline): a jornada da Cida tocada sozinha, com toques visíveis e legenda numerada.
+      Coordenadas: celular em px da tela de 390 × 796; notebook em px da tela de 1600 × 1000. */
+  function tour(P, C) {
+    const leg = (txt) => { const a = $("#demo-apoio"); gsap.fromTo(a, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .35, onStart: () => { a.textContent = txt; } }); };
+    const ok = (txt) => { const e = $("#demo-ok"); e.querySelector("span").textContent = txt; gsap.fromTo(e, { autoAlpha: 0, scale: .6 }, { autoAlpha: 1, scale: 1, duration: .45, ease: "back.out(2.4)" }); };
+    const t = gsap.timeline();
+    t.call(() => leg("1 · A Cida acha a clínica-escola mais perto."), null, 1.4)
+      .call(() => P.mostrar("clinica", 195, 575), null, 1.9)
+      .call(() => P.rolar(640, 1.4), null, 3.2)
+      .call(() => leg("2 · O pedido dela chega no painel da clínica."), null, 4.9)
+      .call(() => C.tocarEm(400, 557), null, 5.4)
+      .call(() => C.mostrar("triagem", 1409, 719), null, 6.6)
+      .call(() => leg("3 · Triagem: urgência avaliada primeiro, depois o score."), null, 7.2)
+      .call(() => C.tocarEm(880, 330), null, 8.4)
+      .call(() => leg("4 · O canal não cabe na grade: outra parceira é sugerida."), null, 9.8)
+      .call(() => P.mostrar("busca", 65, 46), null, 10.2)
+      .call(() => P.mostrar("cuidado", 240, 762), null, 11.2)
+      .call(() => P.mostrar("encaminhamento", 195, 247), null, 12.3)
+      .call(() => P.rolar(300, 1), null, 13.4)
+      .call(() => P.tocarEm(195, 532), null, 14.8)
+      .call(() => ok("A Cida confirmou o encaminhamento"), null, 15.1)
+      .call(() => leg("5 · O histórico vai junto, com registro de quem viu."), null, 16.6)
+      .call(() => C.mostrar("prontuario", 800, 420), null, 17.0)
+      .call(() => ok("Jornada completa · protótipo offline"), null, 19.4)
+      .set({}, {}, 20);
+    return t;
+  }
+  /** App de verdade dentro da moldura (iframe do servidor de dev); some se demorar, e o protótipo continua por baixo. */
+  function carregarApp(iframe, url) {
+    if (demo.rotas[iframe.id] === url) { gsap.to(iframe, { opacity: 1, duration: .3 }); return; }
+    demo.rotas[iframe.id] = url; gsap.set(iframe, { opacity: 0 });
+    iframe.onload = () => gsap.to(iframe, { opacity: 1, duration: .4, delay: .2 });
+    iframe.src = url;
+  }
+  function modoTexto() {
+    $("#demo-modo").classList.toggle("off", !demo.aoVivo);
+    $("#demo-modo-txt").textContent = demo.aoVivo ? "App ao vivo · dados fictícios" : "Telas do protótipo · dados fictícios";
+  }
+  function botoes(cfg) {
+    const a = $("#demo-acoes"); a.innerHTML = "";
+    const add = (txt, fn, sec) => { const b = document.createElement("button"); b.type = "button"; b.textContent = txt; if (sec) b.className = "sec"; b.addEventListener("click", (e) => { e.stopPropagation(); fn(); }); a.appendChild(b); };
+    add("Voltar ao slide (Esc)", () => fecharDemo());
+    if (cfg.auto) { add("Repetir (R)", () => demo.repetir && demo.repetir(), true); return; }
+    if (cfg.clinica && !demo.aoVivo) {
+      add("Fila e score", () => montarProto($("#proto-c"), TELAS_C, "triagem", 1600), true);
+      add("Prontuário", () => montarProto($("#proto-c"), TELAS_C, "prontuario", 1600), true);
+    }
+    add(demo.aoVivo ? "Usar telas offline" : "Tentar ao vivo", () => trocarModo(cfg), true);
+  }
+  async function trocarModo(cfg) {
+    demo.aoVivo = demo.aoVivo ? false : await noAr(CFG.paciente);
+    $$("#app-p, #app-c").forEach((f) => gsap.set(f, { opacity: 0, pointerEvents: demo.aoVivo ? "auto" : "none" }));
+    if (demo.aoVivo) { carregarApp($("#app-p"), CFG.paciente + cfg.rota); if (cfg.clinica) carregarApp($("#app-c"), CFG.clinica + cfg.clinica.rota); }
+    modoTexto(); botoes(cfg);
+  }
+
+  async function abrirDemo(chave) {
+    if (demo.aberto) return;
+    if (trans && trans.isActive()) trans.progress(1); // D no meio da troca de slide: conclui a troca e abre
+    const cfg = DEMOS[chave] || DEMOS.geral;
+    demo.aberto = chave;
+    if (flutua) flutua.pause();
+    // conteúdo
+    $("#demo-eyebrow").textContent = cfg.eyebrow;
+    ["#demo-titulo", "#demo-apoio"].forEach((s) => delete $(s).dataset.quebrado);
+    $("#demo-titulo").innerHTML = cfg.titulo; $("#demo-apoio").textContent = cfg.apoio;
+    $("#demo").classList.toggle("clinica", !!cfg.clinica);
+    $("#demo-note-wrap").hidden = !cfg.clinica;
+    const P = montarProto($("#proto-p"), TELAS, cfg.tela, 390);
+    const C = cfg.clinica ? montarProto($("#proto-c"), TELAS_C, cfg.clinica.tela, 1600) : null;
+    gsap.set("#demo-ok", { autoAlpha: 0 });
+    if (cfg.auto) demo.aoVivo = false; // a demo do pitch é uma animação: nunca depende de servidor
+    else if (demo.aoVivo === null) demo.aoVivo = await noAr(CFG.paciente);
+    $$("#app-p, #app-c").forEach((f) => gsap.set(f, { opacity: 0, pointerEvents: demo.aoVivo ? "auto" : "none" }));
+    if (demo.aoVivo) { carregarApp($("#app-p"), CFG.paciente + cfg.rota); if (cfg.clinica) carregarApp($("#app-c"), CFG.clinica + cfg.clinica.rota); }
+    modoTexto(); botoes(cfg);
+
+    // animação: o sorriso amarelo cobre o slide; o celular voa do slide até a moldura e o halo vira a borda
+    const D = $("#demo"), cel = $("#demo-cel");
+    gsap.set([cel, "#demo-note", "#demo-halo"], { clearProps: "transform,opacity" });
+    D.style.display = "block";
+    const tl = gsap.timeline({ defaults: { ease: "power3.inOut" } });
+    sorriso(tl, $("#demo-faixa"), null, $("#demo-fundo"), 0, .7);
+    demo.fonte = SL[atual].querySelector(".cel-dir");
+    const escala = cfg.clinica ? .92 : 1.02;
+    if (demo.fonte) {
+      const a = demo.fonte.getBoundingClientRect(), b = cel.getBoundingClientRect(), s = k();
+      tl.set(demo.fonte, { visibility: "hidden" }, .15)
+        .fromTo(cel, { x: (a.left - b.left) / s, y: (a.top - b.top) / s, scale: (a.width / b.width), rotationY: -9, rotationX: 3, transformOrigin: "0 0" },
+          { x: 0, y: 0, scale: escala, rotationY: 0, rotationX: 0, duration: 1, ease: "power3.inOut" }, .15);
+    } else {
+      tl.fromTo(cel, { y: 900, rotation: 8, scale: escala, transformOrigin: "0 0" }, { y: 0, rotation: 0, duration: 1, ease: "power4.out" }, .3);
+    }
+    tl.fromTo("#demo-halo", { scale: .9, opacity: 0 }, { scale: 1, opacity: 1, duration: .6, ease: "back.out(2.4)" }, .95);
+    const notaSlide = SL[atual].querySelector("#note-p");
+    if (cfg.clinica && notaSlide) {
+      // o notebook do slide do painel voa até a moldura da demo (o wrap da demo tem escala .62)
+      const a = notaSlide.getBoundingClientRect(), dn = $("#demo-note"), b = dn.getBoundingClientRect(), s = k() * .62;
+      tl.set(notaSlide, { visibility: "hidden" }, .15).call(() => {}, null, .15)
+        .fromTo(dn, { x: (a.left - b.left) / s, y: (a.top - b.top) / s, scale: a.width / b.width, transformOrigin: "0 0" }, { x: 0, y: 0, scale: 1, duration: 1, ease: "power3.inOut" }, .15);
+      demo.nota = notaSlide;
+    } else if (cfg.clinica) tl.fromTo("#demo-note", { y: 900, rotationX: -60, transformPerspective: 2400, transformOrigin: "50% 100%" }, { y: 0, rotationX: 0, duration: 1.1, ease: "power4.out" }, .45);
+    tl.from("#demo-cab .eyebrow, #demo-modo", { opacity: 0, y: 20, duration: .4, stagger: .1 }, .5);
+    entra(tl, "#demo-titulo", .6); entra(tl, "#demo-apoio", .9, { stagger: .02 });
+    tl.from("#demo-acoes > *", { opacity: 0, y: 24, duration: .4, stagger: .08, ease: "power2.out" }, 1.1);
+    if (REDUZ) tl.progress(1);
+    demo.tl = tl;
+    if (cfg.auto && !REDUZ) { demo.repetir = () => { if (demo.auto) demo.auto.kill(); P.mostrar(cfg.tela); C.mostrar(cfg.clinica.tela); gsap.set("#demo-ok", { autoAlpha: 0 }); demo.auto = tour(P, C); demo.auto.time(1.2); }; demo.auto = tour(P, C); }
+    avisarApresentador();
+    setTimeout(() => $("#demo-acoes button")?.focus({ preventScroll: true }), REDUZ ? 0 : 1300);
+  }
+  function fecharDemo(seco = false) {
+    if (!demo.aberto) return;
+    if (demo.auto) { demo.auto.kill(); demo.auto = null; } demo.repetir = null;
+    const fim = () => {
+      $("#demo").style.display = "none";
+      if (demo.fonte) gsap.set(demo.fonte, { visibility: "visible" });
+      if (demo.nota) { gsap.set(demo.nota, { visibility: "visible" }); demo.nota = null; }
+      $$("#app-p, #app-c").forEach((f) => gsap.set(f, { opacity: 0, pointerEvents: "none" }));
+      demo.aberto = null; demo.fonte = null;
+      if (flutua) flutua.resume();
+      avisarApresentador();
+    };
+    if (seco || REDUZ || !demo.tl) { if (demo.tl) demo.tl.progress(0).kill(); fim(); return; }
+    demo.tl.eventCallback("onReverseComplete", fim).timeScale(1.7).reverse();
+  }
+  // cliques dentro da demo não avançam o deck
+  $("#demo").addEventListener("click", (e) => e.stopPropagation());
+  $("#demo").addEventListener("contextmenu", (e) => e.stopPropagation());
+
+  /* ---------- apêndice para a banca (tecla A): cartões de pergunta e resposta, fora da contagem ---------- */
+  const apx = { aberto: false, tl: null, foco: 0 };
+  function abrirApendice() {
+    if (apx.aberto) return;
+    if (demo.aberto) fecharDemo(true);
+    if (trans && trans.isActive()) trans.progress(1);
+    apx.aberto = true; ampliar(0);
+    if (flutua) flutua.pause();
+    const A = $("#apendice"); A.hidden = false;
+    const tl = gsap.timeline();
+    sorriso(tl, $("#apx-faixa"), null, $("#apx-fundo"), 0, .7);
+    tl.from("#apx-cab > *", { opacity: 0, y: 30, duration: .5, stagger: .1, ease: "power3.out" }, .45);
+    tl.from(".apx-card", { opacity: 0, y: 60, scale: .96, duration: .5, stagger: .07, ease: "back.out(1.6)" }, .6);
+    tl.from("#apx-rodape", { opacity: 0, duration: .4 }, 1.1);
+    if (REDUZ) tl.progress(1);
+    apx.tl = tl;
+    avisarApresentador();
+  }
+  function fecharApendice() {
+    if (!apx.aberto) return;
+    const fim = () => {
+      // reverter um .from() deixa os cartões no estado inicial: limpa para a próxima abertura
+      if (apx.tl) apx.tl.kill(); apx.tl = null;
+      gsap.set("#apx-cab > *, .apx-card, #apx-rodape, #apx-fundo, #apx-faixa", { clearProps: "all" });
+      $("#apendice").hidden = true; apx.aberto = false; ampliar(0); if (flutua) flutua.resume(); avisarApresentador();
+    };
+    if (REDUZ || !apx.tl) { fim(); return; }
+    apx.tl.eventCallback("onReverseComplete", fim).timeScale(1.8).reverse();
+  }
+  /** Amplia o cartão n (1–6) no centro; 0 (ou o mesmo número) volta para a grade. */
+  function ampliar(n) {
+    const cards = $$(".apx-card"), z = $("#apx-zoom");
+    apx.foco = n >= 1 && n <= cards.length && n !== apx.foco ? n : 0;
+    $("#apendice").classList.toggle("foco", !!apx.foco);
+    if (!apx.foco) { z.hidden = true; return; }
+    const c = cards[apx.foco - 1];
+    z.querySelector(".apx-n").textContent = apx.foco;
+    z.querySelector("h3").textContent = c.querySelector("h3").textContent;
+    z.querySelector("p").innerHTML = c.querySelector("p").innerHTML;
+    z.hidden = false;
+    if (!REDUZ) gsap.fromTo(z, { scale: .82, opacity: 0, y: 40 }, { scale: 1, opacity: 1, y: 0, duration: .45, ease: "back.out(1.8)" });
+  }
+  $("#apendice").addEventListener("click", (e) => {
+    e.stopPropagation();
+    const c = e.target.closest(".apx-card");
+    if (c) ampliar($$(".apx-card").indexOf(c) + 1); else if (apx.foco) ampliar(0);
+  });
+  $("#apendice").addEventListener("contextmenu", (e) => { e.preventDefault(); e.stopPropagation(); });
+
+  /* ---------- modo apresentador (tecla P): janela com notas, próximo slide e cronômetro ---------- */
+  function abrirApresentador() {
+    const u = new URL(location.href); u.hash = ""; u.searchParams.set("apresentador", "1");
+    janelaApres = window.open(u.href, "sorriu-apresentador", "popup,width=1180,height=760");
+    setTimeout(avisarApresentador, 800);
+  }
+  addEventListener("message", (e) => {
+    if (!janelaApres || e.source !== janelaApres || e.data?.sorriu !== "cmd") return;
+    const a = e.data.acao;
+    if (a === "avancar") demo.aberto || apx.aberto ? null : avancar();
+    else if (a === "voltar") apx.aberto ? fecharApendice() : demo.aberto ? fecharDemo() : voltar();
+    else if (a === "demo") { fecharApendice(); demo.aberto ? fecharDemo() : abrirDemo(SL[atual].id); }
+    else if (a === "ir" && Number.isInteger(e.data.i)) { fecharApendice(); ir(e.data.i, true); }
+    else if (a === "apendice") apx.aberto ? fecharApendice() : abrirApendice();
+    else if (a === "ola") avisarApresentador();
+  });
+
   addEventListener("keydown", (e) => {
+    if (apx.aberto) {
+      // com o apêndice aberto: 1–6 amplia, Esc volta da resposta e depois fecha, A fecha
+      if (/^[1-6]$/.test(e.key)) { e.preventDefault(); ampliar(+e.key); }
+      else if (e.key === "Escape") { e.preventDefault(); apx.foco ? ampliar(0) : fecharApendice(); }
+      else if (e.key.toLowerCase() === "a") { e.preventDefault(); fecharApendice(); }
+      else if (e.key.toLowerCase() === "f") { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+      return;
+    }
+    if (demo.aberto) {
+      if (e.key === "Escape" || e.key.toLowerCase() === "d") { e.preventDefault(); fecharDemo(); }
+      else if (e.key.toLowerCase() === "r" && demo.repetir) { e.preventDefault(); demo.repetir(); }
+      return; // com a demo aberta, as teclas são do app
+    }
+    if (e.key.toLowerCase() === "d") { e.preventDefault(); abrirDemo(SL[atual].id); return; }
+    if (e.key.toLowerCase() === "p") { e.preventDefault(); abrirApresentador(); return; }
+    if (e.key.toLowerCase() === "a" && !e.ctrlKey && !e.metaKey) { e.preventDefault(); abrirApendice(); return; }
     if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); avancar(); }
     else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); voltar(); }
     else if (e.key === "Home") ir(0);
@@ -596,16 +1467,161 @@ body:hover #dica { opacity: 1; }
     else if (e.key.toLowerCase() === "n") $("#notas").hidden = !$("#notas").hidden;
     else if (e.key.toLowerCase() === "f") { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
   });
-  $("#palco").addEventListener("click", avancar);
+  $("#palco").addEventListener("click", (e) => {
+    if (e.target.closest(".cel-dir .cel, #note-p") && passo > 0) { abrirDemo(SL[atual].id); return; } // clicar no celular abre o app
+    avancar();
+  });
   $("#palco").addEventListener("contextmenu", (e) => { e.preventDefault(); voltar(); });
 
   // início: slide do endereço (#s3) ou abertura
   const m = /^#s(\d+)$/.exec(location.hash || "");
   SL.forEach((s, k) => { s.style.display = k ? "none" : "block"; });
-  Promise.all([document.fonts.ready, ...$$("img").map((i) => i.decode().catch(() => {}))]).then(() => {
-    if (m && +m[1] > 0 && +m[1] < SL.length) { SL[0].style.display = "none"; SL[+m[1]].style.display = "block"; atual = +m[1]; TL[atual].forEach((t) => t.progress(1)); passo = TL[atual].length; hud(); }
-    else { ab.play(); hud(); }
+  const pronto = Promise.all([document.fonts.ready, ...$$("img").map((i) => i.decode().catch(() => {}))]).then(() => {
+    if (m && +m[1] > 0 && +m[1] < SL.length) { SL[0].style.display = "none"; SL[+m[1]].style.display = "block"; atual = +m[1]; TL[atual].forEach((t) => t.progress(1)); passo = TL[atual].length; flutuar(atual); hud(); }
+    else { REDUZ ? ab.progress(1) : ab.play(); hud(); }
   });
-  window.__deck = { ir, avancar, get atual() { return atual; } };
+  // se fontes ou imagens demorarem (aba em segundo plano, rede lenta), a marca aparece mesmo assim
+  setTimeout(() => { if (atual === 0 && !ab.isActive() && ab.progress() === 0) (REDUZ ? ab.progress(1) : ab.play()); }, 2500);
+  // API para os scripts (exportar-pdf.cjs, render-deck.cjs) e para testes
+  window.__deck = { ir, avancar, abrirDemo, fecharDemo, abrirApendice, fecharApendice, ampliar, pronto, NOTAS, PLANO,
+    get atual() { return atual; }, get passo() { return passo; }, get demo() { return demo.aberto; }, get apendice() { return apx.aberto; },
+    /** Duração (s) de cada passo do slide i. */
+    passos: (i) => TL[i].map((t) => t.duration()) };
+
+  /* ---------- janela do apresentador (mesmo arquivo, ?apresentador) ---------- */
+  function modoApresentador() {
+    document.body.classList.add("apres"); document.title = "Sorriu+ · apresentador";
+    const titulos = $$("#palco > .cena").map((c) => c.getAttribute("aria-label") || c.id);
+    const ap = $("#apres");
+    ap.innerHTML = `
+      <div class="coluna">
+        <h1>Modo apresentador · Sorriu+</h1>
+        <div class="bloco atual"><b id="ap-titulo">Aguardando o deck…</b><span id="ap-passo"></span></div>
+        <div class="bloco fala" id="ap-fala"></div>
+        <div class="bloco prox" id="ap-prox"></div>
+        <div class="controles">
+          <button type="button" data-a="voltar">◀ Voltar</button><button type="button" data-a="avancar">Avançar ▶</button>
+          <button type="button" class="sec" data-a="demo">Abrir/fechar o app (D)</button>
+          <button type="button" class="sec" data-a="apendice">Apêndice da banca (A)</button>
+        </div>
+        <p class="aviso" id="ap-aviso"></p>
+        <div class="bloco" id="ap-resumo" hidden></div>
+      </div>
+      <div class="coluna">
+        <div class="bloco"><div class="relogio" id="ap-relogio">0:00</div><div class="meta" id="ap-meta">Meta: 5:00 · começa no primeiro avanço</div>
+          <div class="controles" style="margin-top:12px"><button type="button" class="sec" id="ap-pausa">Pausar</button><button type="button" class="sec" id="ap-zerar">Zerar</button></div></div>
+        <div class="bloco"><div class="controles"><button type="button" class="sec" id="ap-ensaio" aria-pressed="false">Ensaio: desligado</button><button type="button" class="sec" id="ap-ver-resumo">Resumo</button></div>
+          <div class="meta" id="ap-ensaio-info" style="margin-top:8px">Liga o ensaio para medir quanto tempo cada slide leva de verdade.</div></div>
+        <ol id="ap-lista"></ol>
+        <p class="meta">Demo ao vivo: rode <b>app/iniciar.sh --dev</b> e entre uma vez no celular e no notebook da demo. Sem servidor, o deck usa as telas do protótipo.</p>
+      </div>`;
+    const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+    const fimPlano = PLANO.reduce((a, v, i) => (a.push((a[i - 1] || 0) + v), a), []);
+    $("#ap-lista").innerHTML = titulos.map((t, i) => `<li data-i="${i}" title="${t}"><span class="nome">${i} · ${t}</span><span class="r"></span><span class="t">${fmt(fimPlano[i])}</span></li>`).join("");
+    const deck = window.opener;
+    let inicio = null, pausado = 0, pausaEm = null, est = { atual: 0, passo: 0, passos: 0, demo: false };
+    const decorrido = () => (inicio === null ? 0 : ((pausaEm ?? Date.now()) - inicio - pausado) / 1000);
+    const enviar = (acao, extra = {}) => {
+      if (!deck || deck.closed) { $("#ap-aviso").textContent = "Abra esta janela pela tecla P no deck."; return; }
+      if (inicio === null && (acao === "avancar" || acao === "demo")) inicio = Date.now();
+      deck.postMessage({ sorriu: "cmd", acao, ...extra }, "*");
+    };
+    /* ensaio: soma o tempo real em cada slide (pausa junto com o cronômetro) e guarda neste navegador */
+    const CHAVE = "sorriu-ensaio-v1";
+    const palavras = NOTAS.map((n) => n.replace(/\[(clique|demo)\]/g, " ").split(/\s+/).filter(Boolean).length);
+    const vazio = () => ({ tempos: PLANO.map(() => 0), data: null });
+    let ensaio = vazio(), ensaioAtivo = false, ultimo = Date.now(), gravado = 0;
+    try { const g = JSON.parse(localStorage.getItem(CHAVE) || "null"); if (g && Array.isArray(g.tempos) && g.tempos.length === PLANO.length) ensaio = g; } catch {}
+    const guardar = () => { try { localStorage.setItem(CHAVE, JSON.stringify(ensaio)); } catch {} };
+    const curto = (t) => (/^Funcionalidade: /.test(t) ? t.slice(16) : t.split(":")[0]);
+    const fmtD = (s) => `${s < 0 ? "−" : "+"}${fmt(Math.abs(s))}`;
+    function pintarEnsaio() {
+      const b = $("#ap-ensaio"), tem = ensaio.tempos.some((t) => t > 0);
+      b.setAttribute("aria-pressed", String(ensaioAtivo));
+      b.textContent = ensaioAtivo ? (est.atual === PLANO.length - 1 ? "Encerrar e ver resumo" : "Ensaio: gravando") : "Ensaio: desligado";
+      b.classList.toggle("chama", ensaioAtivo && est.atual === PLANO.length - 1);
+      $("#ap-ensaio-info").textContent = ensaioAtivo ? "Tempo real / meta de cada slide na lista. Pausar também pausa o ensaio."
+        : tem ? `Último ensaio${ensaio.data ? " em " + new Date(ensaio.data).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : ""}: ${fmt(ensaio.tempos.reduce((a, v) => a + v, 0))} no total. Ligar de novo começa do zero.`
+        : "Liga o ensaio para medir quanto tempo cada slide leva de verdade.";
+      $$("#ap-lista li").forEach((li, j) => {
+        const r = li.querySelector(".r"), t = ensaio.tempos[j];
+        r.textContent = t > 0 || (ensaioAtivo && j === est.atual) ? `${fmt(t)} / ${fmt(PLANO[j])}` : "";
+        r.classList.toggle("passou", t > PLANO[j] + .5);
+      });
+    }
+    function mostrarResumo() {
+      const tot = ensaio.tempos.reduce((a, v) => a + v, 0), meta = PLANO.reduce((a, v) => a + v, 0);
+      const box = $("#ap-resumo");
+      if (!tot) { box.hidden = false; box.innerHTML = "<h2>Resumo do ensaio</h2><p class=\"meta\">Ainda não há ensaio gravado. Ligue o Ensaio e passe o pitch inteiro.</p>"; return; }
+      const linhas = PLANO.map((p, i) => {
+        const t = ensaio.tempos[i], d = t - p, wpm = t >= 3 ? Math.round(palavras[i] / (t / 60)) : 0;
+        return `<tr class="${d > .5 ? "passou" : ""}"><td>${i} · ${curto(titulos[i])}</td><td>${fmt(p)}</td><td>${fmt(t)}</td><td>${t ? fmtD(d) : "—"}</td><td>${palavras[i]}</td><td>${wpm || "—"}</td></tr>`;
+      }).join("");
+      const estouro = PLANO.map((p, i) => ({ i, d: ensaio.tempos[i] - p })).filter((x) => x.d > .5).sort((a, b) => b.d - a.d);
+      // palavras a cortar = o excesso de tempo no ritmo real daquele slide
+      const cortes = estouro.map(({ i, d }) => `<li><b>${i} · ${curto(titulos[i])}</b>: passou ${fmt(d)}; no seu ritmo, corte cerca de ${Math.max(1, Math.round(palavras[i] * d / ensaio.tempos[i]))} de ${palavras[i]} palavras.</li>`).join("");
+      box.hidden = false;
+      box.innerHTML = `<h2>Resumo do ensaio · ${fmt(tot)} de ${fmt(meta)} (${fmtD(tot - meta)})</h2>
+        <table><thead><tr><th>Slide</th><th>Meta</th><th>Real</th><th>Dif.</th><th>Palavras</th><th>Pal./min</th></tr></thead><tbody>${linhas}</tbody></table>
+        ${estouro.length ? `<p class="meta" style="margin:12px 0 0">Onde cortar, do maior estouro para o menor:</p><ul class="cortes">${cortes}</ul>` : `<p class="meta" style="margin:12px 0 0">Nenhum slide passou da meta.</p>`}
+        <div class="controles" style="margin-top:12px"><button type="button" class="sec" id="ap-fechar-resumo">Fechar resumo</button><button type="button" class="sec" id="ap-limpar">Apagar ensaio</button></div>`;
+      $("#ap-fechar-resumo").addEventListener("click", () => { box.hidden = true; });
+      $("#ap-limpar").addEventListener("click", () => { ensaio = vazio(); guardar(); box.hidden = true; pintarEnsaio(); });
+    }
+    $("#ap-ensaio").addEventListener("click", () => {
+      if (!ensaioAtivo) {
+        ensaio = { tempos: PLANO.map(() => 0), data: Date.now() }; ensaioAtivo = true; ultimo = Date.now();
+        if (inicio === null) inicio = Date.now(); // o ensaio liga o cronômetro
+        if (pausaEm !== null) { pausado += Date.now() - pausaEm; pausaEm = null; $("#ap-pausa").textContent = "Pausar"; }
+        $("#ap-resumo").hidden = true; guardar();
+      } else { ensaioAtivo = false; guardar(); mostrarResumo(); }
+      pintarEnsaio();
+    });
+    $("#ap-ver-resumo").addEventListener("click", () => ($("#ap-resumo").hidden ? mostrarResumo() : ($("#ap-resumo").hidden = true)));
+
+    function pintar() {
+      const i = est.atual;
+      $("#ap-titulo").textContent = `${i} · ${titulos[i]}`;
+      $("#ap-passo").textContent = est.demo ? "app aberto" : `passo ${est.passo}/${est.passos}`;
+      $("#ap-fala").innerHTML = fala(NOTAS[i]);
+      $("#ap-prox").innerHTML = i + 1 < titulos.length ? `Próximo: <b>${titulos[i + 1]}</b>` : "Último slide.";
+      $$("#ap-lista li").forEach((li, j) => { li.className = j === i ? "agora" : j < i ? "feito" : ""; });
+      if (est.apendice) $("#ap-passo").textContent = "apêndice aberto";
+      pintarEnsaio();
+    }
+    setInterval(() => {
+      const agora = Date.now();
+      if (ensaioAtivo && pausaEm === null && deck && !deck.closed) {
+        ensaio.tempos[est.atual] += (agora - ultimo) / 1000;
+        if (agora - gravado > 1000) { guardar(); gravado = agora; }
+        pintarEnsaio();
+      }
+      ultimo = agora;
+      const t = decorrido(), i = est.atual;
+      const r = $("#ap-relogio"); r.textContent = fmt(t);
+      r.className = "relogio" + (t > 300 ? " estourou" : t > fimPlano[i] ? " atencao" : "");
+      $("#ap-meta").textContent = inicio === null ? "Meta: 5:00 · começa no primeiro avanço" : `Meta deste slide: até ${fmt(fimPlano[i])} · faltam ${fmt(Math.max(0, 300 - t))}`;
+      $$("#ap-lista li").forEach((li, j) => li.classList.toggle("passou", j === i && t > fimPlano[j]));
+    }, 250);
+    addEventListener("message", (e) => { if (e.source === deck && e.data?.sorriu === "estado") { est = e.data; $("#ap-aviso").textContent = ""; pintar(); } });
+    ap.addEventListener("click", (e) => { const b = e.target.closest("button[data-a]"); if (b) enviar(b.dataset.a); });
+    $("#ap-lista").addEventListener("click", (e) => { const li = e.target.closest("li"); if (li) enviar("ir", { i: +li.dataset.i }); });
+    $("#ap-pausa").addEventListener("click", () => {
+      if (inicio === null) return;
+      if (pausaEm === null) { pausaEm = Date.now(); $("#ap-pausa").textContent = "Continuar"; }
+      else { pausado += Date.now() - pausaEm; pausaEm = null; $("#ap-pausa").textContent = "Pausar"; }
+    });
+    $("#ap-zerar").addEventListener("click", () => {
+      inicio = null; pausado = 0; pausaEm = null; $("#ap-pausa").textContent = "Pausar";
+      if (ensaioAtivo) { ensaioAtivo = false; guardar(); pintarEnsaio(); }
+    });
+    addEventListener("keydown", (e) => {
+      if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); enviar("avancar"); }
+      else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); enviar("voltar"); }
+      else if (e.key.toLowerCase() === "d") enviar("demo");
+      else if (e.key.toLowerCase() === "a") enviar("apendice");
+    });
+    enviar("ola"); pintar();
+  }
 })();
 </script>
