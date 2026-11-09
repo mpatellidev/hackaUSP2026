@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorriu+ · Calculadora de ROI</title>
+<meta name="description" content="Calculadora offline para a clínica-escola estimar o custo da operação manual e das faltas, e simular um cenário com o Sorriu+ a partir dos próprios números.">
+<link rel="stylesheet" href="vendor/fontes.css">
+<style>
+/* Tokens copiados de motion/comum.css */
+:root {
+  --teal: #14beb9;      /* marca — só como preenchimento */
+  --verde: #075e59;
+  --tinta: #0b2423;
+  --sol: #ffb81c;
+  --nevoa: #e8f9f8;
+  --branco: #ffffff;
+  --muted: #3f5958;
+  --linha: #d2e5e4;
+  --perigo: #b3261e;
+  --f-display: "Lexend", system-ui, sans-serif;
+  --f-corpo: "Atkinson Hyperlegible", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; color: var(--tinta); font: 400 17px/1.5 var(--f-corpo);
+  background:
+    radial-gradient(700px 700px at -10% -10%, rgba(147, 227, 224, .40), transparent 62%),
+    radial-gradient(600px 600px at 110% 100%, rgba(255, 184, 28, .16), transparent 60%),
+    var(--branco);
+  min-height: 100vh;
+}
+a { color: var(--verde); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--sol); outline-offset: 2px; }
+
+/* topo */
+.topo { background: var(--verde); color: var(--branco); }
+.topo .in { max-width: 1160px; margin: 0 auto; padding: 28px 24px 32px; }
+.marca { display: inline-flex; align-items: center; padding: 2px 12px 5px; border-radius: 10px; background: var(--branco); color: var(--verde); font: 800 22px var(--f-display); letter-spacing: -.5px; }
+.marca .u { color: var(--sol); -webkit-text-stroke: .5px var(--verde); }
+.eyebrow { margin: 18px 0 6px; font: 700 13px var(--f-display); letter-spacing: 3px; text-transform: uppercase; color: var(--sol); }
+h1 { margin: 0; font: 800 clamp(30px, 5vw, 48px)/1.05 var(--f-display); letter-spacing: -1.2px; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--sol); }
+.topo p { margin: 12px 0 0; max-width: 720px; color: #c7f0ee; font-size: 18px; }
+
+.aviso { max-width: 1160px; margin: 20px auto 0; padding: 0 24px; }
+.aviso div { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px; border-radius: 14px; background: #fff7e3; border: 2px solid var(--sol); font-size: 16px; }
+.aviso b { font-family: var(--f-display); }
+
+main { max-width: 1160px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 880px) { main { grid-template-columns: 1fr; padding: 20px 16px; } .aviso, .topo .in { padding-left: 16px; padding-right: 16px; } }
+
+/* formulário */
+fieldset { margin: 0 0 20px; padding: 20px; border: 2px solid var(--linha); border-radius: 20px; background: var(--branco); min-width: 0; }
+legend { padding: 0 8px; font: 700 18px var(--f-display); color: var(--verde); }
+.campo { display: grid; gap: 4px; margin-top: 16px; }
+.campo:first-of-type { margin-top: 6px; }
+.campo label { font: 700 16px var(--f-corpo); }
+.entrada { display: flex; align-items: stretch; border: 2px solid #9fbfbd; border-radius: 12px; background: var(--branco); overflow: hidden; }
+.entrada:focus-within { border-color: var(--verde); }
+.entrada span { display: grid; place-items: center; padding: 0 12px; background: var(--nevoa); color: var(--muted); font: 700 15px var(--f-display); white-space: nowrap; }
+.entrada input { flex: 1; min-width: 0; border: 0; padding: 11px 12px; font: 700 20px var(--f-display); color: var(--tinta); background: transparent; font-variant-numeric: tabular-nums; }
+.entrada input:focus-visible { outline: none; }
+.campo[data-erro] .entrada { border-color: var(--perigo); }
+.erro { color: var(--perigo); font-size: 15px; font-weight: 700; }
+.dica { font-size: 15px; color: var(--muted); }
+.selo { display: inline-block; padding: 1px 9px 2px; border-radius: 999px; font: 700 12px var(--f-display); letter-spacing: .4px; text-transform: uppercase; vertical-align: 1px; white-space: nowrap; }
+.selo.hip { background: var(--sol); color: var(--tinta); }
+.selo.fonte { background: var(--nevoa); color: var(--verde); border: 1px solid var(--verde); }
+.selo.est { background: var(--branco); color: var(--tinta); border: 1px dashed var(--tinta); }
+.acoes { display: flex; flex-wrap: wrap; gap: 12px; }
+button { cursor: pointer; border: 2px solid var(--verde); background: var(--branco); color: var(--verde); font: 700 16px var(--f-display); padding: 10px 18px; border-radius: 12px; }
+button:hover { background: var(--nevoa); }
+
+/* resultados */
+.resultados { position: sticky; top: 16px; display: grid; gap: 16px; }
+@media (max-width: 880px) { .resultados { position: static; } }
+.cartao { padding: 20px; border-radius: 20px; background: var(--branco); border: 2px solid var(--linha); }
+.cartao h2 { margin: 0 0 4px; font: 700 18px var(--f-display); color: var(--verde); }
+.cartao.hoje { box-shadow: 8px 8px 0 var(--teal); border-color: var(--tinta); }
+.cartao.com { box-shadow: 8px 8px 0 var(--sol); border-color: var(--tinta); }
+.linha { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--linha); }
+.linha:first-of-type { border-top: 0; }
+.linha .rot { color: var(--muted); font-size: 16px; }
+.linha .val { font: 800 22px var(--f-display); color: var(--tinta); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.linha.total .rot { color: var(--tinta); font-weight: 700; }
+.linha.total .val { font-size: 28px; color: var(--verde); letter-spacing: -.5px; }
+.linha .val.neg { color: var(--perigo); }
+
+.barras { display: grid; gap: 10px; margin: 6px 0 4px; }
+.barra { display: grid; grid-template-columns: 112px 1fr; gap: 10px; align-items: center; font-size: 15px; }
+.barra .trilho { height: 22px; border-radius: 8px; background: var(--nevoa); overflow: hidden; }
+.barra .enche { height: 100%; border-radius: 8px; background: var(--teal); transition: width .3s ease; }
+.barra.com .enche { background: var(--sol); }
+@media (prefers-reduced-motion: reduce) { .barra .enche { transition: none; } }
+
+.destaque { padding: 20px; border-radius: 20px; background: var(--verde); color: var(--branco); }
+.destaque .rot { font: 700 13px var(--f-display); letter-spacing: 2.5px; text-transform: uppercase; color: var(--sol); }
+.destaque .num { margin: 4px 0 6px; font: 800 clamp(34px, 6vw, 48px)/1 var(--f-display); letter-spacing: -1.5px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.destaque p { margin: 0; color: #c7f0ee; font-size: 16px; }
+.destaque b { color: var(--branco); }
+
+.conta { font-size: 15px; color: var(--muted); }
+.conta summary { cursor: pointer; font: 700 15px var(--f-display); color: var(--verde); }
+.conta ol { padding-left: 20px; margin: 10px 0 0; }
+.conta li { margin: 4px 0; }
+
+footer { max-width: 1160px; margin: 0 auto; padding: 8px 24px 40px; color: var(--muted); font-size: 15px; }
+footer ul { padding-left: 20px; }
+@media (max-width: 880px) { footer { padding-left: 16px; padding-right: 16px; } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="in">
+    <span class="marca" aria-label="Sorriu+">Sorri<span class="u">u</span>+</span>
+    <p class="eyebrow">Para a clínica-escola</p>
+    <h1>Quanto custa a agenda <em>no improviso?</em></h1>
+    <p>Coloque os números da sua clínica. A página calcula o custo da recepção manual e das faltas, e mostra um cenário com o Sorriu+ baseado em hipóteses que você mesmo ajusta.</p>
+  </div>
+</header>
+
+<div class="aviso" role="note">
+  <div><span aria-hidden="true">⚠️</span><span><b>Simulação, não promessa.</b> Os resultados dependem das hipóteses abaixo (marcadas com <span class="selo hip">hipótese</span>). O Sorriu+ é um protótipo de hackathon e ainda não tem resultado medido em clínica. As fontes de cada valor inicial estão em <a href="fontes.md">fontes.md</a>. Nada é enviado: a conta roda só no seu navegador.</span></div>
+</div>
+
+<main>
+  <form id="f" novalidate aria-describedby="f-dica">
+    <p id="f-dica" class="sr">Os resultados se atualizam enquanto você digita.</p>
+
+    <fieldset>
+      <legend>Recepção hoje</legend>
+      <div class="campo">
+        <label for="pessoas">Pessoas na recepção que cuidam da agenda</label>
+        <div class="entrada"><input id="pessoas" type="number" inputmode="numeric" min="0" max="50" step="1" value="2" aria-describedby="pessoas-d"><span>pessoas</span></div>
+        <div class="dica" id="pessoas-d"><span class="selo hip">hipótese</span> Valor inicial igual à estimativa do time (2 recepcionistas).</div>
+      </div>
+      <div class="campo">
+        <label for="custoPessoa">Custo mensal por pessoa, com encargos</label>
+        <div class="entrada"><span>R$</span><input id="custoPessoa" type="number" inputmode="decimal" min="0" step="50" value="3325" aria-describedby="custoPessoa-d"><span>/mês</span></div>
+        <div class="dica" id="custoPessoa-d"><span class="selo est">estimativa</span> R$ 2.050 de salário médio (Novo CAGED, SP, nov/2026) × 1,62 de encargos no regime geral, sem benefícios. Numa filantrópica ou no Simples, fica perto de R$ 2.650. <a href="fontes.md#4-custo-de-recepcionista-em-são-paulo-para-conferir-r-91-milano-por-2-recepcionistas">fontes §4</a></div>
+      </div>
+      <div class="campo">
+        <label for="fracAgenda">Parte do tempo da recepção gasta com agenda, confirmação e remarcação</label>
+        <div class="entrada"><input id="fracAgenda" type="number" inputmode="decimal" min="0" max="100" step="5" value="50" aria-describedby="fracAgenda-d"><span>%</span></div>
+        <div class="dica" id="fracAgenda-d"><span class="selo hip">hipótese</span> Sem fonte. Meça na sua clínica.</div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Agenda e faltas</legend>
+      <div class="campo">
+        <label for="consultas">Consultas agendadas por mês</label>
+        <div class="entrada"><input id="consultas" type="number" inputmode="numeric" min="0" step="10" value="600" aria-describedby="consultas-d"><span>consultas</span></div>
+        <div class="dica" id="consultas-d"><span class="selo hip">hipótese</span> Coloque o número da sua clínica.</div>
+      </div>
+      <div class="campo">
+        <label for="taxa">Taxa de faltas</label>
+        <div class="entrada"><input id="taxa" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="27.7" aria-describedby="taxa-d"><span>%</span></div>
+        <div class="dica" id="taxa-d"><span class="selo fonte">fonte</span> 27,7% dos pacientes de CEO do SUS faltaram a pelo menos uma consulta (da Cunha et al., BMC Oral Health, 2022). Aqui é usado como aproximação; o ideal é a taxa da sua agenda. <a href="fontes.md#1-absenteísmo-faltas-em-consulta-odontológica">fontes §1</a></div>
+      </div>
+      <div class="campo">
+        <label for="custoFalta">Custo de cada consulta perdida</label>
+        <div class="entrada"><span>R$</span><input id="custoFalta" type="number" inputmode="decimal" min="0" step="5" value="50" aria-describedby="custoFalta-d"><span>/falta</span></div>
+        <div class="dica" id="custoFalta-d"><span class="selo hip">hipótese</span> Não achamos fonte de odontologia. Some material separado, hora do supervisor e cadeira parada. <a href="fontes.md#2-custo-de-uma-consulta-odontológica-perdida-ou-de-material-estéril-desperdiçado">fontes §2</a></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Cenário com o Sorriu+</legend>
+      <div class="campo">
+        <label for="reducao">Redução das faltas (relativa)</label>
+        <div class="entrada"><input id="reducao" type="number" inputmode="decimal" min="0" max="100" step="1" value="10" aria-describedby="reducao-d"><span>%</span></div>
+        <div class="dica" id="reducao-d"><span class="selo hip">hipótese</span> Conservadora: menor que o efeito médio de lembretes por SMS em saúde geral (Cochrane, 2013). Não é resultado medido do Sorriu+. 10% significa passar de 27,7% para 24,9% de faltas. <a href="fontes.md#7-números-que-não-devem-ser-usados">fontes §7</a></div>
+      </div>
+      <div class="campo">
+        <label for="fracLibera">Parte do tempo de agenda que deixa de ser manual</label>
+        <div class="entrada"><input id="fracLibera" type="number" inputmode="decimal" min="0" max="100" step="5" value="30" aria-describedby="fracLibera-d"><span>%</span></div>
+        <div class="dica" id="fracLibera-d"><span class="selo hip">hipótese</span> É tempo liberado para outras tarefas, não demissão.</div>
+      </div>
+      <div class="campo">
+        <label for="preco">Preço mensal do Sorriu+</label>
+        <div class="entrada"><span>R$</span><input id="preco" type="number" inputmode="decimal" min="0" step="50" value="1500" aria-describedby="preco-d"><span>/mês</span></div>
+        <div class="dica" id="preco-d"><span class="selo hip">hipótese</span> Ainda não há preço definido.</div>
+      </div>
+    </fieldset>
+
+    <div class="acoes"><button type="button" id="restaurar">Voltar aos valores iniciais</button></div>
+  </form>
+
+  <section class="resultados" aria-labelledby="res-t">
+    <h2 id="res-t" class="sr">Resultados</h2>
+
+    <div class="cartao hoje">
+      <h2>Hoje, por ano</h2>
+      <div class="linha"><span class="rot">Custo da recepção</span><span class="val" id="o-recepcao">—</span></div>
+      <div class="linha"><span class="rot">…dos quais, tempo de agenda</span><span class="val" id="o-agenda">—</span></div>
+      <div class="linha"><span class="rot">Consultas perdidas por falta</span><span class="val" id="o-faltas">—</span></div>
+      <div class="linha total"><span class="rot">Custo das faltas</span><span class="val" id="o-custoFaltas">—</span></div>
+    </div>
+
+    <div class="cartao com">
+      <h2>Cenário com o Sorriu+, por ano <span class="selo hip">hipótese</span></h2>
+      <div class="barras" aria-hidden="true">
+        <div class="barra"><span>Faltas hoje</span><div class="trilho"><div class="enche" id="b-hoje"></div></div></div>
+        <div class="barra com"><span>Com Sorriu+</span><div class="trilho"><div class="enche" id="b-com"></div></div></div>
+      </div>
+      <div class="linha"><span class="rot">Consultas que deixariam de ser perdidas</span><span class="val" id="o-evitadas">—</span></div>
+      <div class="linha"><span class="rot">Custo de faltas evitado</span><span class="val" id="o-econFaltas">—</span></div>
+      <div class="linha"><span class="rot">Valor do tempo de agenda liberado</span><span class="val" id="o-tempo">—</span></div>
+      <div class="linha"><span class="rot">Assinatura do Sorriu+</span><span class="val neg" id="o-assinatura">—</span></div>
+      <div class="linha total"><span class="rot">Saldo do cenário</span><span class="val" id="o-saldo">—</span></div>
+    </div>
+
+    <div class="destaque" aria-live="polite" aria-atomic="true">
+      <div class="rot">Neste cenário</div>
+      <div class="num" id="o-destaque">—</div>
+      <p id="o-frase">—</p>
+    </div>
+
+    <details class="conta">
+      <summary>Ver a conta passo a passo</summary>
+      <ol>
+        <li>Recepção/ano = pessoas × custo mensal × 12.</li>
+        <li>Tempo de agenda/ano = recepção/ano × parte do tempo com agenda.</li>
+        <li>Faltas/ano = consultas/mês × taxa de faltas × 12.</li>
+        <li>Custo das faltas/ano = faltas/ano × custo por falta.</li>
+        <li>Faltas evitadas/ano = faltas/ano × redução (hipótese).</li>
+        <li>Custo de faltas evitado = faltas evitadas × custo por falta.</li>
+        <li>Tempo liberado = tempo de agenda/ano × parte que deixa de ser manual (hipótese).</li>
+        <li>Saldo = custo de faltas evitado + tempo liberado − preço × 12.</li>
+        <li>Ponto de equilíbrio = a redução de faltas que, com o tempo liberado, cobre a assinatura.</li>
+      </ol>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <p><b>Limites desta conta.</b></p>
+  <ul>
+    <li>Não inclui implantação, treinamento, integração com sistemas da clínica nem impostos sobre o serviço.</li>
+    <li>"Tempo liberado" tem valor de gestão (a equipe faz outra coisa); só vira economia de caixa se a clínica decidir assim.</li>
+    <li>Uma consulta a mais também é aula prática a mais e um paciente atendido. Esse ganho não está em reais aqui.</li>
+    <li>Protótipo de hackathon (HackaUSP 2026). Dados de pacientes do app são fictícios. <a href="fontes.md">Dossiê de fontes</a>.</li>
+  </ul>
+</footer>
+
+<script>
+(() => {
+  const ids = ["pessoas", "custoPessoa", "fracAgenda", "consultas", "taxa", "custoFalta", "reducao", "fracLibera", "preco"];
+  const el = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
+  const padrao = Object.fromEntries(ids.map((id) => [id, el[id].value]));
+  const $ = (id) => document.getElementById(id);
+  const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+  const int = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 });
+  const pct = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
+
+  function ler(id) {
+    const input = el[id];
+    const campo = input.closest(".campo");
+    const v = input.value.trim() === "" ? NaN : Number(input.value);
+    const min = input.min === "" ? -Infinity : Number(input.min);
+    const max = input.max === "" ? Infinity : Number(input.max);
+    let msg = "";
+    if (!Number.isFinite(v)) msg = "Digite um número.";
+    else if (v < min) msg = `Use um valor a partir de ${int.format(min)}.`;
+    else if (v > max) msg = `Use um valor até ${int.format(max)}.`;
+    let erro = campo.querySelector(".erro");
+    if (msg) {
+      campo.setAttribute("data-erro", "");
+      input.setAttribute("aria-invalid", "true");
+      if (!erro) {
+        erro = document.createElement("div");
+        erro.className = "erro"; erro.id = id + "-e";
+        campo.querySelector(".entrada").after(erro);
+        input.setAttribute("aria-describedby", `${id}-e ${id}-d`);
+      }
+      erro.textContent = msg;
+      return null;
+    }
+    if (erro) { erro.remove(); input.setAttribute("aria-describedby", `${id}-d`); }
+    campo.removeAttribute("data-erro");
+    input.removeAttribute("aria-invalid");
+    return v;
+  }
+
+  function calcular() {
+    const v = {};
+    let ok = true;
+    for (const id of ids) { v[id] = ler(id); if (v[id] === null) ok = false; }
+    if (!ok) {
+      for (const o of ["o-recepcao", "o-agenda", "o-faltas", "o-custoFaltas", "o-evitadas", "o-econFaltas", "o-tempo", "o-assinatura", "o-saldo"]) $(o).textContent = "—";
+      $("o-destaque").textContent = "—";
+      $("o-frase").textContent = "Corrija os campos marcados para ver o resultado.";
+      return;
+    }
+    const recepcao = v.pessoas * v.custoPessoa * 12;
+    const agenda = recepcao * v.fracAgenda / 100;
+    const faltas = v.consultas * v.taxa / 100 * 12;
+    const custoFaltas = faltas * v.custoFalta;
+    const evitadas = faltas * v.reducao / 100;
+    const econFaltas = evitadas * v.custoFalta;
+    const tempo = agenda * v.fracLibera / 100;
+    const assinatura = v.preco * 12;
+    const saldo = econFaltas + tempo - assinatura;
+    const taxaNova = v.taxa * (1 - v.reducao / 100);
+
+    $("o-recepcao").textContent = brl.format(recepcao);
+    $("o-agenda").textContent = brl.format(agenda);
+    $("o-faltas").textContent = int.format(faltas);
+    $("o-custoFaltas").textContent = brl.format(custoFaltas);
+    $("o-evitadas").textContent = int.format(evitadas);
+    $("o-econFaltas").textContent = brl.format(econFaltas);
+    $("o-tempo").textContent = brl.format(tempo);
+    $("o-assinatura").textContent = "− " + brl.format(assinatura);
+    $("o-saldo").textContent = (saldo < 0 ? "− " : "") + brl.format(Math.abs(saldo));
+    $("o-saldo").classList.toggle("neg", saldo < 0);
+
+    $("b-hoje").style.width = v.taxa > 0 ? "100%" : "0%";
+    $("b-com").style.width = v.taxa > 0 ? (100 * taxaNova / v.taxa) + "%" : "0%";
+
+    // redução de faltas que, somada ao tempo liberado, cobre a assinatura
+    const porPonto = custoFaltas / 100;          // R$ por 1 ponto percentual de redução relativa
+    const falta = assinatura - tempo;
+    let equilibrio;
+    if (falta <= 0) equilibrio = "o tempo liberado sozinho já cobriria a assinatura";
+    else if (porPonto <= 0) equilibrio = "sem faltas com custo, a assinatura não se paga por esse caminho";
+    else {
+      const r = falta / porPonto;
+      equilibrio = r > 100 ? "nem zerar as faltas cobriria a assinatura" : `a conta empata com ${pct.format(r)}% de redução das faltas`;
+    }
+
+    $("o-destaque").textContent = int.format(evitadas) + " consultas/ano";
+    $("o-frase").innerHTML =
+      `poderiam deixar de ser perdidas se as faltas caíssem de <b>${pct.format(v.taxa)}%</b> para <b>${pct.format(taxaNova)}%</b>. ` +
+      `Saldo de <b>${(saldo < 0 ? "− " : "") + brl.format(Math.abs(saldo))}/ano</b>. Ponto de equilíbrio: ${equilibrio}. ` +
+      `Isso é uma hipótese, não um resultado garantido.`;
+  }
+
+  ids.forEach((id) => el[id].addEventListener("input", calcular));
+  $("restaurar").addEventListener("click", () => { ids.forEach((id) => (el[id].value = padrao[id])); calcular(); el.pessoas.focus(); });
+  calcular();
+})();
+</script>
+</body>
+</html>
