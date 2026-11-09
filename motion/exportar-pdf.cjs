@@ -41,7 +41,7 @@ const DECK = "file://" + path.join(__dirname, "slides.html");
     console.log(`slide ${i}/${total - 1}`);
   }
   if (comApendice) {
-    await foto("s14", "slide-15-apendice", async (p) => { await p.evaluate(() => window.__deck.abrirApendice()); });
+    await foto(`s${total - 1}`, `slide-${String(total).padStart(2, "0")}-apendice`, async (p) => { await p.evaluate(() => window.__deck.abrirApendice()); });
     console.log("apêndice");
   }
 

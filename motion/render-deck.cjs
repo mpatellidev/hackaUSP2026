@@ -69,7 +69,7 @@ function linhas(t) {
   const trechos = []; let t = 0;
   const ultimo = Math.min(ate, info.notas.length - 1);
   for (let i = 0; i <= ultimo; i++) {
-    const segs = info.notas[i].split("[clique]").map((s) => s.trim());
+    const segs = info.notas[i].replace(/\s*\[demo\]/g, "").split("[clique]").map((s) => s.trim());
     const n = Math.max(1, info.passos[i].length);
     if (segs.length !== n) throw new Error(`slide ${i}: ${segs.length} trechos de fala para ${n} passos`);
     const total = segs.reduce((a, s) => a + palavras(s), 0);

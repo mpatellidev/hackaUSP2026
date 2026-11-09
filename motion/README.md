@@ -6,7 +6,7 @@ Material de apresentação do HackaUSP 2026 (Foolstack). Tudo em HTML + GSAP, co
 |---|---|
 | `index.html` | Trailer de 45 s, sem som, em loop (stand). Abre no navegador e toca sozinho. |
 | `sorriu-mais-motion.mp4` | O mesmo trailer em vídeo 1920×1080, 30 fps. |
-| `slides.html` | Deck do pitch de 5 min, 15 slides. O slide 0 é a abertura em loop. |
+| `slides.html` | Deck do pitch de 5 min, 12 slides (0–11). O slide 0 é a abertura em loop; o 8 é o painel da clínica, onde entra a demo de 20 s. |
 | `apresentar.sh` | Abre o deck (ou `--trailer`) num servidor local, já com app ao vivo e QR quando disponíveis. |
 | `sorriu-mais-deck.pdf` | PDF de reserva do deck: um slide montado por página, 16:9 (`exportar-pdf.cjs`). |
 | `sorriu-mais-deck.mp4` + `.srt` | O deck inteiro em vídeo, com todos os passos e a legenda das falas; sem voz (`render-deck.cjs`). |
@@ -21,7 +21,7 @@ Material de apresentação do HackaUSP 2026 (Foolstack). Tudo em HTML + GSAP, co
 ## Slides: como apresentar
 - **→, espaço, PageDown ou clique**: avança uma animação ou o slide (funciona com passador).
 - **← ou PageUp**: volta um slide (já montado).
-- **D** (ou clique no celular dos slides 5–8): abre o **app na tela**. O celular sai do slide, cresce com um halo amarelo e vira o app; no slide 8 o notebook da clínica entra junto. **Esc** ou **D** volta ao slide no mesmo ponto. Em slides sem celular, D abre a busca de clínicas.
+- **D** (ou clique no celular dos slides 4–7, ou no notebook do 8): abre o **app na tela**. O celular sai do slide, cresce com um halo amarelo e vira o app; no slide 8 (painel) é a **demo animada de ~20 s** do pitch: o notebook voa do slide e a jornada da Cida toca sozinha, offline, com legenda (**R** repete). **Esc** ou **D** volta ao slide no mesmo ponto. Em slides sem celular, D abre a busca de clínicas.
 - **P**: abre o **modo apresentador** numa segunda janela (falas, próximo slide, cronômetro de 5 min com meta por slide, botões que comandam o deck). Leve essa janela para o notebook e o deck para o projetor.
 - **Ensaio** (botão no apresentador): grava o tempo real de cada slide e mostra `real / meta` na lista. Ao desligar (ou em "Encerrar e ver resumo" no último slide) aparece o resumo: slides que passaram da meta, palavras de cada fala e quantas cortar no seu ritmo. Fica salvo neste navegador; "Apagar ensaio" limpa.
 - **A**: abre o **apêndice para a banca** (fora da contagem de slides): seis perguntas prováveis com resposta curta (LGPD, quem paga, alternativas, como medir o piloto, por que a clínica adota, protótipo × próximo passo). **1–6** amplia uma resposta, **Esc** volta e fecha. Também abre pelo botão no apresentador.
@@ -31,7 +31,7 @@ Material de apresentação do HackaUSP 2026 (Foolstack). Tudo em HTML + GSAP, co
 ### App ao vivo na demo
 A demo usa o app de verdade quando os servidores de desenvolvimento estão no ar; se não estiverem, usa um protótipo clicável com as capturas (`assets/`), sem travar. O botão "Tentar ao vivo" / "Usar telas offline" troca na hora.
 1. Rode `app/iniciar.sh --dev` (paciente em 5173, clínica em 5174). O servidor de produção (8000) **não** serve: ele proíbe ser exibido em iframe, e isso é de propósito.
-2. Abra o deck, aperte D e **entre uma vez** no celular (paciente) e, no slide 8, no notebook (clínica). A sessão vale enquanto a aba do deck estiver aberta.
+2. Abra o deck, aperte D e **entre uma vez** no celular (paciente) e no notebook (clínica). A demo do slide 8 é sempre offline. A sessão vale enquanto a aba do deck estiver aberta.
 3. Portas diferentes: `slides.html?paciente=http://localhost:5175&clinica=http://localhost:5174/clinica`.
 
 ### QR para a banca
@@ -46,7 +46,7 @@ node motion/render.cjs
 `CHROME=/caminho/do/chrome` usa um Chromium já instalado. O script toca a timeline quadro a quadro (`?render`), então não perde quadros.
 
 ## PDF de reserva
-Se o navegador ou o projetor falharem, o PDF tem os 15 slides já montados:
+Se o navegador ou o projetor falharem, o PDF tem os 12 slides já montados:
 ```bash
 CHROME=~/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome node motion/exportar-pdf.cjs
 ```
